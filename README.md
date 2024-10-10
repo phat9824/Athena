@@ -25,6 +25,6 @@
 * **Đề tài:** WEB BÁN TRANG SỨC
 
 
-<p align='center'>Copyright © 2024 Nhóm 15 - SE104.O27</p>
+<p align='center'>Copyright © 2024 Nhóm ? - IS207.P11</p>
 
 
