@@ -11,7 +11,7 @@
 | STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
 | ------ |:-------------:| ----------------------:|----------:|--------------------------------------------------------:|-------------------------:
 | 1      | 22521074      | Nguyễn Hùng Phát         |Thành viên|[phat9824](https://github.com/phat9824)  |22521074@gm.uit.edu.vn   |
-| 2      | 22520506      | Lê Minh Hùng        | Thành viên|[ASDASD](https://github.com/)            |@gm.uit.edu.vn   |
+| 2      | ASDASD      | ASDASD        | Thành viên|[ASDASD](https://github.com/)            |@gm.uit.edu.vn   |
 
 
 # GIỚI THIỆU MÔN HỌC
