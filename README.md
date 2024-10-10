@@ -15,11 +15,11 @@
 
 
 # GIỚI THIỆU MÔN HỌC
-* **Tên môn học:** Nhập môn công nghệ phần mềm
-* **Mã môn học:** SE104
-* **Mã lớp:** SE104.O27
-* **Năm học:** HK2 (2023 - 2024)
-* **Giảng viên**: Đặng Việt Dũng
+* **Tên môn học:** Phát triển ứng dụng web
+* **Mã môn học:** IS207
+* **Mã lớp:** IS207.P11
+* **Năm học:** HK1 (2024 - 2025)
+* **Giảng viên**: Tạ Việt Phương
 
 # ĐỒ ÁN CUỐI KÌ
 * **Đề tài:** WEB BÁN TRANG SỨC
