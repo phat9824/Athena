@@ -10,8 +10,11 @@
 # Thành viên nhóm
 | STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
 | ------ |:-------------:| ----------------------:|----------:|--------------------------------------------------------:|-------------------------:
-| 1      | 22521074      | Nguyễn Hùng Phát         |Thành viên|[phat9824](https://github.com/phat9824)  |22521074@gm.uit.edu.vn   |
-| 2      | ASDASD      | ASDASD        | Thành viên|[ASDASD](https://github.com/)            |@gm.uit.edu.vn   |
+|1      | 22520277     | Vũ Minh Đức        | Thành viên|[ASDASD](https://github.com/)            |22520277@gm.uit.edu.vn   |
+| 2      | 22521706     | Nguyễn Thị Thúy Vy        | Thành viên|[ASDASD](https://github.com/)            |22521706@gm.uit.edu.vn   |
+| 3     | 22521496     | Nguyễn Quang Trãi        | Thành viên|[ASDASD](https://github.com/)            |22521496@gm.uit.edu.vn   |
+| 4      | 22521074      | Nguyễn Hùng Phát         |Thành viên|[phat9824](https://github.com/phat9824)  |22521074@gm.uit.edu.vn   |
+| 5      | 22521189      | Thái Ngọc Quân            |Thành viên |[QuanThaiX](https://github.com/QuanThaiX)                    |22521189@gm.uit.edu.vn   |
 
 
 # GIỚI THIỆU MÔN HỌC
@@ -24,5 +27,11 @@
 # ĐỒ ÁN CUỐI KÌ
 * **Đề tài:** WEB BÁN TRANG SỨC
 
+# Trang giới thiệu nhóm
+* [LuxurySpark](https://sites.google.com/gm.uit.edu.vn/group15-is207p11/home)
+
+# Bảng màu chủ đạo
+
+* [link](https://coolors.co/user/palettes/6707ec7d2bb692000b74b162)
 
 <p align='center'>Copyright © 2024 Nhóm ? - IS207.P11</p>
