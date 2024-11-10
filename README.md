@@ -5,7 +5,7 @@
   </a>
 </p>
 
-<h1 align="center"><b>NHẬP MÔN CÔNG NGHỆ PHẦN MỀM - SE104 </b></h1>
+<h1 align="center"><b>Phát triển ứng dụng Web- IS207.P13 </b></h1>
 
 # Thành viên nhóm
 | STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
