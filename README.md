@@ -10,9 +10,9 @@
 # Thành viên nhóm
 | STT    | MSSV          | Họ và Tên              |Chức Vụ    | Github                                                  | Email                   |
 | ------ |:-------------:| ----------------------:|----------:|--------------------------------------------------------:|-------------------------:
-|1      | 22520277     | Vũ Minh Đức        | Thành viên|[ASDASD](https://github.com/)            |22520277@gm.uit.edu.vn   |
-| 2      | 22521706     | Nguyễn Thị Thúy Vy        | Thành viên|[ASDASD](https://github.com/)            |22521706@gm.uit.edu.vn   |
-| 3     | 22521496     | Nguyễn Quang Trãi        | Thành viên|[ASDASD](https://github.com/)            |22521496@gm.uit.edu.vn   |
+|1      | 22520277     | Vũ Minh Đức        | Thành viên|[ducvu-tech](https://github.com/ducvu-tech)            |22520277@gm.uit.edu.vn   |
+| 2      | 22521706     | Nguyễn Thị Thúy Vy        | Thành viên|[VyNguyen-maker](https://github.com/VyNguyen-maker)            |22521706@gm.uit.edu.vn   |
+| 3     | 22521496     | Nguyễn Quang Trãi        | Thành viên|[Kizaru-Borsalino](https://github.com/Kizaru-Borsalino)            |22521496@gm.uit.edu.vn   |
 | 4      | 22521074      | Nguyễn Hùng Phát         |Thành viên|[phat9824](https://github.com/phat9824)  |22521074@gm.uit.edu.vn   |
 | 5      | 22521189      | Thái Ngọc Quân            |Thành viên |[QuanThaiX](https://github.com/QuanThaiX)                    |22521189@gm.uit.edu.vn   |
 
