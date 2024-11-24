@@ -1,6 +1,7 @@
 import React from 'react';
-import logo from '../assets/logo.png';
+import logo from '../../assets/logo.png';
 import './navbar-home.css';
+import AccountButton from './accountButton-home';
 
 const Navbar = () => {
     return (
@@ -15,7 +16,7 @@ const Navbar = () => {
                     <img src={logo} alt="Athena Jewelry" />
                 </div>
                 <div className="navbar-icons">
-                    <button>Tài Khoản</button>
+                    <AccountButton />
                     <button>Giỏ Hàng</button>
                 </div>
             </div>
@@ -39,4 +40,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
 
