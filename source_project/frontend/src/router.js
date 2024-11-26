@@ -4,9 +4,20 @@ import HomeLayout from './layouts/home-layout';
 import HomePage from './pages/home-pages';
 
 // Import Admin Layout và các trang liên quan
-import AdminLayout from './layouts/admin-layout';
-import AdminDashboardPage from './pages/admin-dashboard-page';
-import ManageProductsPage from './pages/manage-products-page';
+import AdminLayout from './layouts/admin/admin-layout';
+// Import pages
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import ManageProductsPage from './pages/admin/ManageProductsPage';
+import ManageEmployeesPage from './pages/admin/ManageEmployeesPage';
+import ManageInvoicesPage from './pages/admin/ManageInvoicesPage';
+import ManagePromotionsPage from './pages/admin/ManagePromotionsPage';
+import ManageCustomers from './pages/admin/ManageCustomersPage';
+
+
+
+
+import ProfilePage from './pages/admin/ProfilePage';
+
 
 const router = createBrowserRouter([
     // Route gốc chuyển hướng đến Home
@@ -33,12 +44,33 @@ const router = createBrowserRouter([
         element: <AdminLayout />,
         children: [
             {
-                path: "", // Đường dẫn gốc cho Admin
+                path: "",
                 element: <AdminDashboardPage />
             },
             {
-                path: "ManageProducts", // Đường dẫn cho quản lý sản phẩm
+                path: "ManageProducts",
                 element: <ManageProductsPage />
+            },
+            {
+                path: "ManageEmployees",
+                element: <ManageEmployeesPage />
+            },
+            
+            {
+                path: "ManageInvoices",
+                element: <ManageInvoicesPage />
+            },
+            {
+                path: "ManageCustomers",
+                element: <ManageCustomers />
+            },
+            {
+                path: "ManagePromotions",
+                element: <ManagePromotionsPage />
+            },
+            {
+                path: "Profile",
+                element: <ProfilePage />
             }
         ]
     }
