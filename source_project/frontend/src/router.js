@@ -2,6 +2,8 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import HomeLayout from './layouts/home-layout';
 import HomePage from './pages/home-pages';
+import LoginPage from './pages/login-user-pages';
+import DashboardLayout from './layouts/dashboard-user-layout';
 
 // Import Admin Layout và các trang liên quan
 import AdminLayout from './layouts/admin-layout';
@@ -21,12 +23,19 @@ const router = createBrowserRouter([
         element: <HomeLayout />,
         children: [
             {
-                path: "/Home",
+                path: "",
                 element: <HomePage />
+            },
+            {
+                path: "Login",
+                element: <LoginPage />
+            },
+            {
+                path: "Dashboard",
+                element: <DashboardLayout />
             }
         ]
     },
-
     // Route cho Admin
     {
         path: "/Admin",
@@ -42,6 +51,7 @@ const router = createBrowserRouter([
             }
         ]
     }
+
 ]);
 
 export default router;
