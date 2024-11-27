@@ -2,7 +2,8 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import HomeLayout from './layouts/home-layout';
 import HomePage from './pages/home-pages';
-import LoginPage from './pages/login-user-pages';
+import LoginPage from './pages/login-customer-page';
+import RegisterPage from './pages/register-customer-page';
 import DashboardLayout from './layouts/dashboard-user-layout';
 
 // Import Admin Layout và các trang liên quan
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             {
                 path: "Login",
                 element: <LoginPage />
+            },
+            {
+                path: "Register",
+                element: <RegisterPage />
             },
             {
                 path: "Dashboard",
