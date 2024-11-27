@@ -1,10 +1,10 @@
-CREATE DATABASE QUANLYTRANGSUC;
+CREATE DATABASE QUANLYTRANGSUC CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE QUANLYTRANGSUC;
 
 CREATE TABLE TAIKHOAN (
    ID                   INT AUTO_INCREMENT PRIMARY KEY,
-   EMAIL                VARCHAR(100) NOT NULL,
-   PASSWORD             VARCHAR(256) NOT NULL,
+   EMAIL                VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+   PASSWORD             VARCHAR(256) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
    ROLE                 TINYINT NOT NULL, -- 0: Khách hàng, 1: Admin, 2: Superadmin, 3: .....
    TINHTRANG            TINYINT NOT NULL DEFAULT 1,
    DELETED_AT           DATETIME NULL  -- Không xóa hoàn toàn, chỉ ẩn đi
@@ -12,42 +12,42 @@ CREATE TABLE TAIKHOAN (
 
 CREATE TABLE ADMIN (
    ID                   INT PRIMARY KEY, -- Liên kết với ID từ bảng TAIKHOAN
-   ID_CHINHANH          VARCHAR(10) NULL, -- Chi nhánh mà admin quản lý
-   TENADMIN             VARCHAR(100) NULL,
+   ID_CHINHANH          VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Chi nhánh mà admin quản lý
+   TENADMIN             VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    SDT                  VARCHAR(15) NULL,
-   DIACHI               VARCHAR(200) NULL
+   DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL
 );
 
 CREATE TABLE KHACHHANG (
    ID                   INT PRIMARY KEY, -- Liên kết với ID từ bảng TAIKHOAN
-   TENKH                VARCHAR(100) NULL,
+   TENKH                VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    SDT                  VARCHAR(15) NULL,
-   DIACHI               VARCHAR(200) NULL,
+   DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    LOAI                 TINYINT NULL,
    GIOITINH             TINYINT NULL -- 1: Nam, 2: Nữ
 );
 
 CREATE TABLE CHINHANH (
    ID                   VARCHAR(10) PRIMARY KEY,
-   TENCN                VARCHAR(100) NOT NULL,
-   DIACHI               VARCHAR(200) NOT NULL,
+   TENCN                VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+   DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
    DELETED_AT           DATETIME NULL  -- Không xóa hoàn toàn, chỉ ẩn đi
 );
 
 CREATE TABLE TRANGSUC (
    ID                   INT AUTO_INCREMENT PRIMARY KEY,
    MADM                 VARCHAR(10) NOT NULL,
-   TENTS                VARCHAR(200) NOT NULL,
+   TENTS                VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
    GIANIEMYET           BIGINT NOT NULL,
    SLTK                 INT NOT NULL DEFAULT 0,
-   MOTA                 TEXT NULL,
-   IMAGEURL             LONGTEXT NULL,
+   MOTA                 TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+   IMAGEURL             LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    DELETED_AT           DATETIME NULL  -- Không xóa hoàn toàn, chỉ ẩn đi
 );
 
 CREATE TABLE DANHMUCTS (
    MADM                 VARCHAR(10) NOT NULL PRIMARY KEY,
-   TENDM                VARCHAR(50) NOT NULL
+   TENDM                VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL
 );
 
 CREATE TABLE HOADON (
@@ -83,7 +83,7 @@ CREATE TABLE CHITIETHD (
 CREATE TABLE KHUYENMAI (
    ID                   INT AUTO_INCREMENT PRIMARY KEY,
    MAKM                 VARCHAR(100) NOT NULL,
-   TENKM                VARCHAR(100) NOT NULL,
+   TENKM                VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
    NGAYBD               DATE NOT NULL,
    NGAYKT               DATE NOT NULL,
    PHANTRAM             FLOAT NOT NULL DEFAULT 0
@@ -124,3 +124,25 @@ ALTER TABLE CHITIETKM ADD CONSTRAINT FK_CHITIETKM_TRANGSUC FOREIGN KEY (ID_TRANG
 
 ALTER TABLE TS_CHINHANH ADD CONSTRAINT FK_TSCHINHANH_TRANGSUC FOREIGN KEY (ID_TRANGSUC) REFERENCES TRANGSUC(ID) ON DELETE RESTRICT;
 ALTER TABLE TS_CHINHANH ADD CONSTRAINT FK_TSCHINHANH_CHINHANH FOREIGN KEY (ID_CHINHANH) REFERENCES CHINHANH(ID) ON DELETE RESTRICT;
+
+-- Thêm dữ liệu
+
+-- Tài khoản test
+
+-- test@gmail.com
+-- abcdef
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test@gmail.com', '$2a$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn A', '0123456789', '404 Đường F, HCM', 1, 2);
+
+-- superadmin@gmail.com
+-- 123456
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('superadmin@gmail.com', '$2a$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 1, 1);
+
+SET @admin_id = LAST_INSERT_ID();
+INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
+VALUES (@admin_id, NULL, 'Trần Tiến P', '0123456780', '505 Đường G, HCM');
