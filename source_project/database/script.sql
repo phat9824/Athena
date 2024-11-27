@@ -12,24 +12,23 @@ CREATE TABLE TAIKHOAN (
 
 CREATE TABLE ADMIN (
    ID                   INT PRIMARY KEY, -- Liên kết với ID từ bảng TAIKHOAN
-   ID_CHINHANH          INT NOT NULL, -- Chi nhánh mà admin quản lý
-   TENADMIN             VARCHAR(100) NOT NULL,
-   SDT                  VARCHAR(15) NOT NULL,
-   DIACHI               VARCHAR(200) NOT NULL
+   ID_CHINHANH          VARCHAR(10) NULL, -- Chi nhánh mà admin quản lý
+   TENADMIN             VARCHAR(100) NULL,
+   SDT                  VARCHAR(15) NULL,
+   DIACHI               VARCHAR(200) NULL
 );
 
 CREATE TABLE KHACHHANG (
    ID                   INT PRIMARY KEY, -- Liên kết với ID từ bảng TAIKHOAN
-   TENKH                VARCHAR(100) NOT NULL,
-   SDT                  VARCHAR(15) NOT NULL,
-   DIACHI               VARCHAR(200) NOT NULL,
-   LOAI                 TINYINT NOT NULL,
+   TENKH                VARCHAR(100) NULL,
+   SDT                  VARCHAR(15) NULL,
+   DIACHI               VARCHAR(200) NULL,
+   LOAI                 TINYINT NULL,
    GIOITINH             TINYINT NULL -- 1: Nam, 2: Nữ
 );
 
 CREATE TABLE CHINHANH (
-   ID                   INT AUTO_INCREMENT PRIMARY KEY,
-   MACN                 VARCHAR(10) UNIQUE NOT NULL,
+   ID                   VARCHAR(10) PRIMARY KEY,
    TENCN                VARCHAR(100) NOT NULL,
    DIACHI               VARCHAR(200) NOT NULL,
    DELETED_AT           DATETIME NULL  -- Không xóa hoàn toàn, chỉ ẩn đi
@@ -41,8 +40,8 @@ CREATE TABLE TRANGSUC (
    TENTS                VARCHAR(200) NOT NULL,
    GIANIEMYET           BIGINT NOT NULL,
    SLTK                 INT NOT NULL DEFAULT 0,
-   MOTA                 TEXT NOT NULL,
-   IMAGEURL             LONGTEXT NOT NULL,
+   MOTA                 TEXT NULL,
+   IMAGEURL             LONGTEXT NULL,
    DELETED_AT           DATETIME NULL  -- Không xóa hoàn toàn, chỉ ẩn đi
 );
 
@@ -98,7 +97,7 @@ CREATE TABLE CHITIETKM (
 
 CREATE TABLE TS_CHINHANH (
    ID_TRANGSUC          INT NOT NULL,
-   ID_CHINHANH          INT NOT NULL,
+   ID_CHINHANH          VARCHAR(10) NOT NULL,
    SLTONKHO             INT NOT NULL DEFAULT 0,
    PRIMARY KEY (ID_TRANGSUC, ID_CHINHANH)
 );
