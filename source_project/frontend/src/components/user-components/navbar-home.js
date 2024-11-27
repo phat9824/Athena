@@ -2,11 +2,12 @@ import React from 'react';
 import logo from '../../assets/logo.png';
 import './navbar-home.css';
 import AccountButton from './accountButton-home';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = () => {
     return (
         <nav className="navbar">
-
             <div className="navbar-top">
                 <div className="navbar-store">
                     <button>Cửa Hàng</button>
@@ -17,7 +18,6 @@ const Navbar = () => {
                 </div>
                 <div className="navbar-icons">
                     <AccountButton />
-                    <button>Giỏ Hàng</button>
                 </div>
             </div>
 
@@ -40,6 +40,7 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 
 
