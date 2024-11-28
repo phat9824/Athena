@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\TaiKhoan;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -46,6 +47,7 @@ class AuthController extends Controller
                 'data' => $taiKhoan
             ], 201);
         } catch (\Exception $e) {
+            Log::error('Registration Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đăng ký thất bại!',
