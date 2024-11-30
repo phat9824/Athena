@@ -64,3 +64,59 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Cách cài đặt và khởi động dự án
+
+Yêu cầu:
+Xampp, PHP >= 8.2 [Link](https://www.freecodecamp.org/news/how-to-get-started-with-php/)
+Composer [Link](https://www.geeksforgeeks.org/how-to-install-php-composer-on-windows/)
+Node.js và npm [Link](https://www.geeksforgeeks.org/install-node-js-on-windows/)
+
+### **1. Clone dự án và cài các package**
+
+Từ thư mục htdocs trong xampp
+
+```bash
+git clone https://github.com/phat9824/Athena.git
+```
+
+Từ trong thư mục source_project, cài đặt các package PHP:
+```bash
+composer install
+```
+
+Từ trong thư mục frontend, cài đặt các package cho frontend:
+```bash
+npm install
+```
+
+**Trong khi chạy các thiết lập tiếp theo, có thể thiếu một số package, kiểm tra các file "composer.json" và "package.json" để cài các gói còn thiếu**
+
+### **2. Tiến hành các thiết lập**
+
+Bật Apache và MySQL trong Xampp, vào [https://localhost/phpmyadmin/](https://localhost/phpmyadmin/), tạo Database bằng script trong thư mục database của dự án
+Sao chép file .env.example và đặt tên lại thành .env và sửa các tham số cho phù hợp
+
+Từ thư mục source_project, chạy lệnh
+```bash
+php artisan jwt:secret
+```
+để tạo khóa bí mật cho JWT
+
+**Trong môi trường dev:**
+- Từ thư mục source_project, chạy lệnh
+```bash
+php artisan migrate
+```
+để khởi chạy server
+
+- Từ thu mục frontend, chạy lệnh
+```bash
+npm start
+```
+để mở giao diện frontend
+
+**Triển khai trên local**
+Đang cập nhật ...
+**Triển khai công khai trên internet**
+Đang cập nhật ...
