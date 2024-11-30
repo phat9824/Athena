@@ -6,23 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\TaiKhoan;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {   
         /* 
-        Validate dữ liệu
+        Validate dữ liệu ở mức cấu trúc
             required: bắt buộc có
             email: kiểm tra định dạng là email
-            unique:taikhoan,email : kiểm tra email có trong bảng taikhoan cột email hay không
             min: độ dài tối thiểu
             max: độ dài tối đa
         Hàm fails trả về true nếu validate thất bại
         */
         $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:taikhoan,email|max:100',
+            'email' => 'required|email|max:100',
             'password' => 'required|min:6|max:256',
         ]);
 
@@ -33,25 +34,111 @@ class AuthController extends Controller
             ], 400);
         }
 
+        // $sessionCookie = $request->cookie('laravel_session');
+        // Log::info('Cookie laravel_session:', ['value' => $sessionCookie]); // Chỉ để log dữ liệu hỗ trợ việc debug
+
+        // Validate dữ liệu ở mức business logic
+        $existingAccount = TaiKhoan::where('email', $request->email)->first();
+        if ($existingAccount) {
+            if ($existingAccount->tinhtrang === 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên.',
+                ], 403);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản đã tồn tại. Vui lòng sử dụng email khác.',
+                ], 409);
+            }
+        }
+
         try {
-            $taiKhoan = TaiKhoan::create([
+            $userData = [
                 'email' => $request->email,
-                'password' => Hash::make($request->password), // Hàm hash mặc định là Bcrypt
+                'password' => Hash::make($request->password),
                 'role' => 0,
                 'tinhtrang' => 1
-            ]);
+            ];
+            
+            $taiKhoan = TaiKhoan::createUser($userData);
+
+            $token = auth('api')->login($taiKhoan);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng ký thành công!',
-                'data' => $taiKhoan
+                'token' => $token
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Registration Error: ' . $e->getMessage());
+            Log::error('Registration Error: ' . $e->getMessage()); // Log các exception error
             return response()->json([
                 'success' => false,
                 'message' => 'Đăng ký thất bại!',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function login(Request $request)
+    {
+        // Validate dữ liệu
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|max:100',
+            'password' => 'required|min:6|max:256',
+        ]);
+
+        // Kiểm tra tài khoản
+        $taiKhoan = TaiKhoan::getUserByEmail($request->email);
+
+        if (!$taiKhoan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tài khoản không tồn tại.'
+            ], 404);
+        }
+
+        if ($taiKhoan->tinhtrang === 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên.'
+            ], 403);
+        }
+
+        Log::info('Login Attempt:', [
+            's' => $taiKhoan->ID,
+            'plain_password' => $request->password,
+            'hashed_password' => $taiKhoan->PASSWORD,
+        ]);
+
+        if (!Hash::check($request->password, $taiKhoan->PASSWORD)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sai mật khẩu, vui lòng thử lại.'
+            ], 401);
+        }
+
+        // Tạo JWT token
+        try {
+            $token = Auth::login($taiKhoan);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng nhập thành công!',
+                'token' => $token,
+                'data' => [
+                    'user' => $taiKhoan,
+                    'token_type' => 'bearer',
+                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Login Error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Đăng nhập thất bại, vui lòng thử lại.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
