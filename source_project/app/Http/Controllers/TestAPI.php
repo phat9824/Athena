@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class ApiController extends Controller
+
+// Chỉ để test xem API có hoạt động không
+
+class TestAPIController extends Controller
 {
     public function test()
     {
