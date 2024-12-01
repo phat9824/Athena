@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../AppContext.js';
 
 const Login = () => {
-    const { getCSRFToken, getCookie, baseUrl} = useAppContext();
+    const { getCSRFToken, getCookie, baseUrl, login} = useAppContext();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -33,8 +33,7 @@ const Login = () => {
             const res = await response.json();
 
             if (response.ok) {
-                // Lưu JWT vào localStorage
-                localStorage.setItem('token', res.token);
+                login(res.data);
                 navigate('/Home/Dashboard');
             } else {
                 setErrorMessage(res.message || 'Thông tin đăng nhập không chính xác!');
@@ -71,6 +70,12 @@ const Login = () => {
                 </button>
                 {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             </form>
+            <p>
+                Chưa có tài khoản?{' '}
+                <span className="register-link" onClick={() => navigate('../Register')}>
+                    Đăng ký
+                </span>
+            </p>
         </div>
     );
 };

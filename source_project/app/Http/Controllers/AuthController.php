@@ -123,17 +123,27 @@ class AuthController extends Controller
             //Log::info('Login User:', ['user' => $taiKhoan]);
             $token = auth('api')->login($taiKhoan);
             //Log::info('JWT', ['value' => $token]);
+
+            $cookie = cookie(
+                name: 'token',
+                value: $token,
+                minutes: JWTAuth::factory()->getTTL(),
+                path: '/',
+                domain: null,
+                secure: true,
+                httpOnly: true,             // Không truy cập đc bằng JS phía client
+                raw: false,
+                sameSite: 'Lax'             // Cho phép cross-site
+            );
+
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công!',
-                'token' => $token,
                 'data' => [
                     'role' => $taiKhoan->ROLE,
                     'id' => $taiKhoan->ID,
-                    'type' => 'bearer',
-                    'exp' => JWTAuth::factory()->getTTL() * 60,
                 ],
-            ], 200);
+            ], 200)->cookie($cookie);
         } catch (\Exception $e) {
             Log::error('Login Error: ' . $e->getMessage());
 

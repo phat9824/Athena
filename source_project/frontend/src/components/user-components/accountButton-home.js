@@ -1,55 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faSignInAlt, faUserPlus, faShoppingCart, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { useAppContext } from '../../AppContext';
 
 const AccountButton = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [username, setUsername] = useState("...");
+    const { isLoggedIn, username, logout } = useAppContext();
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        navigate('./Login');
-        setIsLoggedIn(true);
-        setUsername("Người Dùng");
-    };
-
-    const handleRegister = () => {
-        navigate('./Register');
+        navigate('/Home/Login');
     };
 
     const handleLogout = () => {
-        setIsLoggedIn(false);
-        setUsername("");
+        logout();
         navigate('/');
-    };
-
-    const handleAccount = () => {
-        navigate('/account');
     };
 
     return (
         <div className="account-button">
-            {!isLoggedIn ? (
-                <>
-                    <button onClick={handleRegister}>
-                        <FontAwesomeIcon icon={faUserPlus} /> Đăng Ký
-                    </button>
-                    <button onClick={handleLogin}>
-                        <FontAwesomeIcon icon={faSignInAlt} /> Đăng Nhập
-                    </button>
-                </>
-            ) : (
-                <>
-                    <button onClick={handleAccount}>
-                        <FontAwesomeIcon icon={faUser} /> Tài Khoản
-                    </button>
-                    <button onClick={handleLogout}>
-                        <FontAwesomeIcon icon={faSignOutAlt} /> Đăng Xuất
-                    </button>
-                </>
-            )}
-        </div>
+        {!isLoggedIn ? (
+            <button className="btn-login" onClick={handleLogin}>
+                <FontAwesomeIcon icon={faUser} /> Đăng Nhập
+            </button>
+        ) : (
+            <div className="logged-in-info">
+                <span>
+                    <FontAwesomeIcon icon={faUser} /> {username}
+                </span>
+                <button className="btn-logout" onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faSignOutAlt} /> Đăng Xuất
+                </button>
+            </div>
+        )}
+    </div>
     );
 };
 
