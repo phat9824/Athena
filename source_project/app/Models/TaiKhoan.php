@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\Authenticatable;
-
+use Illuminate\Support\Facades\Log;
 
 class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
 {
@@ -23,7 +23,8 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     // Trả về ID
     public function getJWTIdentifier()
     {
-        return $this->getKey();
+        Log::info('JWT Identifier:', ['id' => $this->getKey()]);
+        return (string)$this->getKey();
     }
 
     // Trả về payload tùy chỉnh JWT.

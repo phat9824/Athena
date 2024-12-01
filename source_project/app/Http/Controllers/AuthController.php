@@ -105,11 +105,11 @@ class AuthController extends Controller
             ], 403);
         }
 
-        Log::info('Login Attempt:', [
-            's' => $taiKhoan->ID,
-            'plain_password' => $request->password,
-            'hashed_password' => $taiKhoan->PASSWORD,
-        ]);
+        // Log::info('Login Attempt:', [
+        //     's' => $taiKhoan->ID,
+        //     'plain_password' => $request->password,
+        //     'hashed_password' => $taiKhoan->PASSWORD,
+        // ]);
 
         if (!Hash::check($request->password, $taiKhoan->PASSWORD)) {
             return response()->json([
@@ -120,16 +120,18 @@ class AuthController extends Controller
 
         // Tạo JWT token
         try {
-            $token = Auth::login($taiKhoan);
-
+            //Log::info('Login User:', ['user' => $taiKhoan]);
+            $token = auth('api')->login($taiKhoan);
+            //Log::info('JWT', ['value' => $token]);
             return response()->json([
                 'success' => true,
                 'message' => 'Đăng nhập thành công!',
                 'token' => $token,
                 'data' => [
-                    'user' => $taiKhoan,
-                    'token_type' => 'bearer',
-                    'expires_in' => JWTAuth::factory()->getTTL() * 60,
+                    'role' => $taiKhoan->ROLE,
+                    'id' => $taiKhoan->ID,
+                    'type' => 'bearer',
+                    'exp' => JWTAuth::factory()->getTTL() * 60,
                 ],
             ], 200);
         } catch (\Exception $e) {
