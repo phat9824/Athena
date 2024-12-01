@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminSidebar from '../../components/admin/admin-sidebar'; // Đường dẫn tới sidebar
+import AdminSidebar from '../../components/admin/admin-sidebar'; // Đường dẫn tới Nav
 import { Outlet } from 'react-router-dom'; // Outlet để render route con
 
 const AdminLayout = () => {
