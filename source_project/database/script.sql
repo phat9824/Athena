@@ -132,7 +132,7 @@ ALTER TABLE TS_CHINHANH ADD CONSTRAINT FK_TSCHINHANH_CHINHANH FOREIGN KEY (ID_CH
 -- test@gmail.com
 -- abcdef
 INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
-VALUES ('test@gmail.com', '$2a$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+VALUES ('test@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
 
 SET @test_id = LAST_INSERT_ID();
 INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
@@ -141,7 +141,7 @@ VALUES (@test_id, 'Nguyễn Văn A', '0123456789', '404 Đường F, HCM', 1, 2)
 -- superadmin@gmail.com
 -- 123456
 INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
-VALUES ('superadmin@gmail.com', '$2a$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 1, 1);
+VALUES ('superadmin@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 1, 1);
 
 SET @admin_id = LAST_INSERT_ID();
 INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
