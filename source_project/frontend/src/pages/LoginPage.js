@@ -34,7 +34,11 @@ const Login = () => {
 
             if (response.ok) {
                 login(res.data);
-                navigate('/Home/Dashboard');
+                if (['1', '2'].includes(localStorage.getItem('role'))) {
+                    navigate('/Admin');
+                } else {
+                    navigate('/Home');
+                }
             } else {
                 setErrorMessage(res.message || 'Thông tin đăng nhập không chính xác!');
             }

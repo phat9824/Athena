@@ -1,9 +1,11 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import ProtectedRoute from './components/user-components/protectedRoute.js';
+
 import HomeLayout from './layouts/home-layout';
 import HomePage from './pages/home-pages';
-import LoginPage from './pages/login-customer-page';
-import RegisterPage from './pages/register-customer-page';
+import LoginPage from './pages/LoginPage.js';
+import RegisterPage from './pages/RegisterPage.js';
 import DashboardLayout from './layouts/dashboard-user-layout';
 
 // Import Admin Layout và các trang liên quan
@@ -17,10 +19,10 @@ import ManagePromotionsPage from './pages/admin/ManagePromotionsPage';
 import ManageCustomers from './pages/admin/ManageCustomersPage';
 
 
-
-
 import ProfilePage from './pages/admin/ProfilePage';
 
+// Othes Page
+import Unauthorized from './pages/UnauthorizedPage.js';
 
 const router = createBrowserRouter([
     // Route gốc chuyển hướng đến Home
@@ -55,7 +57,11 @@ const router = createBrowserRouter([
     // Route cho Admin
     {
         path: "/Admin",
-        element: <AdminLayout />,
+        element: (
+            <ProtectedRoute allowedRoles={['1', '2']}>
+                <AdminLayout />
+            </ProtectedRoute>
+        ),
         children: [
             {
                 path: "",
@@ -87,6 +93,11 @@ const router = createBrowserRouter([
                 element: <ProfilePage />
             }
         ]
+    },
+
+    {
+        path: "/Unauthorized",
+        element: <Unauthorized />
     }
 
 ]);
