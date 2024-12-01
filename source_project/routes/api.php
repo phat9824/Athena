@@ -10,5 +10,15 @@ Route::post('/api/login', [AuthController::class, 'login']);
 
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware('auth:api')->group(function () {
+    Route::middleware('check.role:1,2')->group(function () {
+        Route::get('/api/admin/dashboard', [TestAPIController::class, 'adminDashboard']);
+    });
 
+    Route::middleware('check.role:1')->group(function () {
+        
+    });
+
+    Route::middleware('check.role:0')->group(function () {
+        
+    });
 });

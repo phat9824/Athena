@@ -62,7 +62,7 @@ const AdminSidebar = () => {
                     </NavLink>
                 </li>
                 <li className="logout">
-                    <NavLink to="/Logout" className={({ isActive }) => (isActive ? 'active' : '')}>
+                    <NavLink to="/Home" className={({ isActive }) => (isActive ? 'active' : '')}>
                         <i className="fas fa-sign-out-alt"></i> Đăng xuất
                     </NavLink>
                 </li>
