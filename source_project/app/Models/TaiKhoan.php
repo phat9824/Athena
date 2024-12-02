@@ -13,7 +13,7 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     use Authenticatable;
 
     protected $table = 'taikhoan'; // mapping với bảng TAIKHOAN
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'ID';
     public $timestamps = false; // tắt các cột quản lý thời gian do laravel tự tạo
     protected $fillable = ['email', 'password', 'role', 'tinhtrang', 'deleted_at']; // Các cột được phép thao tác (thêm, sửa)
 
@@ -23,7 +23,7 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     // Trả về ID
     public function getJWTIdentifier()
     {
-        Log::info('JWT Identifier:', ['id' => $this->getKey()]);
+        Log::info('JWT Identifier:', ['id' => (string)$this->getKey()]);
         return (string)$this->getKey();
     }
 
@@ -31,9 +31,9 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'email' => $this->email,
-            'role' => $this->role,
-            'tinhtrang' => $this->tinhtrang,
+            'email' => $this->EMAIL,
+            'role' => $this->ROLE,
+            'tinhtrang' => $this->TINHTRANG,
         ];
     }
 
