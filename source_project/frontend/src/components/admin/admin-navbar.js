@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import './admin-sidebar.css';
+import './admin-navbar.css';
 import logo from '../../assets/logo.png';
 
 const AdminSidebar = () => {
