@@ -106,7 +106,7 @@ php artisan jwt:secret
 **Trong môi trường dev:**
 - Từ thư mục source_project, chạy lệnh
 ```bash
-php artisan migrate
+php artisan serve
 ```
 để khởi chạy server
 
