@@ -98,7 +98,7 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if ($taiKhoan->tinhtrang === 0) {
+        if ($taiKhoan->TINHTRANG === 0) {
             return response()->json([
                 'success' => false,
                 'message' => 'Tài khoản đã bị khóa, vui lòng liên hệ quản trị viên.'
