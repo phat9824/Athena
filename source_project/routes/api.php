@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestAPIController;
 
+
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
 
 // Các API không cần xác thực
@@ -24,3 +25,17 @@ Route::middleware('auth:api')->group(function () {
         
     });
 });
+
+
+
+use App\Http\Controllers\DanhMucController;
+
+// API lấy danh mục
+Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
+
+
+
+
+
+
+

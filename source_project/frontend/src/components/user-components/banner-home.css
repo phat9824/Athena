@@ -6,12 +6,13 @@
     align-items: center; /* Căn giữa nội dung theo chiều dọc */
     height: 100vh; /* Chiều cao chiếm toàn màn hình */
     overflow: hidden; /* Đảm bảo hình ảnh không tràn */
-    background-color: #f8f9fa; /* Thêm màu nền */
+    background-color: hsl(210, 17%, 98%); /* Thêm màu nền */
 }
 
 .banner-image {
     width: 100%; /* Hình ảnh phủ hết chiều ngang */
     height: auto; /* Đảm bảo giữ tỷ lệ hình ảnh */
+    width: 200px; /* Kích thước hình ảnh */
     object-fit: cover; /* Đảm bảo hình ảnh bao phủ mà không méo mó */
     display: block;
 }
@@ -35,6 +36,6 @@
 
 .banner-text p {
     font-size: 1.2rem; /* Kích thước chữ mô tả */
-    margin-top: 10px;
+    margin-top: 20px;
     line-height: 1.5;
 }
