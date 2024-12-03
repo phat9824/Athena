@@ -1,0 +1,108 @@
+.account-button {
+    display: flex;
+    align-items: center;
+    gap: 2%;
+    padding: 1vw;
+    flex-wrap: wrap;
+}
+
+.btn-login {
+    display: flex;
+    align-items: center;
+    gap: 0.5em; 
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6em 1.2em; 
+    border-radius: 0.4em;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.logged-in-info {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+.avatar {
+    width: 2.5em; 
+    height: 2.5em;
+    border-radius: 50%; 
+    background-size: cover; 
+    background-position: center; 
+    background-color: #ccc;
+    flex-shrink: 0;
+}
+
+.username {
+    font-size: 1rem; 
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 10ch; 
+}
+
+.cart-button {
+    position: relative;
+    cursor: pointer;
+    font-size: 1.5rem; 
+    align-items: center;
+    gap: 0.5em;
+}
+
+.cart-button #cart-text {
+    font-size: 1rem;
+    color: #333;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10%;
+    right: -10%;
+    background: red;
+    color: white;
+    border-radius: 50%;
+    width: 1.5em;
+    height: 1.5em;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive*/
+@media (max-width: 768px) {
+    .account-button {
+        justify-content: space-around;
+        gap: 3%;
+    }
+
+    .username {
+        max-width: 8ch;
+    }
+
+    .cart-button {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-button {
+        flex-direction: column; 
+        align-items: flex-start;
+        gap: 1.5em;
+    }
+
+    .cart-button {
+        margin-right: 0;
+        font-size: 1rem;
+    }
+
+    .username {
+        font-size: 0.9rem; 
+        max-width: 6ch;
+    }
+}
