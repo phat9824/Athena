@@ -110,6 +110,10 @@ php artisan serve
 ```
 để khởi chạy server
 
+```
+php artisan storage:link
+```
+
 - Từ thu mục frontend, chạy lệnh
 ```bash
 npm start
