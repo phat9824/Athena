@@ -15,7 +15,7 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     protected $table = 'taikhoan'; // mapping với bảng TAIKHOAN
     protected $primaryKey = 'ID';
     public $timestamps = false; // tắt các cột quản lý thời gian do laravel tự tạo
-    protected $fillable = ['email', 'password', 'role', 'tinhtrang', 'deleted_at']; // Các cột được phép thao tác (thêm, sửa)
+    protected $fillable = ['EMAIL', 'PASSWORD', 'ROLE', 'TINHTRANG', 'DELETE_AT']; // Các cột được phép thao tác (thêm, sửa)
 
 
 

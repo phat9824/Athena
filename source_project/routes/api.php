@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestAPIController;
 
+Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
+
 // Các API không cần xác thực
 Route::post('/api/register', [AuthController::class, 'register']);
 Route::post('/api/login', [AuthController::class, 'login']);
