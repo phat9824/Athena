@@ -2,11 +2,19 @@ import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/user-components/protectedRoute.js';
 
-import HomeLayout from './layouts/home-layout';
+import HomeLayout from './layouts/home-layout.js';
 import HomePage from './pages/home-pages';
 import LoginPage from './pages/LoginPage.js';
 import RegisterPage from './pages/RegisterPage.js';
-import DashboardLayout from './layouts/dashboard-user-layout';
+import DashboardLayout from './layouts/dashboard-user-layout.js';
+
+// Import các home pages cho trang web bán hàng
+import ProductsPage from './pages/ProductsPage';
+import CollectionsPage from './pages/CollectionsPage';
+import NewsEventsPage from './pages/NewsEventsPage';
+import PromotionsPage from './pages/PromotionsPage';
+import ContactPage from './pages/ContactPage';
+
 
 // Import Admin Layout và các trang liên quan
 import AdminLayout from './layouts/admin/admin-layout';
@@ -51,6 +59,26 @@ const router = createBrowserRouter([
             {
                 path: "Dashboard",
                 element: <DashboardLayout />
+            },
+            {
+                path: "Products",
+                element: <ProductsPage />
+            },
+            {
+                path: "Collections",
+                element: <CollectionsPage />
+            },
+            {
+                path: "NewsEvents",
+                element: <NewsEventsPage />
+            },
+            {
+                path: "Promotions",
+                element: <PromotionsPage />
+            },
+            {
+                path: "Contact",
+                element: <ContactPage />
             }
         ]
     },
