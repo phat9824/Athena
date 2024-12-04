@@ -129,41 +129,117 @@ ALTER TABLE TS_CHINHANH ADD CONSTRAINT FK_TSCHINHANH_CHINHANH FOREIGN KEY (ID_CH
 
 -- Tài khoản test
 
--- test@gmail.com
--- abcdef
-INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
-VALUES ('test@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
-
-SET @test_id = LAST_INSERT_ID();
-INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
-VALUES (@test_id, 'Nguyễn Văn A', '0123456789', '404 Đường F, HCM', 1, 2);
-
 -- superadmin@gmail.com
 -- 123456
 INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
 VALUES ('superadmin@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 1, 1);
-
 SET @admin_id = LAST_INSERT_ID();
 INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
 VALUES (@admin_id, NULL, 'Trần Tiến P', '0123456780', '505 Đường G, HCM');
 
 INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
 VALUES ('admin1@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 2, 1);
-
 SET @admin_id = LAST_INSERT_ID();
 INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
-VALUES (@admin_id, NULL, 'Văn T', '0123456781', '506 Đường A, HCM');
+VALUES (@admin_id, NULL, 'Văn A', '0123456781', '506 Đường A, HCM');
 
--- Thêm danh mục
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('admin2@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 2, 1);
+SET @admin_id = LAST_INSERT_ID();
+INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI)
+VALUES (@admin_id, NULL, 'Văn B', '0123456782', '506 Đường A, HCM');
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('admin3@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 2, 1);
+SET @admin_id = LAST_INSERT_ID();
+INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
+VALUES (@admin_id, NULL, 'Văn C', '0123456783', '506 Đường A, HCM');
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('admin4@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 2, 1);
+SET @admin_id = LAST_INSERT_ID();
+INSERT INTO ADMIN (ID, ID_CHINHANH, TENADMIN, SDT, DIACHI) 
+VALUES (@admin_id, NULL, 'Văn D', '0123456784', '506 Đường A, HCM');
+
+-- test1@gmail.com
+-- abcdef
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test1@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn A', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test2@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn B', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test3@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn C', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test4@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn D', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test5@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn E', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test6@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn F', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test7@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn G', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test8@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn H', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test9@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn K', '0123456789', '404 Đường F, HCM', 1, 2);
+
+INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
+VALUES ('test10@gmail.com', '$2y$10$Sh.HPSQycPtzt7vtFWOTFuPVXU/Qwy0rBTkzEFejymFdKPrfkMisC', 0, 1);
+SET @test_id = LAST_INSERT_ID();
+INSERT INTO KHACHHANG (ID, TENKH, SDT, DIACHI, LOAI, GIOITINH) 
+VALUES (@test_id, 'Nguyễn Văn L', '0123456789', '404 Đường F, HCM', 1, 2);
+
+-- Thêm chi nhánh ----------------------------------------------------------------
+INSERT INTO CHINHANH (ID, TENCN, DIACHI)
+VALUES
+('CN001', 'Chi nhánh Hà Nội', 'Số 1, Đường B, Hà Nội'),
+('CN002', 'Chi nhánh Đà Nẵng', 'Số 2, Đường C, Đà Nẵng'),
+('CN003', 'Chi nhánh Hồ Chí Minh', 'Số 3, Đường D, Hồ Chí Minh'),
+('CN004', 'Chi nhánh Cần Thơ', 'Số 4, Đường E, Cần Thơ');
+
+-- Thêm danh mục ----------------------------------------------------------------
 INSERT INTO DANHMUCTS (MADM, TENDM) VALUES
 ('DM00', 'Nhẫn'),
 ('DM01', 'Vòng tay'),
 ('DM02', 'Dây chuyền'),
 ('DM03', 'Khuyên tai'),
-('DM04', 'Lắc')
+('DM04', 'Lắc');
 
--- Thêm trang sức
--- Thêm dữ liệu vào bảng TRANGSUC
+-- Thêm dữ liệu vào bảng TRANGSUC ----------------------------------------------------------------
 INSERT INTO TRANGSUC (MADM, TENTS, GIANIEMYET, SLTK, MOTA, IMAGEURL, DELETED_AT) VALUES 
 ('DM00', 'Nhẫn vàng 24K tinh tế', 3000000, 15, 'Nhẫn vàng 24K chế tác tinh xảo, mang lại vẻ đẹp sang trọng.', '\\storage\\images\\DM00_1.png', NULL),
 ('DM00', 'Nhẫn bạc ý đính đá quý', 2000000, 20, 'Nhẫn bạc cao cấp đính đá quý lấp lánh, tạo phong cách hiện đại.', '\\storage\\images\\DM00_2.png', NULL),
@@ -215,3 +291,23 @@ INSERT INTO TRANGSUC (MADM, TENTS, GIANIEMYET, SLTK, MOTA, IMAGEURL, DELETED_AT)
 ('DM04', 'Lắc tay đá ruby đỏ quyền lực', 4000000, 10, 'Lắc tay đá ruby đỏ, mang lại sự quyền quý.', '\\storage\\images\\DM04_8.png', NULL),
 ('DM04', 'Lắc tay đơn giản tinh tế', 1200000, 35, 'Lắc tay bạc thiết kế tối giản, dễ dàng kết hợp trang phục.', '\\storage\\images\\DM04_9.png', NULL),
 ('DM04', 'Lắc tay hoa văn khắc laser', 1500000, 28, 'Lắc tay bạc với hoa văn được khắc bằng công nghệ laser hiện đại.', '\\storage\\images\\DM04_10.png', NULL);
+
+
+-- Tạo giỏ hàng cho các khách hàng
+INSERT INTO GIOHANG (ID_KHACHHANG)
+VALUES
+(6),(7),(8),(9),(10),(11),(12),(13),(14),(15);
+
+-- Thêm dữ liệu CHITIETGH
+INSERT INTO CHITIETGH (ID_TRANGSUC, ID_GIOHANG, SOLUONG)
+VALUES
+(1, 1, 2), (2, 1, 1), (3, 1, 3),
+(4, 2, 1), (5, 2, 2), (6, 2, 1),
+(7, 3, 2), (8, 3, 1), (9, 3, 3),
+(10, 4, 1), (11, 4, 2), (12, 4, 1),
+(13, 5, 2), (14, 5, 1), (15, 5, 3),
+(16, 6, 1), (17, 6, 2), (18, 6, 1),
+(19, 7, 2), (20, 7, 1), (21, 7, 3),
+(22, 8, 1), (23, 8, 2), (24, 8, 1),
+(25, 9, 2), (26, 9, 1), (27, 9, 3),
+(28, 10, 1), (29, 10, 2), (30, 10, 1);

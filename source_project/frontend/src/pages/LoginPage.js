@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../AppContext.js';
+import Notification from '../components/user-components/Notification.js';
 
 const Login = () => {
     const { getCSRFToken, getCookie, baseUrl, login} = useAppContext();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [notification, setNotification] = useState(null);
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setErrorMessage('');
         setIsLoading(true);
 
         try {
@@ -40,10 +40,10 @@ const Login = () => {
                     navigate('/Home');
                 }
             } else {
-                setErrorMessage(res.message || 'Thông tin đăng nhập không chính xác!');
+                setNotification({ message: res.message || 'Thông tin đăng nhập không chính xác!', type: 'error' });
             }
         } catch (error) {
-            setErrorMessage('Đã xảy ra lỗi, vui lòng thử lại!');
+            setNotification({ message: 'Đã xảy ra lỗi, vui lòng thử lại!', type: 'error' });
         } finally {
             setIsLoading(false);
         }
@@ -72,7 +72,15 @@ const Login = () => {
                 <button type="submit" disabled={isLoading}>
                     {isLoading ? 'Đang xử lý...' : 'Đăng Nhập'}
                 </button>
-                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+                {notification &&
+                    (<Notification
+                    message={notification.message}
+                    type={notification.type}
+                    duration={2000}
+                    onClose={() => setNotification(null)}/>
+                    )
+                }
             </form>
             <p>
                 Chưa có tài khoản?{' '}
