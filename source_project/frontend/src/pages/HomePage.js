@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Banner from '../components/user-components/banner-home';
 import { useAppContext } from '../AppContext';
+import '../styles/HomePage.css';
 
 const HomePage = () => {
 
@@ -36,15 +37,17 @@ const HomePage = () => {
     return (
         <div>
             <Banner />
-            <br></br>
-            <div>
-                {images.map((image) => (
-                    <div key={image.ID}>
+            <br />
+            <p>Test API</p>
+            <div className="image-gallery">
+                {images.slice(0, 20).map((image) => (
+                    <div className="image-item" key={image.ID}>
                         <img
                             src={`${baseUrl}${image.IMAGEURL}`}
                             alt={image.TENTS}
+                            className="image"
                         />
-                        <p>{image.TENTS}</p>
+                        <p className="image-title">{image.TENTS}</p>
                     </div>
                 ))}
             </div>

@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { useState, createContext, useContext, useEffect } from 'react';
 
 const AppContext = createContext();
 
@@ -28,10 +28,23 @@ export const AppProvider = ({ children }) => {
             ?.split('=')[1] || null;
     };
 
+    useEffect(() => {
+        const storedId = localStorage.getItem('id');
+        const storedRole = localStorage.getItem('role');
+        const storedUsername = localStorage.getItem('username');
+
+        if (storedId && storedRole) {
+            setIsLoggedIn(true);
+            setId(storedId);
+            setRole(storedRole);
+            setUsername(storedUsername);
+        }
+    }, []);
+
     const login = (user) => {
         localStorage.setItem('id', user.id);
         localStorage.setItem('role', user.role);
-        localStorage.setItem('username', user.username);
+        localStorage.setItem('username', user.username || "Guest");
         setIsLoggedIn(true);
         setUsername(user.username || 'Guest');
         setId(user.id);

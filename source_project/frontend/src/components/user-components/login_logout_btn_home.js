@@ -26,7 +26,11 @@ const AccountButton = () => {
     };
 
     const handleCartClick = () => {
-        navigate('/cart');
+        navigate('./Dashboard/Cart');
+    };
+
+    const handleDashboardClick = () => {
+        navigate('./Dashboard/Profile');
     };
 
     const userAvater = null; // Sẽ xử lí sau
@@ -44,10 +48,10 @@ const AccountButton = () => {
                         <span id='cart-text'>Giỏ hàng</span>
                         {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                     </div>
-                    <div className="avatar"
+                    <div className="avatar"  onClick={handleDashboardClick}
                          style={{backgroundImage: `url(${avatar})`,}}> {/*Đặt là ảnh mặc định nếu không có avatar*/} 
                     </div>
-                    <span className="username" title={username}>
+                    <span className="username" title={username} onClick={handleDashboardClick}>
                         {username.length > 20 ? `${username.slice(0, 20)}...` : username} {/* Nếu tên dài hơn 10 kí tự, chỉ hiển thị phần đầu*/} 
                     </span>
                 </div>
