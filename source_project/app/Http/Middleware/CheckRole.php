@@ -15,7 +15,7 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, ...$roles): Response
+    public function handle(Request $request, Closure $next, ...$roles)
     {   
         try {
             $user = JWTAuth::parseToken()->authenticate();
@@ -26,7 +26,7 @@ class CheckRole
                 ], 403);
             }
         } catch (\Exception $e) {
-            Log::error('Login Error: ' . $e->getMessage());
+            Log::error('Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Đã có lỗi bất thường xảy ra',

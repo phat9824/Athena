@@ -41,7 +41,7 @@ const Register = () => {
                 setErrorMessage('');
                 setTimeout(() => {
                     navigate('../Login');
-                }, 500);
+                }, 100);
             } else {
                 const error = res.errors || res.message || 'Đã xảy ra lỗi, vui lòng thử lại!';
                 setErrorMessage(error);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link từ react-router-dom
 import logo from '../../assets/logo.png';
 import './navbar-home.css';
-import AccountButton from './accountButton-home';
+import AccountButton from './login_logout_btn_home';
 
 const Navbar = () => {
     return (
