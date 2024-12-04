@@ -106,11 +106,23 @@ php artisan jwt:secret
 **Trong môi trường dev:**
 - Từ thư mục source_project, chạy lệnh
 ```bash
+npm install axios
+```
+
+```bash
 php artisan serve
 ```
 để khởi chạy server
 
+```
+php artisan storage:link
+```
+
 - Từ thu mục frontend, chạy lệnh
+```bash
+npm install @fortawesome/fontawesome-free
+```
+
 ```bash
 npm start
 ```

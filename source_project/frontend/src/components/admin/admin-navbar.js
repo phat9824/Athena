@@ -23,18 +23,18 @@ const AdminSidebar = () => {
                 </li>
                 <li>
                     <NavLink
-                        to="/admin/ManageEmployees"
-                        className={({ isActive }) => (isActive ? 'active' : '')}
-                    >
-                        <i className="fas fa-users"></i> Quản lý nhân viên
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
                         to="/admin/ManageCustomers"
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
                         <i className="fas fa-user-friends"></i> Quản lý khách hàng
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/admin/ManageProducts"
+                        className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
+                        <i className="fas fa-tags"></i> Quản lý sản phẩm
                     </NavLink>
                 </li>
                 <li>
@@ -51,6 +51,15 @@ const AdminSidebar = () => {
                         className={({ isActive }) => (isActive ? 'active' : '')}
                     >
                         <i className="fas fa-tags"></i> Quản lý chương trình khuyến mãi
+                    </NavLink>
+                </li>
+                
+                <li>
+                    <NavLink
+                        to="/admin/ManageEmployees"
+                        className={({ isActive }) => (isActive ? 'active' : '')}
+                    >
+                        <i className="fas fa-users"></i> Quản lý nhân viên
                     </NavLink>
                 </li>
                 <li>
