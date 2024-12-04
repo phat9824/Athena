@@ -149,8 +149,8 @@ VALUES (@admin_id, NULL, 'Trần Tiến P', '0123456780', '505 Đường G, HCM'
 
 -- Thêm danh mục
 INSERT INTO DANHMUCTS (MADM, TENDM) VALUES
-('NKC0', 'Nhẫn')
+('DM00', 'Nhẫn')
 
 -- Thêm trang sức
 INSERT INTO TRANGSUC (MADM, TENTS, GIANIEMYET, SLTK, MOTA, IMAGEURL, DELETED_AT) VALUES 
-('NKC0', 'Nhẫn kim cương phake siêu cấp vip pro', 5000000, 10, 'Nhẫn kim cương siu cấp, dược tạo từ công xường gia công hàng phake lớn nhất thế giưới aka Tung của bingchiling', '\storage\images\1.png', NULL)
+('DM00', 'Nhẫn kim cương phake siêu cấp vip pro', 5000000, 10, 'Nhẫn kim cương siu cấp, dược tạo từ công xường gia công hàng phake lớn nhất thế giưới aka Tung của bingchiling', '\storage\images\1.png', NULL)
