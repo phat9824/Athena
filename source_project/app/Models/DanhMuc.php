@@ -66,7 +66,7 @@ class DanhMuc extends Model
 
         static::creating(function ($model) {
             // Lấy mã cuối cùng trong bảng
-            $lastDanhMuc = self::orderByRaw("CAST(SUBSTRING(MADM, 3) AS UNSIGNED) DESC")->first();
+            $lastDanhMuc = self::latest('MADM')->first();
 
             // Sinh mã mới
             $lastMADM = $lastDanhMuc ? $lastDanhMuc->MADM : 'DM00';
