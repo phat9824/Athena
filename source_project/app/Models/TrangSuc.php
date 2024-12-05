@@ -23,7 +23,7 @@ class TrangSuc extends Model
     $includeDeleted     false   :Không lấy các trang sức tạm ẩn
                         true    :Lấy cả các trang sức bị ẩn
      */
-    public function getAllTrangSuc($includeDeleted = false)
+    static public function getAllTrangSuc($includeDeleted = false)
     {
         if ($includeDeleted) {
             return self::all();
@@ -32,16 +32,16 @@ class TrangSuc extends Model
     }
 
     // PDO --------------------------------------------------------------------------
-    private function getPDOConnection()
+    private static function getPDOConnection()
     {
         $connection = DB::connection()->getPdo();
         return $connection;
     }
 
     // Lấy tất cả sản phẩm
-    function getAllProducts()
+    public static function getAllProducts()
     {
-        $pdo = $this->getPDOConnection();
+        $pdo = TrangSuc::getPDOConnection();
         $sql = "SELECT * FROM TRANGSUC WHERE DELETED_AT IS NULL";
         $stmt = $pdo->prepare($sql);
         $stmt->execute();
