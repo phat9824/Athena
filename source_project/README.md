@@ -114,7 +114,7 @@ php artisan serve
 ```
 để khởi chạy server
 
-```
+```bash
 php artisan storage:link
 ```
 
