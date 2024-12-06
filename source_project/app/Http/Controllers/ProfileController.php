@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -42,18 +43,43 @@ class ProfileController extends Controller
     public function updateProfile(Request $request)
     {
         try {
-            $userId = $user = JWTAuth::parseToken()->authenticate();
-            $data = $request->all();
-            if ($request->hasFile('avatar')) {
-                $file = $request->file('avatar');
-                $path = $file->store('avatars', 'public');
-                $data['avatar'] = $path;
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if ($request->has('name')) {
+                KhachHang::updateAttributeById($user->ID, 'TENKH', $request->input('name'));
+            }
+    
+            if ($request->has('phone')) {
+                KhachHang::updateAttributeById($user->ID, 'SDT', $request->input('phone'));
+            }
+    
+            if ($request->has('address')) {
+                KhachHang::updateAttributeById($user->ID, 'DIACHI', $request->input('address'));
             }
 
-            TaiKhoan::updateProfileById($userId, $data);
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $filename = 'Avatar_'. $user->ID .'.png';
+                // Lưu vào storage/app/public/images
+                $file->storeAs('images', $filename, 'public');
+                $updateData['IMAGEURL'] = '/storage/images/' . $filename; 
+            }
 
-            return response()->json(['message' => 'Profile updated successfully']);
-        } catch (Exception $e) {
+            // Lấy lại thông tin mới
+            $newProfile = KhachHang::getProfileById($user->ID);
+            $email = TaiKhoan::getEmailById($user->ID);
+
+            return response()->json([
+                "TENKH" => $newProfile["TENKH"],
+                "SDT"=> $newProfile["SDT"],
+                "DIACHI" => $newProfile["DIACHI"],
+                "LOAI" => $newProfile["LOAI"],
+                "GIOITINH" => $newProfile["GIOITINH"],
+                "IMAGEURL"=> $newProfile["IMAGEURL"],
+                "EMAIL" => $email["EMAIL"],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Update Profile Error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

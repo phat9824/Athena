@@ -1,0 +1,122 @@
+.profilePage {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profilePageHeading {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Avatar */
+.avatarContainer {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.avatarImg {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 50%;
+    transition: border 0.3s ease;
+}
+
+.avatarImgEditable {
+    cursor: pointer;
+    border: 3px solid transparent;
+}
+
+.avatarContainer:hover .avatarImgEditable {
+    border-color: #4A90E2; /* Highlight on hover */
+}
+
+/* Labels and Inputs */
+.label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.inputField {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.inputField:disabled {
+    background-color: #f0f0f0;
+}
+
+.inputField:focus {
+    border-color: #4A90E2;
+    outline: none;
+}
+
+.inputContainer {
+    margin-bottom: 20px;
+}
+
+/* Buttons */
+.actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:focus {
+    outline: none;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Edit, Save, Cancel Buttons */
+.editButton {
+    background-color: #4A90E2;
+    color: white;
+}
+
+.saveButton {
+    background-color: #4A90E2;
+    color: white;
+}
+
+.cancelButton {
+    background-color: #ccc;
+    color: white;
+}
+
+/* Form Editing States */
+.editing .inputField {
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.fileInput {
+    display: none;
+}

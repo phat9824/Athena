@@ -35,6 +35,7 @@ import ProfilePage from './pages/admin/ProfilePage';
 
 // Othes Page
 import Unauthorized from './pages/UnauthorizedPage.js';
+import TestPage from './pages/TestPage.js';
 
 const router = createBrowserRouter([
     // Route gốc chuyển hướng đến Home
@@ -152,6 +153,11 @@ const router = createBrowserRouter([
     {
         path: "/Unauthorized",
         element: <Unauthorized />
+    },
+
+    {
+        path: "/test",
+        element: <TestPage />
     }
 
 ]);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../../AppContext';
 import Notification from '../../components/user-components/Notification.js';
-import './ProfilePage.css'
+import styles from './ProfilePage.module.css';  // Import CSS Module
 import defaultAvatar from '../../assets/default-avatar.jpg';
 
 const ProfilePage = () => {
@@ -16,6 +16,7 @@ const ProfilePage = () => {
 
     const [isEditing, setIsEditing] = useState(false);
     const [notification, setNotification] = useState(null);
+    const [selectedAvatar, setSelectedAvatar] = useState(null);
 
     useEffect(() => {
         fetchProfile();
@@ -67,15 +68,23 @@ const ProfilePage = () => {
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
 
-            const response = await fetch(`${baseUrl}/api/profile`, {
-                method: 'PUT',
+            const formData = new FormData();
+            formData.append('name', profile.name);
+            formData.append('email', profile.email);
+            formData.append('phone', profile.phone);
+            formData.append('address', profile.address);
+            if (selectedAvatar) {
+                formData.append('avatar', selectedAvatar);
+            }
+
+            const response = await fetch(`${baseUrl}/api/customer/profile/update`, {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Accept': 'application/json',
                     'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
                 },
                 credentials: 'include',
-                body: JSON.stringify(profile),
+                body: formData,
             });
 
             if (!response.ok) {
@@ -85,7 +94,7 @@ const ProfilePage = () => {
 
             const data = await response.json();
             setProfile({
-                name: data.TENKH || data.TENADMIN || '',
+                name: data.TENKH || '',
                 email: data.EMAIL || '',
                 phone: data.SDT || '',
                 address: data.DIACHI || '',
@@ -99,83 +108,118 @@ const ProfilePage = () => {
         }
     };
 
+    const handleAvatarChange = (e) => {
+        const file = e.target.files[0];  // Lấy file ảnh được chọn
+        if (file) {
+            setSelectedAvatar(file); // Lưu ảnh vào state
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setProfile((prevProfile) => ({
+                    ...prevProfile,
+                    avatar: reader.result, // hiển thị tạm thời
+                }));
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleCancel = () => {
+        fetchProfile();
+        setIsEditing(false);
+    };
+
     return (
-        <div className="profile-page">
-            <h1>Thông Tin Cá Nhân</h1>
+        <div className={`${styles.profilePage} ${isEditing ? styles.editing : ''}`}>
+            <h1 className={styles.profilePageHeading}>Thông Tin Cá Nhân</h1>
             <form>
-                {profile.avatar ? (
-                    <div>
-                        <label>Ảnh Đại Diện:</label>
-                        <img src={`${baseUrl}${profile.avatar}`} alt="Avatar" />
-                    </div>
-                ) : (
-                    <div>
-                        <label></label>
-                        <img src={defaultAvatar} alt=""/>
-                    </div>
-                )}
-                <div>
-                    <label htmlFor="name">Tên:</label>
+                <div className={styles.avatarContainer}>
+                    <label htmlFor="profile-page-customer-avatar-upload">
+                        <img
+                            className={`${styles.avatarImg} ${isEditing ? styles.avatarImgEditable : ''}`}
+                            src={
+                                profile.avatar
+                                    ? profile.avatar.startsWith('data:') 
+                                        ? profile.avatar // Base64 URL
+                                        : `${baseUrl}${profile.avatar}` 
+                                    : defaultAvatar
+                            }
+                            alt="Avatar"
+                        />
+                    </label>
+                    {isEditing && (
+                        <input
+                            type="file"
+                            className={styles.fileInput}
+                            id="profile-page-customer-avatar-upload"
+                            accept="image/*"
+                            onChange={handleAvatarChange}
+                        />
+                    )}
+                </div>
+                <div className={styles.inputContainer}>
+                    <label className={styles.label} htmlFor="name">Tên:</label>
                     <input
+                        className={styles.inputField}
                         type="text"
-                        id="name"
+                        id="profile-page-customer-name"
                         name="name"
                         value={profile.name}
+                        onChange={handleInputChange}
                         disabled={!isEditing}
                     />
                 </div>
-                <div>
-                    <label htmlFor="email">Email:</label>
+                <div className={styles.inputContainer}>
+                    <label className={styles.label} htmlFor="email">Email:</label>
                     <input
+                        className={styles.inputField}
                         type="email"
-                        id="email"
+                        id="profile-page-customer-email"
                         name="email"
                         value={profile.email}
-                        onChange={handleInputChange}
-                        disabled="True"
+                        disabled
                     />
                 </div>
-                <div>
-                    <label htmlFor="phone">Số Điện Thoại:</label>
+                <div className={styles.inputContainer}>
+                    <label className={styles.label} htmlFor="phone">Số Điện Thoại:</label>
                     <input
+                        className={styles.inputField}
                         type="text"
-                        id="phone"
+                        id="profile-page-customer-phone"
                         name="phone"
                         value={profile.phone}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                     />
                 </div>
-                <div>
-                    <label htmlFor="address">Địa Chỉ:</label>
+                <div className={styles.inputContainer}>
+                    <label className={styles.label} htmlFor="address">Địa Chỉ:</label>
                     <input
+                        className={styles.inputField}
                         type="text"
-                        id="address"
+                        id="profile-page-customer-address"
                         name="address"
                         value={profile.address}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                     />
                 </div>
-                
-                <div className="profile-actions">
+                <div className={styles.actions}>
                     {!isEditing ? (
-                        <button type="button" onClick={() => setIsEditing(true)}>
+                        <button className={styles.editButton} type="button" onClick={() => setIsEditing(true)}>
                             Chỉnh Sửa
                         </button>
                     ) : (
                         <>
-                            <button type="button" onClick={handleSave}>
+                            <button className={styles.saveButton} type="button" onClick={handleSave}>
                                 Lưu
                             </button>
-                            <button type="button" onClick={() => setIsEditing(false)}>
+                            <button className={styles.cancelButton} type="button" onClick={handleCancel}>
                                 Hủy
                             </button>
                         </>
                     )}
                 </div>
             </form>
-
             {notification && (
                 <Notification
                     message={notification.message}
