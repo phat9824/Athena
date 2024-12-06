@@ -28,4 +28,12 @@ class KhachHang extends Model
         $stmt->execute(['id' => $userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public static function updateAttributeById($userId, $attribute, $value)
+    {
+        $pdo = self::getPDOConnection();
+        $sql = "UPDATE KHACHHANG SET $attribute = :value WHERE ID = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['value' => $value, 'id' => $userId]);
+    }
 }
