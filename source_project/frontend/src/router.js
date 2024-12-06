@@ -18,7 +18,7 @@ import DashboardLayout from './layouts/dashboard-user-layout.js';
 import CartPage from './pages/customer/CartPage.js';
 import CouponsPage from './pages/customer/CouponsPage.js';
 import HistoryPage from './pages/customer/HistoryPage.js';
-import ProfilePage_Customer from './pages/customer/ProfilePage.js';
+import ProfilePageCustomer from './pages/customer/ProfilePage.js';
 
 // Import Admin Layout và các trang liên quan
 import AdminLayout from './layouts/admin/admin-layout';
@@ -74,7 +74,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: "Profile",
-                        element: <ProfilePage_Customer />
+                        element: <ProfilePageCustomer />
                     },
                     {
                         path: "History",

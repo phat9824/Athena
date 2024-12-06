@@ -1,0 +1,25 @@
+#btn-logout1 {
+    margin-top: auto; 
+    padding: 15px 20px;
+    background-color: #8b2133;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#btn-logout1:hover {
+    background-color: #e6476f;
+}
+
+.logout-link {
+    text-decoration: none;
+    color: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-flex;
+    align-items: center;
+}
+
+.logout-link i {
+    margin-right: 8px;
+}

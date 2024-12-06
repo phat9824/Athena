@@ -15,7 +15,8 @@ CREATE TABLE ADMIN (
    ID_CHINHANH          VARCHAR(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL, -- Chi nhánh mà admin quản lý
    TENADMIN             VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    SDT                  VARCHAR(15) NULL,
-   DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL
+   DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+   IMAGEURL             LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL
 );
 
 CREATE TABLE KHACHHANG (
@@ -24,7 +25,8 @@ CREATE TABLE KHACHHANG (
    SDT                  VARCHAR(15) NULL,
    DIACHI               VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
    LOAI                 TINYINT NULL,
-   GIOITINH             TINYINT NULL -- 1: Nam, 2: Nữ
+   GIOITINH             TINYINT NULL, -- 1: Nam, 2: Nữ
+   IMAGEURL             LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL
 );
 
 CREATE TABLE CHINHANH (
