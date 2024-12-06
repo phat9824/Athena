@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestAPIController;
 use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\TrangSucController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
 
@@ -25,4 +26,5 @@ Route::middleware(['auth:api', 'check.role:1'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {
+    Route::get('api/customer/profile', [ProfileController::class, 'getProfile']);
 });

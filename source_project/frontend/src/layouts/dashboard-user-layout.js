@@ -1,19 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/user-components/sidebar.js';
-import './dashboard-user-layout.js';
+import './dashboard-user-layout.css';
 
 const DashboardLayout = () => {
     return (
         <div className="dashboard-layout">
-            <Sidebar />
+            <Sidebar
+                className={`dashboard-sidebar`}
+            />
             <div className="dashboard-content">
-                <main className="dashboard-main">
-                    <Outlet /> 
-                </main>
+                <Outlet />
             </div>
         </div>
     );
 };
 
 export default DashboardLayout;
+

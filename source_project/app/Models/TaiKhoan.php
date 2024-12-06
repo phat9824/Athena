@@ -7,6 +7,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Log;
+use PDO;
+use Illuminate\Support\Facades\DB;
 
 class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
 {
@@ -16,7 +18,7 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     protected $primaryKey = 'ID';
     public $timestamps = false; // tắt các cột quản lý thời gian do laravel tự tạo
     protected $fillable = ['EMAIL', 'PASSWORD', 'ROLE', 'TINHTRANG', 'DELETE_AT']; // Các cột được phép thao tác (thêm, sửa)
-
+    protected $hidden = ['PASSWORD'];
 
 
     // JWT --------------------------------------------------------------------------------------------------------------
@@ -81,4 +83,15 @@ class TaiKhoan extends Model implements AuthenticatableContract, JWTSubject
     }
 
     // PDO --------------------------------------------------------------------------------------------------------------
+    private static function getPDOConnection()
+    {
+        return DB::connection()->getPdo();
+    }
+
+    public static function getEmailById($id){
+        $pdo = self::getPDOConnection();
+        $stmt = $pdo->prepare("SELECT EMAIL FROM TAIKHOAN WHERE ID = :id");
+        $stmt->execute(['id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
