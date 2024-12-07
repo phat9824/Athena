@@ -1,52 +1,87 @@
+.inputField {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .cartPage {
     display: flex;
     min-height: 100vh;
     font-family: Arial, sans-serif;
-}
-
-.sidebar {
-    width: 200px;
-    background-color: #f8f8f8;
-    padding: 20px;
-    border-right: 1px solid #ddd;
-}
-
-.sidebar h2 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    text-transform: uppercase;
-}
-
-.sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.sidebar li {
-    margin-bottom: 8px;
-}
-
-.sidebar a {
-    text-decoration: none;
+    background: #fff;
     color: #333;
 }
 
-.sidebar a:hover {
-    color: #007bff;
+.cartContainer {
+    display: flex;
+    width: 100%;
+    padding: 40px;
+    gap: 20px;
+    box-sizing: border-box;
 }
 
-.mainContent {
-    flex: 1;
+.cartItemsContainer {
+    width: 70%;
+    background: #fff;
+}
+
+.cartSummary {
+    width: 30%;
+    background: #f2f2f2;
+    border-radius: 10px;
     padding: 20px;
+    box-sizing: border-box;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.mainContent h1 {
-    font-size: 24px;
+.cartSummary h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.summaryRow, .summaryRowTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.summaryRowTotal {
+    font-weight: bold;
+    margin-top: 10px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.paymentSelect {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
     margin-bottom: 20px;
 }
 
-.error {
-    color: red;
+.checkoutButton {
+    width: 100%;
+    padding: 12px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.checkoutButton:hover {
+    background: #000;
 }
 
 .cartItems {
@@ -59,12 +94,15 @@
     display: flex;
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
+    color: #333;
 }
 
 .itemImage img {
     width: 100px;
     height: 100px;
     object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
 }
 
 .itemInfo {
@@ -75,23 +113,62 @@
 .itemInfo h2 {
     font-size: 18px;
     margin: 0 0 5px;
+    color: #333;
 }
 
 .quantity {
     margin-top: 10px;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.quantity button {
-    margin: 0 5px;
+.editButtons button {
+    margin: 0px 5px 0px 5px;
     padding: 5px 10px;
-    background-color: #007bff;
+    background-color: #333;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 4px;
 }
 
-.quantity button:hover {
-    background-color: #0056b3;
+.editButtons button:hover {
+    background-color: #000;
+}
+
+.editButton, .confirmButton, .cancelButton {
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.confirmButton {
+    background: #444;
+}
+
+.cancelButton {
+    background: #999;
+}
+
+.editButton:hover {
+    background: #000;
+}
+.confirmButton:hover {
+    background: #222;
+}
+.cancelButton:hover {
+    background: #666;
+}
+
+.actionButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 0px;
 }

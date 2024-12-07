@@ -10,10 +10,32 @@ const CartPage = () => {
     const [loading, setLoading] = useState(true);
     const [notification, setNotification] = useState(null);
     const [editingItems, setEditingItems] = useState([]);
+    const [originalTotal, setOriginalTotal] = useState(0);
+    const [discount, setDiscount] = useState(0);
+    const [finalTotal, setFinalTotal] = useState(0);
+    const [shippingFee, setShippingFee] = useState(0);
+    const [address, setAddress] = useState('');
+    const [receiverName, setReceiverName] = useState('');
+    const [contactPhone, setContactPhone] = useState('');
+    const [paymentMethod, setPaymentMethod] = useState('credit_card');
+    const [processingPayment, setProcessingPayment] = useState(false);
 
     useEffect(() => {
         fetchCartItems();
     }, []);
+
+    useEffect(() => {
+        const currentItems = editingItems.length > 0 ? editingItems : cartItems;
+        let total = 0;
+        currentItems.forEach(item => {
+            total += item.GIANIEMYET * item.SOLUONG;
+        });
+
+        const appliedDiscount = 0; // Sẽ được xử lí sau
+        setOriginalTotal(total);
+        setDiscount(appliedDiscount);
+        setFinalTotal(total - appliedDiscount);
+    }, [cartItems, editingItems]);
 
     const fetchCartItems = async () => {
         try {
@@ -63,7 +85,7 @@ const CartPage = () => {
             return updatedItems;
         });
     };
-    const handleConfirm = async () => {}
+    const handleConfirm = async () => {} // Sẽ được xử lí sau
 
     const handleEdit = () => {
         setEditingItems(cartItems.map((item) => ({ ...item })));
@@ -73,54 +95,123 @@ const CartPage = () => {
         setEditingItems([]);
     };
 
+    const handleCheckout = () => {
+        setProcessingPayment(true);
+        setTimeout(() => {
+            setProcessingPayment(false);
+            setNotification({ message: 'Thanh toán thành công', type: 'success' });
+        }, 1000);
+    }
+
     return (
         <div className={styles.cartPage}>
-            <div className={styles.mainContent}>
-                <h1>Giỏ Hàng</h1>
-                {loading &&  <Loader />}
-                {!loading && cartItems.length === 0 && (
-                    <p>Giỏ hàng của bạn đang trống.</p>
-                )}
-                {!loading && cartItems.length > 0 && (
-                    <>
-                        <div className={styles.cartItems}>
-                            {(editingItems.length > 0 ? editingItems : cartItems).map((item) => (
-                                <div key={item.ID_TRANGSUC} className={styles.cartItem}>
-                                    <div className={styles.itemImage}>
-                                        <img
-                                            src={item.IMAGEURL ? `${baseUrl}${item.IMAGEURL}` : defaultItem}
-                                            alt={item.TENTS}
-                                        />
-                                    </div>
-                                    <div className={styles.itemInfo}>
-                                        <h2>{item.TENTS}</h2>
-                                        <p>Giá: {item.GIANIEMYET.toLocaleString()} VNĐ</p>
-                                        <div className={styles.quantity}>
-                                            <span>Số lượng: {item.SOLUONG}</span>
-                                            {editingItems.length > 0 && (
-                                                <div>
-                                                    <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, -1)}>
-                                                        -
-                                                    </button>
-                                                    <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, 1)}>
-                                                        +
-                                                    </button>
-                                                </div>
-                                            )}
+            <div className={styles.cartContainer}>
+                <div className={styles.cartItemsContainer}>
+                    <h1>Giỏ Hàng</h1>
+                    {loading &&  <Loader />}
+                    {!loading && cartItems.length === 0 && (
+                        <p>Giỏ hàng của bạn đang trống.</p>
+                    )}
+                    {!loading && cartItems.length > 0 && (
+                        <>
+                            <div className={styles.cartItems}>
+                                {(editingItems.length > 0 ? editingItems : cartItems).map((item) => (
+                                    <div key={item.ID_TRANGSUC} className={styles.cartItem}>
+                                        <div className={styles.itemImage}>
+                                            <img
+                                                src={item.IMAGEURL ? `${baseUrl}${item.IMAGEURL}` : defaultItem}
+                                                alt={item.TENTS}
+                                            />
+                                        </div>
+                                        <div className={styles.itemInfo}>
+                                            <h2>{item.TENTS}</h2>
+                                            <p>Giá: {item.GIANIEMYET.toLocaleString()} VNĐ</p>
+                                            <div className={styles.quantity}>
+                                                <span>Số lượng: {item.SOLUONG}</span>
+                                                {editingItems.length > 0 && (
+                                                    <div className={styles.editButtons}>
+                                                        <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, -1)}>
+                                                            -
+                                                        </button>
+                                                        <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, 1)}>
+                                                            +
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                        {editingItems.length === 0 ? (
-                            <button onClick={handleEdit}>Chỉnh sửa</button>
-                        ) : (
-                            <div>
-                                <button onClick={handleConfirm}>Xác nhận</button>
-                                <button onClick={handleCancel}>Hủy</button>
+                                ))}
                             </div>
-                        )}
-                    </>
+                            {editingItems.length === 0 ? (
+                                <button className={styles.editButton} onClick={handleEdit}>Chỉnh sửa</button>
+                            ) : (
+                                <div className={styles.actionButtons}>
+                                    <button className={styles.confirmButton} onClick={handleConfirm}>Xác nhận</button>
+                                    <button className={styles.cancelButton} onClick={handleCancel}>Hủy</button>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {!loading && cartItems.length > 0 && (
+                    <div className={styles.cartSummary}>
+                    <h2>Thông tin thanh toán</h2>
+                    <div className={styles.summaryRow}>
+                        <span>Giá gốc:</span>
+                        <span>{originalTotal.toLocaleString()} VNĐ</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                        <span>Giảm giá:</span>
+                        <span>-{discount.toLocaleString()} VNĐ</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                        <span>Phí ship:</span>
+                        <span>{shippingFee.toLocaleString()} VNĐ</span>
+                    </div>
+                    <div className={styles.summaryRowTotal}>
+                        <span>Tổng cộng:</span>
+                        <span>{finalTotal.toLocaleString()} VNĐ</span>
+                    </div>
+
+                    <h3>Thông tin giao hàng</h3>
+                        <input
+                            type="text"
+                            placeholder="Người nhận"
+                            value={receiverName}
+                            onChange={(e) => setReceiverName(e.target.value)}
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Số điện thoại liên hệ"
+                            value={contactPhone}
+                            onChange={(e) => setContactPhone(e.target.value)}
+                            className={styles.inputField}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Địa chỉ nhận hàng"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            className={styles.inputField}
+                        />
+
+                    <h3>Phương thức thanh toán</h3>
+                    <select
+                        value={paymentMethod}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className={styles.paymentSelect}
+                    >
+                        <option value="credit_card">Thẻ tín dụng</option>
+                        <option value="bank_transfer">Chuyển khoản</option>
+                    </select>
+
+                    <button className={styles.checkoutButton} onClick={handleCheckout} disabled={processingPayment}>
+                        {processingPayment ? 'Đang thanh toán...' : 'Thanh toán'}
+                    </button>
+                </div>
                 )}
             </div>
             {notification && (
@@ -131,6 +222,7 @@ const CartPage = () => {
                     onClose={() => setNotification(null)}
                 />
             )}
+            {processingPayment && <Loader />}
         </div>
     );
 };
