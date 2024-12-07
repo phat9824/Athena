@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faSignInAlt, faUserPlus, faShoppingCart, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { useAppContext } from '../../AppContext';
 import defaultAvatar from '../../assets/default-avatar.jpg';
-import './login_logout_btn_home.css'
+import styles from './login_logout_btn_home.module.css';
 
 const AccountButton = () => {
     const { isLoggedIn, username, logout } = useAppContext();
@@ -38,25 +38,25 @@ const AccountButton = () => {
     const avatar = userAvater || defaultAvatar;
 
     return (
-<div className="account-button">
+        <div className={styles.accountButton}>
             {isLoggedIn ? (
-                <div className="logged-in-info">
-                    <div className="cart-button"
+                <div className={styles.loggedInInfo}>
+                    <div className={styles.cartButton}
                          onClick={handleCartClick}
                          style={{ marginRight: 'auto' }}>
                         <FontAwesomeIcon icon={faShoppingCart} />
-                        <span id='cart-text'>Giỏ hàng</span>
-                        {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+                        <span className={styles.cartText}>Giỏ hàng</span>
+                        {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
                     </div>
-                    <div className="avatar"  onClick={handleDashboardClick}
-                         style={{backgroundImage: `url(${avatar})`,}}> {/*Đặt là ảnh mặc định nếu không có avatar*/} 
+                    <div className={styles.avatar} onClick={handleDashboardClick}
+                         style={{ backgroundImage: `url(${avatar})` }}> {/*Đặt là ảnh mặc định nếu không có avatar*/} 
                     </div>
-                    <span className="username" title={username} onClick={handleDashboardClick}>
+                    <span className={styles.username} title={username} onClick={handleDashboardClick}>
                         {username.length > 20 ? `${username.slice(0, 20)}...` : username} {/* Nếu tên dài hơn 10 kí tự, chỉ hiển thị phần đầu*/} 
                     </span>
                 </div>
             ) : (
-                <button className="btn-login" onClick={handleLogin}>
+                <button className={styles.btnLogin} onClick={handleLogin}>
                     <FontAwesomeIcon icon={faUser} /> Tài khoản
                 </button>
             )}
@@ -65,4 +65,3 @@ const AccountButton = () => {
 };
 
 export default AccountButton;
-

@@ -1,0 +1,41 @@
+.banner {
+    position: relative;
+    text-align: center;
+    display: flex; /* Sử dụng Flexbox*/
+    justify-content: center; 
+    align-items: center;
+    width: 100%; /*Rộng toàn màn hình */
+    height: 400px; 
+    overflow: hidden; /*Ảnh không tràn ra ngoài */
+    background-color: hsl(210, 17%, 98%);
+}
+
+.bannerImage {
+    width: 100%; /* Hình ảnh phủ hết chiều ngang */
+    height: 100%; /* Giới hạn chiều cao của hình ảnh theo chiều cao của banner */
+    object-fit: cover;
+}
+
+.bannerText {
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%); 
+    color: white; 
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7); /* Bóng chữ */
+    text-align: center; 
+    z-index: 1; 
+}
+
+.bannerText h1 {
+    font-size: 3rem; 
+    margin: 0;
+    line-height: 1.2;
+}
+
+.bannerText p {
+    font-size: 1.2rem;
+    margin-top: 20px;
+    line-height: 1.5;
+}
+

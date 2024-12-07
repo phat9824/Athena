@@ -29,5 +29,30 @@ class CartController extends Controller
             return response()->json(['message' => 'Đã xảy ra lỗi khi lấy giỏ hàng'], 500);
         }
     }
+
+    public function updateCart(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            $userId = $user->ID;
+            $cart = GioHang::getCartByUserId($userId);
+            if (!$cart) {
+                return response()->json(['message' => 'Giỏ hàng không tồn tại'], 404);
+            }
+
+            $items = $request->input('items');
+            if (empty($items)) {
+                return response()->json(['message' => 'Dữ liệu không hợp lệ'], 400);
+            }
+
+            ChiTietGH::updateCartItems($cart['ID_GIOHANG'], $items);
+
+            $cartItems = ChiTietGH::getCartItemsByCartId($cart['ID_GIOHANG']);
+            return response()->json($cartItems, 200);
+        } catch (\Exception $e) {
+            Log::error('Update Cart Error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['message' => 'Đã xảy ra lỗi khi cập nhật giỏ hàng'], 500);
+        }
+    }
 }
 
