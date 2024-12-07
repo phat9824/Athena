@@ -36,4 +36,27 @@ class ChiTietGH extends Model
         $stmt->execute(['cartId' => $cartId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public static function updateCartItems($cartId, $items)
+    {
+        $pdo = self::getPDOConnection();
+        $pdo->beginTransaction();
+
+        try {
+            foreach ($items as $item) {
+                $sql = "UPDATE CHITIETGH SET SOLUONG = :quantity 
+                        WHERE ID_GIOHANG = :cartId AND ID_TRANGSUC = :productId";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    'quantity' => $item['SOLUONG'],
+                    'cartId' => $cartId,
+                    'productId' => $item['ID_TRANGSUC'],
+                ]);
+            }
+            $pdo->commit();
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
 }

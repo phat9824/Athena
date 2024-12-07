@@ -1,0 +1,33 @@
+.navbarTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0px;
+    border-bottom: 1px solid #ddd;
+    background-color: white;
+}
+
+.navbarStore {
+    display: flex;
+    align-items: center;
+}
+
+.navbarStore button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 20px;
+    color: #333;
+}
+
+.navbarStore span {
+    font-size: 14px;
+    color: #666;
+}
+
+.navbarLogo img {
+    height: 70px;
+    width: auto;
+    margin: 0 auto;
+}

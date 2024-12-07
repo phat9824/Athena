@@ -5,58 +5,58 @@
     font-family: Arial, sans-serif;
 }
 
-.footer-content {
+.footerContent {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 20px 0;
 }
 
-.footer-section {
+.footerSection {
     flex: 1;
     min-width: 200px;
     margin: 10px;
 }
 
-.footer-section.about h3 {
+.footerSectionAbout h3 {
     font-size: 18px;
     margin-bottom: 10px;
 }
 
-.footer-section.links ul {
+.footerSectionLinks ul {
     list-style: none;
     padding: 0;
 }
 
-.footer-section.links li {
+.footerSectionLinks li {
     margin-bottom: 8px;
 }
 
-.footer-section.links a {
+.footerSectionLinks a {
     color: #fff;
     text-decoration: none;
 }
 
-.footer-section.links a:hover {
+.footerSectionLinks a:hover {
     color: #A6E3A1;
 }
 
-.footer-section.social-media h4 {
+.footerSectionSocialMedia h4 {
     font-size: 18px;
     margin-bottom: 10px;
 }
 
-.social-icons a {
+.socialIcons a {
     color: #fff;
     text-decoration: none;
     margin-right: 15px;
 }
 
-.social-icons a:hover {
+.socialIcons a:hover {
     color: #A6E3A1;
 }
 
-.footer-bottom {
+.footerBottom {
     text-align: center;
     padding-top: 10px;
     border-top: 1px solid #444;

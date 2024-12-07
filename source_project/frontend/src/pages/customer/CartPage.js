@@ -85,7 +85,38 @@ const CartPage = () => {
             return updatedItems;
         });
     };
-    const handleConfirm = async () => {} // Sẽ được xử lí sau
+    const handleConfirm = async () => {
+        try {
+            setLoading(true);
+            await getCSRFToken();
+            const xsrfToken = getCookie('XSRF-TOKEN');
+    
+            const response = await fetch(`${baseUrl}/api/customer/cart/update`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
+                },
+                credentials: 'include',
+                body: JSON.stringify({ items: editingItems }),
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const res = await response.json();
+            setCartItems(res);
+            setEditingItems([]);
+            setNotification({ message: 'Cập nhật giỏ hàng thành công!', type: 'success' });
+        } catch (error) {
+            console.error('Error updating cart:', error);
+            setNotification({ message: 'Đã xảy ra lỗi khi cập nhật giỏ hàng!', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    }
 
     const handleEdit = () => {
         setEditingItems(cartItems.map((item) => ({ ...item })));
