@@ -28,3 +28,7 @@
 .notification-box.error {
     background-color: #f44336;
 }
+
+.notification-box.info {
+    background-color: #3662f4;
+}
