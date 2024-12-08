@@ -6,7 +6,7 @@ use App\Http\Controllers\TestAPIController;
 use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\TrangSucController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -31,6 +31,7 @@ Route::middleware(['auth:api', 'check.role:1'])->group(function () {
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {
     Route::get('api/customer/profile', [ProfileController::class, 'getProfile']);
     Route::post('api/customer/profile/update', [ProfileController::class, 'updateProfile']);
-    Route::get('api/customer/cart', [CartController::class, 'getCart']);
-    Route::post('api/customer/cart/update', [CartController::class, 'updateCart']);
+    Route::get('api/customer/cart', [OrderController::class, 'getCart']);
+    Route::post('api/customer/cart/update', [OrderController::class, 'updateCart']);
+    Route::get('api/customer/history/', [OrderController::class, 'getOrderHistory']);
 });

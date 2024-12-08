@@ -8,8 +8,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
 use App\Models\GioHang;
 use App\Models\ChiTietGH;
+use App\Models\HoaDon;
 
-class CartController extends Controller
+class OrderController extends Controller
 {
     public function getCart(Request $request)
     {
@@ -52,6 +53,19 @@ class CartController extends Controller
         } catch (\Exception $e) {
             Log::error('Update Cart Error: ' . $e->getMessage(), ['exception' => $e]);
             return response()->json(['message' => 'Đã xảy ra lỗi khi cập nhật giỏ hàng'], 500);
+        }
+    }
+
+    public function getOrderHistory(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            $idKhachHang = $user->ID;
+            $hoadonData = HoaDon::getAllByIDKhachHang($idKhachHang);
+            return response()->json($hoadonData);
+        } catch (\Exception $e) {
+            Log::error('Error' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi server'], 500);
         }
     }
 }
