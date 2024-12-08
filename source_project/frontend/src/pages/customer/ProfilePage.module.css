@@ -1,57 +1,74 @@
 .profilePage {
+    display: flex;
+    flex-direction: column;
+    min-height: 20vh;
     font-family: Arial, sans-serif;
-    padding: 20px;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #f9f9f9;
+    padding: 40px;
+    background: #fff;
+    color: #333;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    max-height: 80vh;
+    margin: 0 auto;
+    gap: 20px;
 }
 
 .profilePageHeading {
     text-align: center;
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    color: #333;
 }
 
 /* Avatar */
 .avatarContainer {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 .avatarImg {
     width: 100px;
     height: 100px;
-    object-fit: contain;
+    object-fit: cover;
     border-radius: 50%;
+    border: 1px solid #ddd;
     transition: border 0.3s ease;
 }
 
 .avatarImgEditable {
     cursor: pointer;
-    border: 3px solid transparent;
+    border: 1px solid transparent;
 }
 
 .avatarContainer:hover .avatarImgEditable {
-    border-color: #4A90E2; /* Highlight on hover */
+    border-color: #4A90E2;
 }
 
-/* Labels and Inputs */
 .label {
     font-weight: bold;
     display: block;
-    margin-bottom: 5px;
     font-size: 14px;
+    color: #333;
 }
 
 .inputField {
     width: 100%;
     padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 8px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
+    border-radius: 4px;
     font-size: 14px;
     box-sizing: border-box;
+    color: #333;
+    background-color: #fff;
+    transition: border 0.3s ease, background-color 0.3s ease;
 }
 
 .inputField:disabled {
@@ -65,53 +82,52 @@
 
 .inputContainer {
     margin-bottom: 20px;
+    width: 100%;
 }
 
 /* Buttons */
 .actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
-.button {
-    padding: 10px 20px;
-    font-size: 14px;
-    border-radius: 8px;
+.editButton {
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.button:focus {
-    outline: none;
-}
-
-.button:hover {
-    opacity: 0.8;
-}
-
-.button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-/* Edit, Save, Cancel Buttons */
-.editButton {
-    background-color: #4A90E2;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    background-color: #333;
     color: white;
 }
 
 .saveButton {
-    background-color: #4A90E2;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    background-color: #333;
     color: white;
 }
 
 .cancelButton {
-    background-color: #ccc;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    background-color: #333;
     color: white;
 }
 
-/* Form Editing States */
 .editing .inputField {
     background-color: #fff;
     border: 1px solid #ccc;

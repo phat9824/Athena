@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    background-color: rgba(0, 0, 0, 0); 
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .notification-box {
@@ -21,14 +21,14 @@
     cursor: pointer;
 }
 
-.notification-box.success {
+.success {
     background-color: #4caf50;
 }
 
-.notification-box.error {
+.error {
     background-color: #f44336;
 }
 
-.notification-box.info {
+.info {
     background-color: #3662f4;
 }

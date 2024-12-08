@@ -1,0 +1,209 @@
+.historyPage {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #333;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.historyContainer {
+    width: 100%;
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.historyContainer h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #222;
+    text-align: center;
+}
+
+.ordersList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.orderItem {
+    flex: 1 1 calc(50% - 15px); 
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    padding: 10px;
+    transition: transform 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.orderItem:hover {
+    transform: scale(1.02);
+}
+
+.orderSummary {
+    display: flex;
+    flex-direction: column;
+}
+
+.orderHeader, .orderFooter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.orderInfo {
+    flex: 1;
+    text-align: left;
+}
+
+.orderInfo p {
+    margin: 5px 0;
+    word-wrap: break-word;
+    width: 100%;
+    line-height: 1.5;
+}
+
+.orderDetailsButton, .contactButton {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0px 5px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.orderDetailsButton:hover, .contactButton:hover {
+    background: #555;
+}
+
+.orderDetails {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f7f7f7;
+    border-radius: 4px;
+}
+
+.productDetail {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.productImage {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.productInfo {
+    flex: 1;
+    font-size: 14px;
+}
+
+.productInfo p {
+    margin: 5px 0;
+    color: #555;
+}
+
+.iconText {
+    display: flex;
+    align-items: center;
+}
+
+.iconText p {
+    margin: 0 8px;
+    display: flex;
+    align-items: center; 
+}
+
+.orderInfoRow {
+    display: flex;
+    justify-content: space-between; 
+    margin-bottom: 5px;
+}
+
+.icon {
+    width: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.text {
+    flex-grow: 1;
+}
+
+.filtersContainer {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.filtersContainer select {
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.filtersContainer select:hover {
+    border-color: #888;
+}
+
+.filtersContainer select:focus {
+    outline: none;
+    border-color: #555;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.filtersContainer .sortOrderToggle {
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s;
+}
+
+.filtersContainer .sortOrderToggle:hover {
+    background: #eee;
+    color: #111;
+}
+
+.filtersContainer .sortOrderToggle.active {
+    background: #333;
+    color: #fff;
+}
+
+
+
+@media (max-width: 768px) {
+    .orderItem {
+        flex: 1 1 100%;
+    }
+
+    .orderSummary {
+        flex-direction: column;
+    }
+}
