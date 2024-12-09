@@ -16,6 +16,8 @@ const AccountButton = () => {
         setCartCount(cartItems.length);
     }, []);
 
+    const role = localStorage.getItem('role');
+
     const handleLogin = () => {
         navigate('/Home/Login');
     };
@@ -33,6 +35,10 @@ const AccountButton = () => {
         navigate('./Dashboard/Profile');
     };
 
+    const handleAdminClick = () => {
+        navigate('/Admin');
+    };
+
     const userAvater = null; // Sẽ xử lí sau
 
     const avatar = userAvater || defaultAvatar;
@@ -41,19 +47,27 @@ const AccountButton = () => {
         <div className={styles.accountButton}>
             {isLoggedIn ? (
                 <div className={styles.loggedInInfo}>
-                    <div className={styles.cartButton}
-                         onClick={handleCartClick}
-                         style={{ marginRight: 'auto' }}>
-                        <FontAwesomeIcon icon={faShoppingCart} />
-                        <span className={styles.cartText}>Giỏ hàng</span>
-                        {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
-                    </div>
-                    <div className={styles.avatar} onClick={handleDashboardClick}
-                         style={{ backgroundImage: `url(${avatar})` }}> {/*Đặt là ảnh mặc định nếu không có avatar*/} 
-                    </div>
-                    <span className={styles.username} title={username} onClick={handleDashboardClick}>
-                        {username.length > 20 ? `${username.slice(0, 20)}...` : username} {/* Nếu tên dài hơn 10 kí tự, chỉ hiển thị phần đầu*/} 
-                    </span>
+                    {role !== '1' && role !== '2' && (
+                        <>
+                            <div className={styles.cartButton}
+                                 onClick={handleCartClick}
+                                 style={{ marginRight: 'auto' }}>
+                                <FontAwesomeIcon icon={faShoppingCart} />
+                                <span className={styles.cartText}>Giỏ hàng</span>
+                                {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
+                            </div>
+                            <div className={styles.avatar} onClick={handleDashboardClick}
+                                 style={{ backgroundImage: `url(${avatar})` }} />
+                            <span className={styles.username} title={username} onClick={handleDashboardClick}>
+                                {username.length > 20 ? `${username.slice(0, 20)}...` : username}
+                            </span>
+                        </>
+                    )}
+                    {(role === '1' || role === '2') && (
+                        <button className={styles.btnAdmin} onClick={handleAdminClick}>
+                            Trang Admin
+                        </button>
+                    )}
                 </div>
             ) : (
                 <button className={styles.btnLogin} onClick={handleLogin}>
