@@ -85,25 +85,18 @@ class ProductManagementController extends Controller
                 'image' => 'nullable|file|mimes:jpeg,jpg,png|max:2048', // File ảnh
             ]);
 
-            // Xử lý tên file ảnh
+            // Xử lý ảnh
             $lastProduct = TrangSuc::where('MADM', $data['MADM'])->latest('ID')->first();
             $nextNumber = $lastProduct ? intval(Str::afterLast($lastProduct->IMAGEURL, '_')) + 1 : 1;
-
             $filename = $data['MADM'] . '_' . $nextNumber . '.' . $request->file('image')->getClientOriginalExtension();
             $path = $request->file('image')->storeAs('images', $filename, 'public'); // Lưu ảnh vào thư mục storage
+            $data['IMAGEURL'] = TrangSuc::prepareImageUrl($filename); // Chuẩn bị đường dẫn ảnh
 
-            // Tạo sản phẩm mới
-            $product = new TrangSuc();
-            $product->MADM = $data['MADM'];
-            $product->TENTS = $data['TENTS'];
-            $product->GIANIEMYET = $data['GIANIEMYET'];
-            $product->SLTK = $data['SLTK'];
-            $product->MOTA = $data['MOTA'];
-            $product->IMAGEURL = '/' . $path; // Lưu đường dẫn ảnh
-            $product->save();
+            // Gọi model để thêm sản phẩm
+            TrangSuc::createProduct($data);
 
             return response()->json(['message' => 'Thêm sản phẩm thành công!'], 201);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
         }

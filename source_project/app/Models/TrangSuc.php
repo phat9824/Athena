@@ -106,7 +106,7 @@ class TrangSuc extends Model
             'total' => $total,
             'products' => $products,
         ];
-}
+    }
 
 
 
@@ -132,20 +132,32 @@ class TrangSuc extends Model
         return $stmt->fetch();
     }
 
-    // Thêm sản phảm mới
-    function createProduct($data)
+    public static function prepareImageUrl($imageName)
     {
-        $pdo = $this->getPDOConnection();
+        return '/storage/images/' . $imageName;
+    }
+
+    // Thêm sản phảm mới
+    public static function createProduct($data)
+    {
+        $pdo = self::getPDOConnection(); // Lấy kết nối PDO
         $sql = "INSERT INTO TRANGSUC (MADM, TENTS, GIANIEMYET, SLTK, MOTA, IMAGEURL) 
-                VALUES (:MADM, :TENTS, :GIANIEMYET, :SLTK, :MOTA, :IMAGEURL)";
+            VALUES (:MADM, :TENTS, :GIANIEMYET, :SLTK, :MOTA, :IMAGEURL)";
+
         $stmt = $pdo->prepare($sql);
+        
         $stmt->bindValue(':MADM', $data['MADM'], PDO::PARAM_STR);
         $stmt->bindValue(':TENTS', $data['TENTS'], PDO::PARAM_STR);
         $stmt->bindValue(':GIANIEMYET', $data['GIANIEMYET'], PDO::PARAM_INT);
         $stmt->bindValue(':SLTK', $data['SLTK'], PDO::PARAM_INT);
         $stmt->bindValue(':MOTA', $data['MOTA'], PDO::PARAM_STR);
         $stmt->bindValue(':IMAGEURL', $data['IMAGEURL'], PDO::PARAM_STR);
-        return $stmt->execute();
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+        throw new \Exception("Không thể thêm sản phẩm.");
     }
 
     // Cập nhật theo ID
