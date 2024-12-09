@@ -73,6 +73,20 @@
     justify-content: center;
 }
 
+.btnAdmin {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .accountButton {
