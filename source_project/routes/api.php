@@ -21,6 +21,7 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/admin/dashboard', [TestAPIController::class, 'adminDashboard']);
     Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
     Route::get('/api/admin/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
+    Route::post('/api/admin/trangsuc/create', [ProductManagementController::class, 'createProduct']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {

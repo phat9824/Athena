@@ -8,23 +8,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Exception;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
 class ProductManagementController extends Controller
 {
     // Get all products (not soft-deleted)
     public static function getAllProducts(Request $request)
     {
+        // Lấy danh sách sản phẩm
         try {
             $products = TrangSuc::getAllProducts();
 
             return response()->json($products);
         } catch (Exception $e) {
-            Log::error('Error: ' . $e->getMessage()); 
+            Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
 
     public static function getPaginatedProducts(Request $request)
     {
+        // Lấy danh sách sản phẩm phân trang
         try {
             $page = $request->query('page', 1);
             $perPage = $request->query('perPage', 10);
@@ -44,7 +49,7 @@ class ProductManagementController extends Controller
                 'totalPages' => ceil($total / $perPage),
             ]);
         } catch (Exception $e) {
-            Log::error('Error: ' . $e->getMessage()); 
+            Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
@@ -52,17 +57,55 @@ class ProductManagementController extends Controller
 
     public static function getProductById($id, Request $request)
     {
+        // Lấy thông tin sản phẩm theo ID
         try {
             $product = TrangSuc::findProductById($id);
-            
+
             if (!$product) {
                 return response()->json(['message' => 'Product not found'], 404);
             }
 
             return response()->json($product);
         } catch (Exception $e) {
-            Log::error('Error: ' . $e->getMessage()); 
+            Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public static function createProduct(Request $request)
+    {
+        try {
+            // Validate dữ liệu đầu vào
+            $data = $request->validate([
+                'MADM' => 'required|string',
+                'TENTS' => 'required|string',
+                'GIANIEMYET' => 'required|numeric',
+                'SLTK' => 'required|integer',
+                'MOTA' => 'nullable|string',
+                'image' => 'nullable|file|mimes:jpeg,jpg,png|max:2048', // File ảnh
+            ]);
+
+            // Xử lý tên file ảnh
+            $lastProduct = TrangSuc::where('MADM', $data['MADM'])->latest('ID')->first();
+            $nextNumber = $lastProduct ? intval(Str::afterLast($lastProduct->IMAGEURL, '_')) + 1 : 1;
+
+            $filename = $data['MADM'] . '_' . $nextNumber . '.' . $request->file('image')->getClientOriginalExtension();
+            $path = $request->file('image')->storeAs('storage/images', $filename, 'public'); // Lưu ảnh vào thư mục storage
+
+            // Tạo sản phẩm mới
+            $product = new TrangSuc();
+            $product->MADM = $data['MADM'];
+            $product->TENTS = $data['TENTS'];
+            $product->GIANIEMYET = $data['GIANIEMYET'];
+            $product->SLTK = $data['SLTK'];
+            $product->MOTA = $data['MOTA'];
+            $product->IMAGEURL = '/' . $path; // Lưu đường dẫn ảnh
+            $product->save();
+
+            return response()->json(['message' => 'Thêm sản phẩm thành công!'], 201);
+        } catch (Exception $e) {
+            Log::error('Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
         }
     }
 }

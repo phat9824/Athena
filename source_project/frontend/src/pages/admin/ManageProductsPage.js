@@ -232,8 +232,72 @@ const ManageProductsPage = () => {
         }
     };
 
+    // Thêm sản phẩm mới
+    const [newProduct, setNewProduct] = useState({
+        name: "",
+        price: "",
+        stock: "",
+        description: "",
+        category: categories.length > 0 ? categories[0].MADM : "", // Giá trị mặc định
+        image: "",
+    });
+    
+
+    const addProduct = async () => {
+        if (!newProduct.name || !newProduct.price || !newProduct.stock || !newProduct.category) {
+            setErrorMessage("Vui lòng điền đầy đủ thông tin sản phẩm!");
+            return;
+        }
+
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie("XSRF-TOKEN");
+
+            const formData = new FormData();
+            formData.append("MADM", newProduct.category);
+            formData.append("TENTS", newProduct.name);
+            formData.append("GIANIEMYET", newProduct.price);
+            formData.append("SLTK", newProduct.stock);
+            formData.append("MOTA", newProduct.description);
+            formData.append("image", newProduct.imageFile); // Đính kèm tệp ảnh
+
+            const response = await fetch(`${baseUrl}/api/admin/trangsuc/create`, {
+                method: "POST",
+                headers: {
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                },
+                credentials: "include",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const res = await response.json();
+                throw new Error(res.message || "Không thể thêm sản phẩm.");
+            }
+
+            const res = await response.json();
+            setSuccessMessage(res.message || "Thêm sản phẩm thành công!");
+            setErrorMessage("");
+            setNewProduct({
+                name: "",
+                price: "",
+                stock: "",
+                description: "",
+                category: "",
+                imageFile: null,
+            });
+            fetchProducts(1); // Cập nhật danh sách sản phẩm
+        } catch (error) {
+            setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm sản phẩm!");
+        }
+    };
+
+
+
+
     return (
         <div className={styles.container}>
+            {/* -------------------------------------------------------------------------------------------- */}
             <h2 className={styles.heading}>Danh sách sản phẩm</h2>
             <div className={styles.inputGroup}>
                 <input
@@ -268,7 +332,7 @@ const ManageProductsPage = () => {
                         <th className={styles.th}>Danh mục</th>
                         <th className={styles.th}>Giá niêm yết</th>
                         <th className={styles.th}>Số lượng tồn kho</th>
-                        
+
                     </tr>
                 </thead>
                 <tbody>
@@ -290,13 +354,98 @@ const ManageProductsPage = () => {
                                 {product.GIANIEMYET.toLocaleString()} VND
                             </td>
                             <td className={styles.td}>{product.SLTK}</td>
-                            
+
                         </tr>
                     ))}
                 </tbody>
             </table>
-
             {renderPagination()}
+
+
+            {/* -------------------------------------------------------------------------------------------- */}
+            <h2>Thêm danh mục mới</h2>
+            <input
+                type="text"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Nhập tên danh mục"
+            />
+            <button onClick={addCategory}>Thêm</button>
+
+            {/* -------------------------------------------------------------------------------------------- */}
+            <h2>Thêm sản phẩm mới</h2>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    addProduct();
+                }}
+                className={styles.addProductForm}
+            >
+                <input
+                    type="text"
+                    placeholder="Tên sản phẩm"
+                    value={newProduct.name}
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({ ...prev, name: e.target.value }))
+                    }
+                    required
+                />
+                <input
+                    type="number"
+                    placeholder="Giá niêm yết"
+                    value={newProduct.price}
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({ ...prev, price: e.target.value }))
+                    }
+                    required
+                />
+                <input
+                    type="number"
+                    placeholder="Số lượng tồn kho"
+                    value={newProduct.stock}
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({ ...prev, stock: e.target.value }))
+                    }
+                    required
+                />
+                <textarea
+                    placeholder="Mô tả sản phẩm"
+                    value={newProduct.description}
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({ ...prev, description: e.target.value }))
+                    }
+                />
+                <select
+                    value={newProduct.category}
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({ ...prev, category: e.target.value }))
+                    }
+                    required
+                >
+                    <option value="">Chọn danh mục</option>
+                    {categories.map((cat) => (
+                        <option key={cat.MADM} value={cat.MADM}>
+                            {cat.TENDM}
+                        </option>
+                    ))}
+                </select>
+
+                <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                        setNewProduct((prev) => ({
+                            ...prev,
+                            imageFile: e.target.files[0], // Lưu tệp ảnh vào state
+                        }))
+                    }
+                />
+
+                <button type="submit">Thêm sản phẩm</button>
+            </form>
+
+
+
         </div>
     );
 };
