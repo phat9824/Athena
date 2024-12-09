@@ -90,7 +90,7 @@ class ProductManagementController extends Controller
             $nextNumber = $lastProduct ? intval(Str::afterLast($lastProduct->IMAGEURL, '_')) + 1 : 1;
 
             $filename = $data['MADM'] . '_' . $nextNumber . '.' . $request->file('image')->getClientOriginalExtension();
-            $path = $request->file('image')->storeAs('storage/images', $filename, 'public'); // Lưu ảnh vào thư mục storage
+            $path = $request->file('image')->storeAs('images', $filename, 'public'); // Lưu ảnh vào thư mục storage
 
             // Tạo sản phẩm mới
             $product = new TrangSuc();
