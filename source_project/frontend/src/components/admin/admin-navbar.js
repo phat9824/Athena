@@ -2,8 +2,12 @@ import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import './admin-navbar.css';
 import logo from '../../assets/logo.png';
+import { useAppContext } from '../../AppContext';
+import LogoutButton from '../button/logout';
 
 const AdminSidebar = () => {
+    const {logout} = useAppContext();
+
     const location = useLocation();
     const role = localStorage.getItem('role');
     const hasAccess = (role, allowedRoles) => allowedRoles.includes(parseInt(role, 10));
@@ -92,11 +96,7 @@ const AdminSidebar = () => {
                     </li>
                 )}
 
-                <li className="logout">
-                    <NavLink to="/Home" className={({ isActive }) => (isActive ? 'active' : '')}>
-                        <i className="fas fa-sign-out-alt"></i> Đăng xuất
-                    </NavLink>
-                </li>
+                <LogoutButton onLogout={logout} />
             </ul>
         </div>
     );
