@@ -43,6 +43,7 @@
 .th, .td {
     border: 1px solid #ccc;
     padding: 0px;
+    text-align: center;
 }
 
 .th {
