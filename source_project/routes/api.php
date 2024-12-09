@@ -4,9 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestAPIController;
 use App\Http\Controllers\DanhMucController;
-use App\Http\Controllers\TrangSucController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductManagementController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -20,7 +20,7 @@ Route::post('/api/login', [AuthController::class, 'login']);
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/admin/dashboard', [TestAPIController::class, 'adminDashboard']);
     Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
-    Route::get('/api/trangsuc', [TrangSucController::class, 'getAllProducts']);
+    Route::get('/api/admin/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
