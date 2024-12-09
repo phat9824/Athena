@@ -48,10 +48,83 @@ class TrangSuc extends Model
         return $stmt->fetchAll();
     }
 
-    // Tìm theo ID
-    function findProductById($id)
+    // Lấy các sản phẩm với phân trang
+    public static function getPaginatedProducts($offset, $limit)
     {
-        $pdo = $this->getPDOConnection();
+        $pdo = self::getPDOConnection();
+        $sql = "SELECT * FROM TRANGSUC WHERE DELETED_AT IS NULL LIMIT :offset, :limit";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Lấy các sản phẩm với filers và search cùng với phân trang
+    public static function filterProducts($filters = [], $search = '', $offset = 0, $limit = 10)
+    {
+        $pdo = self::getPDOConnection();
+        $params = [];
+        $baseSql = "FROM TRANGSUC WHERE DELETED_AT IS NULL";
+
+        // Lọc
+        if (!empty($filters)) {
+            foreach ($filters as $key => $value) {
+                $baseSql .= " AND $key = :$key";
+                $params[":$key"] = $value;
+            }
+        }
+
+        // Tìm kiếm
+        if (!empty($search)) {
+            $baseSql .= " AND TENTS LIKE :search";
+            $params[':search'] = "%$search%";
+        }
+
+        // Lấy tổng số sản phẩm 
+        $countSql = "SELECT COUNT(*) AS total " . $baseSql;
+        $countStmt = $pdo->prepare($countSql);
+        foreach ($params as $key => $value) {
+            $countStmt->bindValue($key, $value);
+        }
+        $countStmt->execute();
+        $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Lấy danh sách sản phẩm với phân trang
+        $productSql = "SELECT * " . $baseSql . " LIMIT :offset, :limit";
+        $params[':offset'] = $offset;
+        $params[':limit'] = $limit;
+
+        $productStmt = $pdo->prepare($productSql);
+        foreach ($params as $key => $value) {
+            $productStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $productStmt->execute();
+        $products = $productStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'total' => $total,
+            'products' => $products,
+        ];
+}
+
+
+
+    // Đếm tổng số sản phẩm
+    public static function countAllProducts()
+    {
+        $pdo = self::getPDOConnection();
+        $sql = "SELECT COUNT(*) AS total FROM TRANGSUC WHERE DELETED_AT IS NULL";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['total'];
+    }
+
+    // Tìm theo ID
+    public static function findProductById($id)
+    {
+        $pdo = self::getPDOConnection();
         $sql = "SELECT * FROM TRANGSUC WHERE ID = :id AND DELETED_AT IS NULL";
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
