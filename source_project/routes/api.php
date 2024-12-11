@@ -7,6 +7,7 @@ use App\Http\Controllers\DanhMucController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductManagementController;
+use App\Http\Controllers\PromotionManagementController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -22,6 +23,10 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
     Route::get('/api/admin/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
     Route::post('/api/admin/trangsuc/create', [ProductManagementController::class, 'createProduct']);
+
+    // Route để lấy tất cả khuyến mãi
+    //Route::get('/api/admin/khuyenmai', [PromotionManagementController::class, 'getAllKhuyenMai']);
+    Route::get('/api/admin/khuyenmai', [PromotionManagementController::class, 'getPaginatedKhuyenMai']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {

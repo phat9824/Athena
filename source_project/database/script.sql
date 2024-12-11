@@ -435,3 +435,17 @@ INSERT INTO HOADON VALUES (NULL,15,'2024-01-30',5400000,5400000,1,NULL);
 SET @hd_id = LAST_INSERT_ID();
 INSERT INTO CHITIETHD VALUES
 (5, @hd_id, 3, 1800000);
+
+
+-- Thêm dữ liệu KHUYENMAI ----------------------------------------------------------------
+INSERT INTO KHUYENMAI (MAKM, TENKM, NGAYBD, NGAYKT, PHANTRAM) VALUES
+('KM001', 'Khuyến mãi Tết Nguyên Đán', '2024-01-15', '2024-01-31', 15),
+('KM002', 'Mùa Valentine yêu thương', '2024-02-01', '2024-02-14', 20),
+('KM003', 'Ưu đãi Quốc tế Phụ nữ', '2024-03-01', '2024-03-08', 25),
+('KM004', 'Chào Hè rực rỡ', '2024-05-01', '2024-05-31', 10),
+('KM005', 'Giảm giá Quốc tế Lao động', '2024-05-01', '2024-05-07', 30),
+('KM006', 'Ưu đãi mùa tựu trường', '2024-08-15', '2024-08-31', 15),
+('KM007', 'Khuyến mãi Trung thu', '2024-09-01', '2024-09-15', 20),
+('KM008', 'Mùa lễ hội Giáng sinh', '2024-12-01', '2024-12-25', 35),
+('KM009', 'Ưu đãi Black Friday', '2024-11-25', '2024-11-30', 50),
+('KM010', 'Khuyến mãi chào năm mới', '2024-12-26', '2025-01-05', 40);
