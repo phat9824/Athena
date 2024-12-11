@@ -96,7 +96,7 @@ class ProductManagementController extends Controller
             TrangSuc::createProduct($data);
 
             return response()->json(['message' => 'Thêm sản phẩm thành công!'], 201);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
         }
