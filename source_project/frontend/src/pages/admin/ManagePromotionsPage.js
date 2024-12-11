@@ -57,45 +57,45 @@ const ManagePromotionsPage = () => {
     }, [currentPage, searchQuery]);
 
     // Add new promotion
-    // const addPromotion = async () => {
-    //     if (!newPromotion.name || !newPromotion.startDate || !newPromotion.endDate || !newPromotion.discount) {
-    //         setErrorMessage("Vui lòng điền đầy đủ thông tin khuyến mãi!");
-    //         return;
-    //     }
+    const addPromotion = async () => {
+        if (!newPromotion.name || !newPromotion.startDate || !newPromotion.endDate || !newPromotion.discount) {
+            setErrorMessage("Vui lòng điền đầy đủ thông tin khuyến mãi!");
+            return;
+        }
 
-    //     try {
-    //         await getCSRFToken();
-    //         const xsrfToken = getCookie("XSRF-TOKEN");
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie("XSRF-TOKEN");
 
-    //         const response = await fetch(`${baseUrl}/api/khuyenmai/create`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Accept": "application/json",
-    //                 "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
-    //             },
-    //             credentials: "include",
-    //             body: JSON.stringify({
-    //                 TENKM: newPromotion.name,
-    //                 NGAYBD: newPromotion.startDate,
-    //                 NGAYKT: newPromotion.endDate,
-    //                 PHANTRAM: newPromotion.discount,
-    //             }),
-    //         });
+            const response = await fetch(`${baseUrl}/api/admin/khuyenmai/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    TENKM: newPromotion.name,
+                    NGAYBD: newPromotion.startDate,
+                    NGAYKT: newPromotion.endDate,
+                    PHANTRAM: newPromotion.discount,
+                }),
+            });
 
-    //         if (!response.ok) {
-    //             const res = await response.json();
-    //             throw new Error(res.message || "Không thể thêm khuyến mãi.");
-    //         }
+            if (!response.ok) {
+                const res = await response.json();
+                throw new Error(res.message || "Không thể thêm khuyến mãi.");
+            }
 
-    //         setSuccessMessage("Thêm khuyến mãi thành công!");
-    //         setErrorMessage("");
-    //         setNewPromotion({ name: "", startDate: "", endDate: "", discount: "" });
-    //         fetchPromotions(1); // Refresh promotions list
-    //     } catch (error) {
-    //         setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm khuyến mãi!");
-    //     }
-    // };
+            setSuccessMessage("Thêm khuyến mãi thành công!");
+            setErrorMessage("");
+            setNewPromotion({ name: "", startDate: "", endDate: "", discount: "" });
+            fetchPromotions(1); // Refresh promotions list
+        } catch (error) {
+            setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm khuyến mãi!");
+        }
+    };
 
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
@@ -103,25 +103,59 @@ const ManagePromotionsPage = () => {
 
     const renderPagination = () => {
         if (totalPages <= 1) return null;
-
-        const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-
+    
+        const pageNumbers = [];
+        const maxVisibleButtons = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+        let endPage = Math.min(totalPages, currentPage + Math.floor(maxVisibleButtons / 2));
+    
+        if (endPage - startPage + 1 < maxVisibleButtons) {
+            if (startPage === 1) {
+                endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+            } else if (endPage === totalPages) {
+                startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+            }
+        }
+    
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(i);
+        }
+    
         return (
             <div className={styles.pagination}>
-                {pages.map((page) => (
+                {/* Nút quay lại */}
+                <button
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ""}`}
+                >
+                    ←
+                </button>
+    
+                {/* Các nút số trang */}
+                {pageNumbers.map((page) => (
                     <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
                         disabled={page === currentPage}
-                        className={`${styles.paginationButton} ${page === currentPage ? styles.paginationButtonActive : ""
-                            }`}
+                        className={`${styles.paginationButton} ${page === currentPage ? styles.paginationButtonActive : ""}`}
                     >
                         {page}
                     </button>
                 ))}
+    
+                {/* Nút tiếp theo */}
+                <button
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ""}`}
+                >
+                    →
+                </button>
             </div>
         );
     };
+    
 
     return (
         <div className={styles.container}>
@@ -163,7 +197,7 @@ const ManagePromotionsPage = () => {
 
             {renderPagination()}
 
-            {/* <h2>Thêm chương trình khuyến mãi mới</h2>
+            <h2>Thêm chương trình khuyến mãi mới</h2>
             <form
                 onSubmit={(e) => {
                     e.preventDefault();
@@ -198,7 +232,7 @@ const ManagePromotionsPage = () => {
                     required
                 />
                 <button type="submit">Thêm</button>
-            </form> */}
+            </form>
         </div>
     );
 };

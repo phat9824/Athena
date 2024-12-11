@@ -108,6 +108,21 @@ class KhuyenMai
     }
 
     /**
+     * Kiểm tra mã khuyến mãi đã tồn tại hay chưa
+     */
+    public static function checkCodeExists($code)
+    {
+        $pdo = self::getPDOConnection(); // Lấy kết nối PDO
+        $sql = "SELECT COUNT(*) AS count FROM KHUYENMAI WHERE MAKM = :MAKM";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':MAKM', $code, PDO::PARAM_STR);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int)$result['count'] > 0; // Trả về true nếu mã đã tồn tại
+    }
+
+    /**
      * Tạo mới khuyến mãi.
      */
     public static function createKhuyenMai($data)
@@ -115,7 +130,7 @@ class KhuyenMai
         $pdo = self::getPDOConnection();
         $sql = "INSERT INTO KHUYENMAI (MAKM, TENKM, NGAYBD, NGAYKT, PHANTRAM) 
                 VALUES (:MAKM, :TENKM, :NGAYBD, :NGAYKT, :PHANTRAM)";
-        
+
         $stmt = $pdo->prepare($sql);
         $stmt->bindValue(':MAKM', $data['MAKM'], PDO::PARAM_STR);
         $stmt->bindValue(':TENKM', $data['TENKM'], PDO::PARAM_STR);
