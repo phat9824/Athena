@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAppContext } from '../../AppContext';
+import { useAppContext } from '../../AppContext.js';
 import Notification from '../../components/user-components/Notification.js';
 import styles from './ProfilePage.module.css';  // Import CSS Module
 import defaultAvatar from '../../assets/default-avatar.jpg';

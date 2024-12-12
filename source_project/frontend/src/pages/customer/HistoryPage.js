@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useAppContext } from '../../AppContext';
+import { useAppContext } from '../../AppContext.js';
 import styles from './HistoryPage.module.css';
-import Notification from '../../components/user-components/Notification';
+import Notification from '../../components/user-components/Notification.js';
 import Loader from '../../components/user-components/loader.js';
 import defaultImage from '../../assets/default_item.jpg';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

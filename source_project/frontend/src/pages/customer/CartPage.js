@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAppContext } from '../../AppContext';
+import { useAppContext } from '../../AppContext.js';
 import styles from './CartPage.module.css';
-import Notification from '../../components/user-components/Notification';
+import Notification from '../../components/user-components/Notification.js';
 import defaultItem from '../../assets/default_item.jpg';
 import Loader from '../../components/user-components/loader.js'
 const CartPage = () => {

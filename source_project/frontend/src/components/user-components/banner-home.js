@@ -1,15 +1,15 @@
 import React from 'react';
-import banner from '../../assets/banner-home.png';
+import banner from '../../assets/image/Banner/1.png';
 import styles from './banner-home.module.css';
 
 const Banner = () => {
     return (
         <div className={styles.banner}>
             <img src={banner} alt="Athena Jewelry Banner" className={styles.bannerImage} />
-            <div className={styles.bannerText}>
+            {/* <div className={styles.bannerText}>
                 <h1>Athena</h1>
                 <p>Quà tặng ý nghĩa - Sang trọng - Thông minh</p>
-            </div>
+            </div> */}
         </div>
     );
 };

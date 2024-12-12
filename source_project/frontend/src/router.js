@@ -7,11 +7,11 @@ import HomeLayout from './layouts/home-layout.js';
 import HomePage from './pages/HomePage.js';
 import LoginPage from './pages/LoginPage.js';
 import RegisterPage from './pages/RegisterPage.js';
-import ProductsPage from './pages/ProductsPage';
-import CollectionsPage from './pages/CollectionsPage';
-import NewsEventsPage from './pages/NewsEventsPage';
-import PromotionsPage from './pages/PromotionsPage';
-import ContactPage from './pages/ContactPage';
+import ProductsPage from './pages/ProductsPage.js';
+import CollectionsPage from './pages/CollectionsPage.js';
+import NewsEventsPage from './pages/NewsEventsPage.js';
+import PromotionsPage from './pages/PromotionsPage.js';
+import ContactPage from './pages/ContactPage.js';
 
 // Import các trang trong dashboard khách hàng
 import DashboardLayout from './layouts/dashboard-user-layout.js';
@@ -21,17 +21,17 @@ import HistoryPage from './pages/customer/HistoryPage.js';
 import ProfilePageCustomer from './pages/customer/ProfilePage.js';
 
 // Import Admin Layout và các trang liên quan
-import AdminLayout from './layouts/admin/admin-layout';
+import AdminLayout from './layouts/admin/admin-layout.js';
 // Import pages
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import ManageProductsPage from './pages/admin/ManageProductsPage';
-import ManageEmployeesPage from './pages/admin/ManageEmployeesPage';
-import ManageInvoicesPage from './pages/admin/ManageInvoicesPage';
-import ManagePromotionsPage from './pages/admin/ManagePromotionsPage';
-import ManageCustomers from './pages/admin/ManageCustomersPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage.js';
+import ManageProductsPage from './pages/admin/ManageProductsPage.js';
+import ManageEmployeesPage from './pages/admin/ManageEmployeesPage.js';
+import ManageInvoicesPage from './pages/admin/ManageInvoicesPage.js';
+import ManagePromotionsPage from './pages/admin/ManagePromotionsPage.js';
+import ManageCustomers from './pages/admin/ManageCustomersPage.js';
 
 
-import ProfilePage from './pages/admin/ProfilePage';
+import ProfilePage from './pages/admin/ProfilePage.js';
 
 // Othes Page
 import Unauthorized from './pages/UnauthorizedPage.js';
