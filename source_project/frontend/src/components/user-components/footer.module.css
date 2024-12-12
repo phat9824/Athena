@@ -12,6 +12,15 @@
     padding: 20px 0;
 }
 
+.navbarLogo img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 150px;
+    width: auto;
+}
+
+
 .footerSection {
     flex: 1;
     min-width: 200px;

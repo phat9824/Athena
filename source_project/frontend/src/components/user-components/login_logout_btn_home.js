@@ -39,9 +39,9 @@ const AccountButton = () => {
         navigate('/Admin');
     };
 
-    const userAvater = null; // Sẽ xử lí sau
+    const userAvatar = null; // Sẽ xử lí sau
 
-    const avatar = userAvater || defaultAvatar;
+    const avatar = userAvatar || defaultAvatar;
 
     return (
         <div className={styles.accountButton}>

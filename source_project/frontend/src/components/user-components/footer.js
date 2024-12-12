@@ -1,10 +1,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './footer.module.css';
+import logo from '../../assets/image/logo_footer.png';
 
 const Footer = () => {
     return (
-        <footer className={styles.footer}>
+        <footer id ="footer" className={styles.footer}>
+            <div className={styles.navbarLogo}>
+                <img src={logo} alt="Athena Jewelry" />
+            </div>
             <div className={styles.footerContent}>
                 <div className={`${styles.footerSection} ${styles.footerSectionAbout}`}>
                     <h3>Công Ty Cổ Phần Trang Sức Athena</h3>

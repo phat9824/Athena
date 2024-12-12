@@ -21,13 +21,19 @@ const Navbar2 = () => {
                 <li>
                     <Link to="/Home/Promotions">Khuyến Mãi</Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link to="/Home/Contact">Liên Hệ</Link>
+                </li> */}
+                <li>
+                    <a href="#footer">Liên Hệ</a>
                 </li>
+
             </ul>
             <div className={styles.searchBar}>
                 <input type="text" placeholder="Tìm kiếm..." />
-                <button>🔍</button>
+                <button className={styles.searchButton}>
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </button>
             </div>
         </div>
     );

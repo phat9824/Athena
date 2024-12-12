@@ -24,7 +24,16 @@
 }
 
 .navbarLinks li:hover {
-    color: #888;
+    color:#C9C9C9;
+}
+
+.navbarLinks li a {
+    color: #888 ;
+    text-decoration: none; /* Loại bỏ gạch chân mặc định của liên kết */
+}
+
+.navbarLinks li a:hover {
+    color: #C9C9C9; /* Màu khi người dùng di chuột vào liên kết */
 }
 
 .searchBar {
