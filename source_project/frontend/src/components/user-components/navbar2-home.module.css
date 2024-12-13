@@ -39,7 +39,7 @@
 .searchBar {
     display: flex;
     align-items: center;
-    background-color: #FCF9F2;
+    background-color: #ccc;
     border-radius: 10px;
     padding: 5px 10px;
     margin-left: 15px;
