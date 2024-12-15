@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PDO;
 
 class HoaDon extends Model
 {
@@ -42,5 +43,69 @@ class HoaDon extends Model
             Log::error('Error fetching order history: ' . $e->getMessage());
             return [];
         }
+    }
+
+    public static function createInvoiceFromCart($userId)
+    {
+        $pdo = DB::connection()->getPdo();
+        try {
+            $pdo->beginTransaction();
+
+            $cart = GioHang::getCartByUserId($userId);
+            if (!$cart) {
+                throw new \Exception('Giỏ hàng không tồn tại');
+            }
+
+            $cartItems = ChiTietGH::getCartItemsByCartId($cart['ID_GIOHANG']);
+            if (empty($cartItems)) {
+                throw new \Exception('Giỏ hàng trống');
+            }
+
+            $totalValue = array_reduce($cartItems, function ($sum, $item) {
+                return $sum + $item['GIANIEMYET'] * $item['SOLUONG'];
+            }, 0);
+
+            $sqlHoaDon = "INSERT INTO HOADON (ID_KHACHHANG, NGAYLAPHD, TRIGIAHD, TIENPHAITRA, TRANGTHAI) 
+                          VALUES (:idKhachHang, NOW(), :triGiaHD, :tienPhaiTra, :trangThai)";
+            $stmtHoaDon = $pdo->prepare($sqlHoaDon);
+            $stmtHoaDon->execute([
+                'idKhachHang' => $userId,
+                'triGiaHD' => $totalValue,
+                'tienPhaiTra' => $totalValue,
+                'trangThai' => 0,
+            ]);
+
+            $invoiceId = $pdo->lastInsertId();
+
+            $sqlChiTietHD = "INSERT INTO CHITIETHD (ID_HOADON, ID_TRANGSUC, SOLUONG, GIASP) 
+                             VALUES (:idHoaDon, :idTrangSuc, :soLuong, :giaSP)";
+            $stmtChiTietHD = $pdo->prepare($sqlChiTietHD);
+            foreach ($cartItems as $item) {
+                $stmtChiTietHD->execute([
+                    'idHoaDon' => $invoiceId,
+                    'idTrangSuc' => $item['ID_TRANGSUC'],
+                    'soLuong' => $item['SOLUONG'],
+                    'giaSP' => $item['GIANIEMYET'],
+                ]);
+            }
+
+            ChiTietGH::deleteCartItemsByCartId($cart['ID_GIOHANG']);
+
+            $pdo->commit();
+
+            return self::getInvoiceById($invoiceId);
+        } catch (\Exception $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+    }
+
+    public static function getInvoiceById($invoiceId)
+    {
+        $pdo = DB::connection()->getPdo();
+        $sql = "SELECT * FROM HOADON WHERE ID_HOADON = :idHoaDon";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['idHoaDon' => $invoiceId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
