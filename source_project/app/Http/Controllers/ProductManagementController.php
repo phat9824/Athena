@@ -29,18 +29,24 @@ class ProductManagementController extends Controller
 
     public static function getPaginatedProducts(Request $request)
     {
-        // Lấy danh sách sản phẩm phân trang
         try {
             $page = $request->query('page', 1);
             $perPage = $request->query('perPage', 10);
-            $filters = $request->query('filters', []); // Bộ lọc
-            $search = $request->query('search', ''); // Từ khóa tìm kiếm
+
+            $filters = [
+                'category' => $request->query('category', ''),
+                'priceMin' => $request->query('priceMin', ''), 
+                'priceMax' => $request->query('priceMax', ''), 
+            ];
+            $search = $request->query('search', '');
+            $sort = $request->query('sort', 'asc');
 
             $offset = ($page - 1) * $perPage;
 
-            $result = TrangSuc::filterProducts($filters, $search, $offset, $perPage);
+            $result = TrangSuc::filterProducts($filters, $search, $offset, $perPage, $sort);
             $products = $result['products'];
             $total = $result['total'];
+
             return response()->json([
                 'data' => $products,
                 'currentPage' => (int)$page,
@@ -53,7 +59,6 @@ class ProductManagementController extends Controller
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
-
 
     public static function getProductById($id, Request $request)
     {

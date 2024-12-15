@@ -16,11 +16,12 @@ Route::post('/api/upload', [TestAPIController::class, 'upload']);
 // Các API không cần xác thực
 Route::post('/api/register', [AuthController::class, 'register']);
 Route::post('/api/login', [AuthController::class, 'login']);
-
+Route::get('/api/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
+Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/admin/dashboard', [TestAPIController::class, 'adminDashboard']);
-    Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
+    Route::get('/api/admin/danhmucts', [DanhMucController::class, 'getDanhMuc']);
     Route::get('/api/admin/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
     Route::post('/api/admin/trangsuc/create', [ProductManagementController::class, 'createProduct']);
 
