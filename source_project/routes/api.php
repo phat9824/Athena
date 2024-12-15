@@ -40,5 +40,6 @@ Route::middleware(['auth:api', 'check.role:0'])->group(function () {
     Route::post('api/customer/profile/update', [ProfileController::class, 'updateProfile']);
     Route::get('api/customer/cart', [OrderController::class, 'getCart']);
     Route::post('api/customer/cart/update', [OrderController::class, 'updateCart']);
+    Route::post('/api/customer/cart/checkout', [OrderController::class, 'checkout']);
     Route::get('api/customer/history/', [OrderController::class, 'getOrderHistory']);
 });

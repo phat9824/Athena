@@ -24,6 +24,11 @@ const CartPage = () => {
         fetchCartItems();
     }, []);
 
+    const updateCartSummaryInLocalStorage = (items) => {
+        const activeItemsCount = items.filter(item => item.SOLUONG > 0).length;
+        localStorage.setItem('cartCateItemCount', activeItemsCount); 
+    };
+
     useEffect(() => {
         const currentItems = editingItems.length > 0 ? editingItems : cartItems;
         let total = 0;
@@ -59,6 +64,7 @@ const CartPage = () => {
             const res = await response.json();
             // data: [{ID_TRANGSUC, TENTS, GIANIEMYET, SOLUONG, IMAGEURL}, ...]
             setCartItems(res);
+            updateCartSummaryInLocalStorage(res);
         } catch (error) {
             console.error('Error fetching cart items:', error);
             setNotification({ message: 'Đã xảy ra lỗi khi tải giỏ hàng!', type: 'error' });
@@ -69,28 +75,25 @@ const CartPage = () => {
 
     const handleQuantityChange = (id, delta) => {
         setEditingItems((prevEditingItems) => {
-            const updatedItems = [];
-            for (let i = 0; i < prevEditingItems.length; i++) {
-                const item = prevEditingItems[i];
+            return prevEditingItems.map((item) => {
                 if (item.ID_TRANGSUC === id) {
-                    const updatedItem = { 
-                        ...item, 
-                        SOLUONG: Math.max(1, item.SOLUONG + delta) 
-                    };
-                    updatedItems.push(updatedItem);
-                } else {
-                    updatedItems.push(item);
+                    const updatedQuantity = item.SOLUONG + delta;
+                    return { ...item, SOLUONG: Math.max(updatedQuantity, 0) };
                 }
-            }
-            return updatedItems;
+                return item;
+            });
         });
     };
+
     const handleConfirm = async () => {
         try {
             setLoading(true);
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
-    
+            
+            //const updatedItems = editingItems.filter(item => item.SOLUONG > 0);
+            console.log('Items sent to backend:', editingItems);
+
             const response = await fetch(`${baseUrl}/api/customer/cart/update`, {
                 method: 'POST',
                 headers: {
@@ -101,7 +104,7 @@ const CartPage = () => {
                 credentials: 'include',
                 body: JSON.stringify({ items: editingItems }),
             });
-    
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -109,6 +112,7 @@ const CartPage = () => {
             const res = await response.json();
             setCartItems(res);
             setEditingItems([]);
+            updateCartSummaryInLocalStorage(res);
             setNotification({ message: 'Cập nhật giỏ hàng thành công!', type: 'success' });
         } catch (error) {
             console.error('Error updating cart:', error);
@@ -126,12 +130,35 @@ const CartPage = () => {
         setEditingItems([]);
     };
 
-    const handleCheckout = () => {
+    const handleCheckout = async () => {
         setProcessingPayment(true);
-        setTimeout(() => {
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie('XSRF-TOKEN');
+    
+            const response = await fetch(`${baseUrl}/api/customer/cart/checkout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
+                },
+                credentials: 'include',
+            });
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const res = await response.json();
+            setNotification({ message: res.message || 'Thanh toán thành công', type: 'success' });
+            setCartItems([]);
+        } catch (error) {
+            console.error('Error during checkout:', error);
+            setNotification({ message: 'Đã xảy ra lỗi khi thanh toán!', type: 'error' });
+        } finally {
             setProcessingPayment(false);
-            setNotification({ message: 'Thanh toán thành công', type: 'success' });
-        }, 1000);
+        }
     }
 
     return (
@@ -146,7 +173,7 @@ const CartPage = () => {
                     {!loading && cartItems.length > 0 && (
                         <>
                             <div className={styles.cartItems}>
-                                {(editingItems.length > 0 ? editingItems : cartItems).map((item) => (
+                                {(editingItems.length > 0 ? editingItems : cartItems).filter((item) => item.SOLUONG > 0).map((item) => (
                                     <div key={item.ID_TRANGSUC} className={styles.cartItem}>
                                         <div className={styles.itemImage}>
                                             <img

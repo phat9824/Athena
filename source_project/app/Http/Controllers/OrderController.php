@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\GioHang;
 use App\Models\ChiTietGH;
 use App\Models\HoaDon;
+use App\Models\ChiTietHD;
 
 class OrderController extends Controller
 {
@@ -68,5 +69,21 @@ class OrderController extends Controller
             return response()->json(['message' => 'Lỗi server'], 500);
         }
     }
+
+    public function checkout(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            $userId = $user->ID;
+
+            $hoaDon = HoaDon::createInvoiceFromCart($userId);
+            
+            return response()->json(['message' => 'Thanh toán thành công', 'hoaDon' => $hoaDon], 200);
+        } catch (\Exception $e) {
+            Log::error('Checkout Error: ' . $e->getMessage(), ['exception' => $e]);
+            return response()->json(['message' => 'Đã xảy ra lỗi khi thanh toán'], 500);
+        }
+    }
+
 }
 
