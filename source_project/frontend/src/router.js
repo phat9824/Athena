@@ -12,6 +12,7 @@ import CollectionsPage from './pages/CollectionsPage.js';
 import NewsEventsPage from './pages/NewsEventsPage.js';
 import PromotionsPage from './pages/PromotionsPage.js';
 import ContactPage from './pages/ContactPage.js';
+import ProductDetailsPage from "./pages/ProductDetailsPage.js";
 
 // Import các trang trong dashboard khách hàng
 import DashboardLayout from './layouts/dashboard-user-layout.js';
@@ -90,6 +91,10 @@ const router = createBrowserRouter([
             {
                 path: "Products",
                 element: <ProductsPage />
+            },
+            {
+                path: "Products/:id",
+                element: <ProductDetailsPage />
             },
             {
                 path: "Collections",

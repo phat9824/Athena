@@ -61,27 +61,37 @@ class TrangSuc extends Model
     }
 
     // Lấy các sản phẩm với filers và search cùng với phân trang
-    public static function filterProducts($filters = [], $search = '', $offset = 0, $limit = 10)
+    public static function filterProducts($filters = [], $search = '', $offset = 0, $limit = 10, $sort = 'asc')
     {
         $pdo = self::getPDOConnection();
         $params = [];
         $baseSql = "FROM TRANGSUC WHERE DELETED_AT IS NULL";
-
-        // Lọc
-        if (!empty($filters)) {
-            foreach ($filters as $key => $value) {
-                $baseSql .= " AND $key = :$key";
-                $params[":$key"] = $value;
-            }
+    
+        // Lọc theo danh mục
+        if (!empty($filters['category'])) {
+            $baseSql .= " AND MADM = :category";
+            $params[':category'] = $filters['category'];
         }
-
-        // Tìm kiếm
+    
+        // Lọc theo giá tối thiểu
+        if (!empty($filters['priceMin'])) {
+            $baseSql .= " AND GIANIEMYET >= :priceMin";
+            $params[':priceMin'] = $filters['priceMin'];
+        }
+    
+        // Lọc theo giá tối đa
+        if (!empty($filters['priceMax'])) {
+            $baseSql .= " AND GIANIEMYET <= :priceMax";
+            $params[':priceMax'] = $filters['priceMax'];
+        }
+    
+        // Tìm kiếm theo tên sản phẩm
         if (!empty($search)) {
             $baseSql .= " AND TENTS LIKE :search";
             $params[':search'] = "%$search%";
         }
-
-        // Lấy tổng số sản phẩm 
+    
+        // Lấy tổng số sản phẩm
         $countSql = "SELECT COUNT(*) AS total " . $baseSql;
         $countStmt = $pdo->prepare($countSql);
         foreach ($params as $key => $value) {
@@ -89,25 +99,24 @@ class TrangSuc extends Model
         }
         $countStmt->execute();
         $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-
-        // Lấy danh sách sản phẩm với phân trang
-        $productSql = "SELECT * " . $baseSql . " LIMIT :offset, :limit";
+    
+        // Lấy danh sách sản phẩm với phân trang và sắp xếp
+        $productSql = "SELECT * " . $baseSql . " ORDER BY GIANIEMYET " . ($sort === 'desc' ? 'DESC' : 'ASC') . " LIMIT :offset, :limit";
         $params[':offset'] = $offset;
         $params[':limit'] = $limit;
-
+    
         $productStmt = $pdo->prepare($productSql);
         foreach ($params as $key => $value) {
             $productStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
         $productStmt->execute();
         $products = $productStmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
         return [
             'total' => $total,
             'products' => $products,
         ];
     }
-
 
 
     // Đếm tổng số sản phẩm

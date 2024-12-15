@@ -25,7 +25,7 @@ const ManageProductsPage = () => {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
 
-            const response = await fetch(`${baseUrl}/api/danhmucts`, {
+            const response = await fetch(`${baseUrl}/api/admin/danhmucts`, {
                 method: "GET",
                 headers: {
                     "Accept": "application/json",
