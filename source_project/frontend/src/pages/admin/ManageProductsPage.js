@@ -241,7 +241,7 @@ const ManageProductsPage = () => {
         category: categories.length > 0 ? categories[0].MADM : "", // Giá trị mặc định
         image: "",
     });
-    
+
 
     const addProduct = async () => {
         if (!newProduct.name || !newProduct.price || !newProduct.stock || !newProduct.category) {
@@ -291,6 +291,59 @@ const ManageProductsPage = () => {
             setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm sản phẩm!");
         }
     };
+
+    // Cập nhật sản phẩm
+    const updateProduct = async (productId) => {
+        const product = products.find(p => p.ID === productId);
+
+        // Lấy giá trị đã chỉnh sửa, nếu không có thì lấy giá trị gốc
+        const updatedPrice = product.editingPrice !== undefined ? product.editingPrice : product.GIANIEMYET;
+        const updatedStock = product.editingStock !== undefined ? product.editingStock : product.SLTK;
+        const deleted = product.deleted !== undefined ? product.deleted : (product.DELETED_AT !== null);
+
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie("XSRF-TOKEN");
+
+            const response = await fetch(`${baseUrl}/api/admin/trangsuc/update/${productId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    GIANIEMYET: parseInt(updatedPrice),
+                    SLTK: parseInt(updatedStock),
+                    deleted
+                }),
+            });
+
+            const res = await response.json();
+            if (!response.ok) {
+                throw new Error(res.error || res.message || "Không thể cập nhật sản phẩm");
+            }
+
+            setSuccessMessage("Cập nhật sản phẩm thành công!");
+            // Sau khi cập nhật thành công, gọi fetchProducts để cập nhật danh sách
+            fetchProducts(currentPage);
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+    };
+
+    const handleProductFieldChange = (productId, field, value) => {
+        setProducts((prevProducts) =>
+            prevProducts.map((p) => {
+                if (p.ID === productId) {
+                    return { ...p, [field]: value };
+                }
+                return p;
+            })
+        );
+    };
+
 
     return (
         <div className={styles.container}>
@@ -348,10 +401,37 @@ const ManageProductsPage = () => {
                             <td className={styles.td}>{product.TENTS}</td>
                             <td className={styles.td}>{mapCategoryName(product.MADM)}</td>
                             <td className={styles.td}>
-                                {product.GIANIEMYET.toLocaleString()} VND
+                                {/* Input để sửa giá */}
+                                <input
+                                    type="number"
+                                    value={product.editingPrice !== undefined ? product.editingPrice : product.GIANIEMYET}
+                                    onChange={(e) => handleProductFieldChange(product.ID, 'editingPrice', e.target.value)}
+                                    className={styles.inputSmall}
+                                /> VND
                             </td>
-                            <td className={styles.td}>{product.SLTK}</td>
-
+                            <td className={styles.td}>
+                                {/* Input để sửa tồn kho */}
+                                <input
+                                    type="number"
+                                    value={product.editingStock !== undefined ? product.editingStock : product.SLTK}
+                                    onChange={(e) => handleProductFieldChange(product.ID, 'editingStock', e.target.value)}
+                                    className={styles.inputSmall}
+                                />
+                            </td>
+                            <td className={styles.td}>
+                                {/* Nút toggle DELETED_AT */}
+                                <label>
+                                    Ẩn sản phẩm:
+                                    <input
+                                        type="checkbox"
+                                        checked={product.DELETED_AT !== null}
+                                        onChange={(e) => handleProductFieldChange(product.ID, 'deleted', e.target.checked)}
+                                    />
+                                </label>
+                            </td>
+                            <td className={styles.td}>
+                                <button onClick={() => updateProduct(product.ID)}>Lưu</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

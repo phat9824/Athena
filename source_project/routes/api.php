@@ -29,6 +29,9 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     //Route::get('/api/admin/khuyenmai', [PromotionManagementController::class, 'getAllKhuyenMai']);
     Route::get('/api/admin/khuyenmai', [PromotionManagementController::class, 'getPaginatedKhuyenMai']);
     Route::post('/api/admin/khuyenmai/create', [PromotionManagementController::class, 'createKhuyenMai']);
+
+    // Route để cập nhập sản phẩm
+    Route::post('api/admin/trangsuc/update/{id}', [ProductManagementController::class, 'updateProduct']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {

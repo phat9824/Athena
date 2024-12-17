@@ -66,31 +66,31 @@ class TrangSuc extends Model
         $pdo = self::getPDOConnection();
         $params = [];
         $baseSql = "FROM TRANGSUC WHERE DELETED_AT IS NULL";
-    
+
         // Lọc theo danh mục
         if (!empty($filters['category'])) {
             $baseSql .= " AND MADM = :category";
             $params[':category'] = $filters['category'];
         }
-    
+
         // Lọc theo giá tối thiểu
         if (!empty($filters['priceMin'])) {
             $baseSql .= " AND GIANIEMYET >= :priceMin";
             $params[':priceMin'] = $filters['priceMin'];
         }
-    
+
         // Lọc theo giá tối đa
         if (!empty($filters['priceMax'])) {
             $baseSql .= " AND GIANIEMYET <= :priceMax";
             $params[':priceMax'] = $filters['priceMax'];
         }
-    
+
         // Tìm kiếm theo tên sản phẩm
         if (!empty($search)) {
             $baseSql .= " AND TENTS LIKE :search";
             $params[':search'] = "%$search%";
         }
-    
+
         // Lấy tổng số sản phẩm
         $countSql = "SELECT COUNT(*) AS total " . $baseSql;
         $countStmt = $pdo->prepare($countSql);
@@ -99,19 +99,19 @@ class TrangSuc extends Model
         }
         $countStmt->execute();
         $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-    
+
         // Lấy danh sách sản phẩm với phân trang và sắp xếp
         $productSql = "SELECT * " . $baseSql . " ORDER BY GIANIEMYET " . ($sort === 'desc' ? 'DESC' : 'ASC') . " LIMIT :offset, :limit";
         $params[':offset'] = $offset;
         $params[':limit'] = $limit;
-    
+
         $productStmt = $pdo->prepare($productSql);
         foreach ($params as $key => $value) {
             $productStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
         $productStmt->execute();
         $products = $productStmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
         return [
             'total' => $total,
             'products' => $products,
@@ -154,7 +154,7 @@ class TrangSuc extends Model
             VALUES (:MADM, :TENTS, :GIANIEMYET, :SLTK, :MOTA, :IMAGEURL)";
 
         $stmt = $pdo->prepare($sql);
-        
+
         $stmt->bindValue(':MADM', $data['MADM'], PDO::PARAM_STR);
         $stmt->bindValue(':TENTS', $data['TENTS'], PDO::PARAM_STR);
         $stmt->bindValue(':GIANIEMYET', $data['GIANIEMYET'], PDO::PARAM_INT);
@@ -169,6 +169,33 @@ class TrangSuc extends Model
         throw new \Exception("Không thể thêm sản phẩm.");
     }
 
+    // Cập nhật sản phẩm theo ID
+    public static function updateProductById($id, $data)
+    {
+        $pdo = self::getPDOConnection();
+
+        $sql = "UPDATE TRANGSUC SET 
+                GIANIEMYET = :GIANIEMYET, 
+                SLTK = :SLTK,
+                DELETED_AT = :DELETED_AT
+            WHERE ID = :id";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':GIANIEMYET', $data['GIANIEMYET'], PDO::PARAM_INT);
+        $stmt->bindValue(':SLTK', $data['SLTK'], PDO::PARAM_INT);
+        // Nếu DELETED_AT null thì bindParam là PDO::PARAM_NULL
+        if ($data['DELETED_AT'] === null) {
+            $stmt->bindValue(':DELETED_AT', null, PDO::PARAM_NULL);
+        } else {
+            $stmt->bindValue(':DELETED_AT', $data['DELETED_AT'], PDO::PARAM_STR);
+        }
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
+
+    // --------------------------------------------------------------------------
+    // Chưa đụng tới không xài
     // Cập nhật theo ID
     function updateProduct($id, $data)
     {
