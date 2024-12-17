@@ -1,30 +1,56 @@
+// src/pages/admin/ManageProductsPage.js
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../AppContext.js";
 import styles from "./ManageProductsPage.module.css";
 
+// Import các component con
+import ProductTable from "../../components/admin/ProductPages/ProductTable";
+import Pagination from "../../components/admin/ProductPages/Pagination";
+import AddCategoryForm from "../../components/admin/ProductPages/AddCategoryForm";
+import AddProductForm from "../../components/admin/ProductPages/AddProductForm";
+
 const ManageProductsPage = () => {
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
+
     const [isFetching, setIsFetching] = useState(false);
     const [categories, setCategories] = useState([]);
     const [newCategory, setNewCategory] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+    const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [filters, setFilters] = useState({});
+    const [searchQuery, setSearchQuery] = useState("");
+    const [inputPage, setInputPage] = useState(1);
+
+    const [newProduct, setNewProduct] = useState({
+        name: "",
+        price: "",
+        stock: "",
+        description: "",
+        category: "",
+        imageFile: null,
+    });
+
     useEffect(() => {
         fetchCategories();
     }, []);
+
+    useEffect(() => {
+        fetchProducts(currentPage);
+    }, [currentPage, filters, searchQuery]);
 
     const mapCategoryName = (madm) => {
         const category = categories.find((cat) => cat.MADM == madm);
         return category ? category.TENDM : "Không xác định";
     };
 
-    // Lấy danh mục sản phẩm
     const fetchCategories = async () => {
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
-
             const response = await fetch(`${baseUrl}/api/admin/danhmucts`, {
                 method: "GET",
                 headers: {
@@ -34,9 +60,7 @@ const ManageProductsPage = () => {
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                throw new Error(`Lỗi khi lấy danh mục: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Lỗi khi lấy danh mục: ${response.status}`);
 
             const res = await response.json();
             setCategories(res);
@@ -45,27 +69,9 @@ const ManageProductsPage = () => {
         }
     };
 
-    // Xem sản phẩm --------------------------------------------------------------------------------------------//
-
-    const [products, setProducts] = useState([]); // Mảng sản phẩm
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [filters, setFilters] = useState({});
-    const [searchQuery, setSearchQuery] = useState("");
-    const [inputPage, setInputPage] = useState(1); // Giá trị nhập vào ô input số trang
-
-    // Lấy danh sách sản phẩm
     const fetchProducts = async (page) => {
         if (isFetching) return;
         setIsFetching(true);
-
-        // Tạo các tham số cho Query
-        const queryParams = new URLSearchParams({
-            page,
-            perPage: 10,
-            ...filters,
-            search: searchQuery,
-        });
 
         try {
             await getCSRFToken();
@@ -80,9 +86,7 @@ const ManageProductsPage = () => {
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                throw new Error(`Lỗi khi lấy sản phẩm: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Lỗi khi lấy sản phẩm: ${response.status}`);
 
             const res = await response.json();
             setProducts(res.data);
@@ -96,105 +100,18 @@ const ManageProductsPage = () => {
         }
     };
 
-    // Thực thi khi currentPage, filters, searchQuery đổi
-    useEffect(() => {
-        fetchProducts(currentPage);
-    }, [currentPage, filters, searchQuery]);
-
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setCurrentPage(newPage);
         }
     };
 
-    const handleFilterChange = (key, value) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
-    };
-
-    const handleSearch = (event) => {
-        setSearchQuery(event.target.value);
-    };
-
-    // Hàm render pagination với tối đa 5 nút
-    const renderPagination = () => {
-        if (totalPages <= 1) return null; // Không render nếu chỉ có 1 trang
-
-        let startPage = currentPage - 2;
-        let endPage = currentPage + 2;
-
-        if (startPage < 1) {
-            endPage = Math.min(totalPages, endPage + (1 - startPage));
-            startPage = 1;
-        }
-        if (endPage > totalPages) {
-            startPage = Math.max(1, startPage - (endPage - totalPages));
-            endPage = totalPages;
-        }
-
-        const pageNumbers = [];
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <div className={styles.pagination}>
-                <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ""
-                        }`}
-                >
-                    ←
-                </button>
-                {pageNumbers.map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        disabled={page === currentPage}
-                        className={`${styles.paginationButton} ${page === currentPage ? styles.paginationButtonDisabled : ""
-                            }`}
-                    >
-                        {page}
-                    </button>
-                ))}
-                <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ""
-                        }`}
-                >
-                    →
-                </button>
-                <div className={styles.paginationInputGroup}>
-                    <input
-                        type="number"
-                        min={1}
-                        max={totalPages}
-                        value={inputPage}
-                        onChange={(e) => setInputPage(e.target.value)}
-                        className={styles.paginationInput}
-                        placeholder="Nhập số trang"
-                    />
-                    <button
-                        onClick={() => {
-                            const pageNum = Number(inputPage);
-                            if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
-                                handlePageChange(pageNum);
-                            } else {
-                                alert("Vui lòng nhập số trang hợp lệ!");
-                            }
-                        }}
-                        className={styles.paginationGoButton}
-                    >
-                        Đi đến
-                    </button>
-                </div>
-            </div>
+    const handleProductFieldChange = (productId, field, value) => {
+        setProducts((prevProducts) =>
+            prevProducts.map((p) => (p.ID === productId ? { ...p, [field]: value } : p))
         );
     };
 
-
-    // Thêm danh mục mới
     const addCategory = async () => {
         if (!newCategory) {
             setErrorMessage("Tên danh mục không được để trống!");
@@ -225,23 +142,12 @@ const ManageProductsPage = () => {
             setSuccessMessage(res.message || "Thêm danh mục thành công!");
             setErrorMessage("");
             setNewCategory("");
-            fetchCategories(); // Cập nhật lại danh sách danh mục
+            fetchCategories();
         } catch (error) {
             setErrorMessage(error.message || "Đã có lỗi xảy ra, vui lòng thử lại!");
             setSuccessMessage("");
         }
     };
-
-    // Thêm sản phẩm mới
-    const [newProduct, setNewProduct] = useState({
-        name: "",
-        price: "",
-        stock: "",
-        description: "",
-        category: categories.length > 0 ? categories[0].MADM : "", // Giá trị mặc định
-        image: "",
-    });
-
 
     const addProduct = async () => {
         if (!newProduct.name || !newProduct.price || !newProduct.stock || !newProduct.category) {
@@ -259,7 +165,7 @@ const ManageProductsPage = () => {
             formData.append("GIANIEMYET", newProduct.price);
             formData.append("SLTK", newProduct.stock);
             formData.append("MOTA", newProduct.description);
-            formData.append("image", newProduct.imageFile); // Đính kèm tệp ảnh
+            formData.append("image", newProduct.imageFile);
 
             const response = await fetch(`${baseUrl}/api/admin/trangsuc/create`, {
                 method: "POST",
@@ -286,17 +192,15 @@ const ManageProductsPage = () => {
                 category: "",
                 imageFile: null,
             });
-            fetchProducts(1); // Cập nhật danh sách sản phẩm
+            fetchProducts(1);
         } catch (error) {
             setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm sản phẩm!");
         }
     };
 
-    // Cập nhật sản phẩm
     const updateProduct = async (productId) => {
-        const product = products.find(p => p.ID === productId);
+        const product = products.find((p) => p.ID === productId);
 
-        // Lấy giá trị đã chỉnh sửa, nếu không có thì lấy giá trị gốc
         const updatedPrice = product.editingPrice !== undefined ? product.editingPrice : product.GIANIEMYET;
         const updatedStock = product.editingStock !== undefined ? product.editingStock : product.SLTK;
         const deleted = product.deleted !== undefined ? product.deleted : (product.DELETED_AT !== null);
@@ -316,7 +220,7 @@ const ManageProductsPage = () => {
                 body: JSON.stringify({
                     GIANIEMYET: parseInt(updatedPrice),
                     SLTK: parseInt(updatedStock),
-                    deleted
+                    deleted,
                 }),
             });
 
@@ -326,28 +230,14 @@ const ManageProductsPage = () => {
             }
 
             setSuccessMessage("Cập nhật sản phẩm thành công!");
-            // Sau khi cập nhật thành công, gọi fetchProducts để cập nhật danh sách
             fetchProducts(currentPage);
         } catch (error) {
             setErrorMessage(error.message);
         }
     };
 
-    const handleProductFieldChange = (productId, field, value) => {
-        setProducts((prevProducts) =>
-            prevProducts.map((p) => {
-                if (p.ID === productId) {
-                    return { ...p, [field]: value };
-                }
-                return p;
-            })
-        );
-    };
-
-
     return (
         <div className={styles.container}>
-            {/* -------------------------------------------------------------------------------------------- */}
             <h2 className={styles.heading}>Danh sách sản phẩm</h2>
             <div className={styles.inputGroup}>
                 <input
@@ -373,159 +263,36 @@ const ManageProductsPage = () => {
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
             {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th className={styles.th}>Mã sản phẩm</th>
-                        <th className={styles.th}>Hình ảnh</th>
-                        <th className={styles.th}>Tên sản phẩm</th>
-                        <th className={styles.th}>Danh mục</th>
-                        <th className={styles.th}>Giá niêm yết</th>
-                        <th className={styles.th}>Số lượng tồn kho</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-                    {products.map((product) => (
-                        <tr key={product.ID}>
-                            <td className={styles.td}>{product.ID}</td>
-                            <td className={styles.td}>
-                                <div className={styles.thumbnailWrapper}>
-                                    <img
-                                        src={`${baseUrl}${product.IMAGEURL}`}
-                                        alt={product.TENTS}
-                                        className={styles.thumbnail}
-                                    />
-                                </div>
-                            </td>
-                            <td className={styles.td}>{product.TENTS}</td>
-                            <td className={styles.td}>{mapCategoryName(product.MADM)}</td>
-                            <td className={styles.td}>
-                                {/* Input để sửa giá */}
-                                <input
-                                    type="number"
-                                    value={product.editingPrice !== undefined ? product.editingPrice : product.GIANIEMYET}
-                                    onChange={(e) => handleProductFieldChange(product.ID, 'editingPrice', e.target.value)}
-                                    className={styles.inputSmall}
-                                /> VND
-                            </td>
-                            <td className={styles.td}>
-                                {/* Input để sửa tồn kho */}
-                                <input
-                                    type="number"
-                                    value={product.editingStock !== undefined ? product.editingStock : product.SLTK}
-                                    onChange={(e) => handleProductFieldChange(product.ID, 'editingStock', e.target.value)}
-                                    className={styles.inputSmall}
-                                />
-                            </td>
-                            <td className={styles.td}>
-                                {/* Nút toggle DELETED_AT */}
-                                <label>
-                                    Ẩn sản phẩm:
-                                    <input
-                                        type="checkbox"
-                                        checked={product.DELETED_AT !== null}
-                                        onChange={(e) => handleProductFieldChange(product.ID, 'deleted', e.target.checked)}
-                                    />
-                                </label>
-                            </td>
-                            <td className={styles.td}>
-                                <button onClick={() => updateProduct(product.ID)}>Lưu</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            {renderPagination()}
-
-
-            {/* -------------------------------------------------------------------------------------------- */}
-            <h2>Thêm danh mục mới</h2>
-            <input
-                type="text"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Nhập tên danh mục"
+            <ProductTable
+                products={products}
+                baseUrl={baseUrl}
+                mapCategoryName={mapCategoryName}
+                handleProductFieldChange={handleProductFieldChange}
+                updateProduct={updateProduct}
             />
-            <button onClick={addCategory}>Thêm</button>
 
-            {/* -------------------------------------------------------------------------------------------- */}
-            <h2>Thêm sản phẩm mới</h2>
-            <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    addProduct();
-                }}
-                className={styles.addProductForm}
-            >
-                <input
-                    type="text"
-                    placeholder="Tên sản phẩm"
-                    value={newProduct.name}
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Giá niêm yết"
-                    value={newProduct.price}
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({ ...prev, price: e.target.value }))
-                    }
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Số lượng tồn kho"
-                    value={newProduct.stock}
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({ ...prev, stock: e.target.value }))
-                    }
-                    required
-                />
-                <textarea
-                    placeholder="Mô tả sản phẩm"
-                    value={newProduct.description}
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({ ...prev, description: e.target.value }))
-                    }
-                />
-                <select
-                    value={newProduct.category}
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({ ...prev, category: e.target.value }))
-                    }
-                    required
-                >
-                    <option value="">Chọn danh mục</option>
-                    {categories.map((cat) => (
-                        <option key={cat.MADM} value={cat.MADM}>
-                            {cat.TENDM}
-                        </option>
-                    ))}
-                </select>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onInputPageChange={setInputPage}
+                inputPage={inputPage}
+            />
 
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                        setNewProduct((prev) => ({
-                            ...prev,
-                            imageFile: e.target.files[0], // Lưu tệp ảnh vào state
-                        }))
-                    }
-                />
+            <AddCategoryForm
+                newCategory={newCategory}
+                setNewCategory={setNewCategory}
+                addCategory={addCategory}
+            />
 
-                <button type="submit">Thêm sản phẩm</button>
-            </form>
-
-
-
+            <AddProductForm
+                categories={categories}
+                newProduct={newProduct}
+                setNewProduct={setNewProduct}
+                addProduct={addProduct}
+            />
         </div>
     );
 };
 
 export default ManageProductsPage;
-
