@@ -13,7 +13,7 @@ class KhuyenMai
     }
 
     // PDO --------------------------------------------------------------------------
-    
+
     /**
      * Lấy tất cả khuyến mãi (bao gồm cả những khuyến mãi đã hết hạn).
      */
@@ -143,5 +143,21 @@ class KhuyenMai
         }
 
         throw new \Exception("Không thể tạo khuyến mãi.");
+    }
+
+    public static function updateKhuyenMai($id, $data)
+    {
+        $pdo = self::getPDOConnection();
+        $sql = "UPDATE KHUYENMAI SET NGAYBD = :NGAYBD, NGAYKT = :NGAYKT, PHANTRAM = :PHANTRAM WHERE ID = :id";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':NGAYBD', $data['NGAYBD'], PDO::PARAM_STR);
+        $stmt->bindValue(':NGAYKT', $data['NGAYKT'], PDO::PARAM_STR);
+        $stmt->bindValue(':PHANTRAM', $data['PHANTRAM'], PDO::PARAM_INT);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+
+        if (!$stmt->execute()) {
+            throw new \Exception("Không thể cập nhật khuyến mãi.");
+        }
     }
 }

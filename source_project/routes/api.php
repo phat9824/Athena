@@ -31,7 +31,8 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::post('/api/admin/khuyenmai/create', [PromotionManagementController::class, 'createKhuyenMai']);
 
     // Route để cập nhập sản phẩm
-    Route::post('api/admin/trangsuc/update/{id}', [ProductManagementController::class, 'updateProduct']);
+    Route::post('/api/admin/trangsuc/update/{id}', [ProductManagementController::class, 'updateProduct']);
+    Route::post('/api/admin/khuyenmai/update/{id}', [PromotionManagementController::class, 'updateKhuyenMai']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
