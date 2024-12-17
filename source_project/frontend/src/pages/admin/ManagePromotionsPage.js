@@ -19,6 +19,13 @@ const ManagePromotionsPage = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    const handlePromoChange = (id, field, value) => {
+        setPromotions(prev =>
+            prev.map(p => p.ID === id ? { ...p, [field]: value } : p)
+        );
+    };
+
+
     // Fetch promotions
     const fetchPromotions = async (page) => {
         if (isFetching) return;
@@ -103,12 +110,12 @@ const ManagePromotionsPage = () => {
 
     const renderPagination = () => {
         if (totalPages <= 1) return null;
-    
+
         const pageNumbers = [];
         const maxVisibleButtons = 5;
         let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
         let endPage = Math.min(totalPages, currentPage + Math.floor(maxVisibleButtons / 2));
-    
+
         if (endPage - startPage + 1 < maxVisibleButtons) {
             if (startPage === 1) {
                 endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
@@ -116,11 +123,11 @@ const ManagePromotionsPage = () => {
                 startPage = Math.max(1, endPage - maxVisibleButtons + 1);
             }
         }
-    
+
         for (let i = startPage; i <= endPage; i++) {
             pageNumbers.push(i);
         }
-    
+
         return (
             <div className={styles.pagination}>
                 {/* Nút quay lại */}
@@ -131,7 +138,7 @@ const ManagePromotionsPage = () => {
                 >
                     ←
                 </button>
-    
+
                 {/* Các nút số trang */}
                 {pageNumbers.map((page) => (
                     <button
@@ -143,7 +150,7 @@ const ManagePromotionsPage = () => {
                         {page}
                     </button>
                 ))}
-    
+
                 {/* Nút tiếp theo */}
                 <button
                     onClick={() => setCurrentPage(currentPage + 1)}
@@ -155,7 +162,41 @@ const ManagePromotionsPage = () => {
             </div>
         );
     };
-    
+
+    // Hàm gọi API update
+    const updatePromotion = async (promoId, updatedData) => {
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie("XSRF-TOKEN");
+
+            const response = await fetch(`${baseUrl}/api/admin/khuyenmai/update/${promoId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    NGAYBD: updatedData.startDate,
+                    NGAYKT: updatedData.endDate,
+                    PHANTRAM: updatedData.discount
+                }),
+            });
+
+            const res = await response.json();
+            if (!response.ok) {
+                throw new Error(res.error || res.message || "Không thể cập nhật khuyến mãi");
+            }
+
+            setSuccessMessage("Cập nhật khuyến mãi thành công!");
+            setErrorMessage("");
+            fetchPromotions(currentPage); // Refresh danh sách khuyến mãi sau khi cập nhật
+        } catch (error) {
+            setErrorMessage(error.message);
+        }
+    };
+
 
     return (
         <div className={styles.container}>
@@ -187,11 +228,55 @@ const ManagePromotionsPage = () => {
                     {promotions.map((promo) => (
                         <tr key={promo.ID}>
                             <td>{promo.TENKM}</td>
-                            <td>{promo.NGAYBD}</td>
-                            <td>{promo.NGAYKT}</td>
-                            <td>{promo.PHANTRAM}%</td>
+                            <td>
+                                {promo.isEditing ? (
+                                    <input
+                                        type="date"
+                                        value={promo.editingStartDate || promo.NGAYBD}
+                                        onChange={(e) => handlePromoChange(promo.ID, 'editingStartDate', e.target.value)}
+                                    />
+                                ) : (
+                                    promo.NGAYBD
+                                )}
+                            </td>
+                            <td>
+                                {promo.isEditing ? (
+                                    <input
+                                        type="date"
+                                        value={promo.editingEndDate || promo.NGAYKT}
+                                        onChange={(e) => handlePromoChange(promo.ID, 'editingEndDate', e.target.value)}
+                                    />
+                                ) : (
+                                    promo.NGAYKT
+                                )}
+                            </td>
+                            <td>
+                                {promo.isEditing ? (
+                                    <input
+                                        type="number"
+                                        value={promo.editingDiscount !== undefined ? promo.editingDiscount : promo.PHANTRAM}
+                                        onChange={(e) => handlePromoChange(promo.ID, 'editingDiscount', e.target.value)}
+                                    />
+                                ) : (
+                                    `${promo.PHANTRAM}%`
+                                )}
+                            </td>
+                            <td>
+                                {promo.isEditing ? (
+                                    <button onClick={() => {
+                                        updatePromotion(promo.ID, {
+                                            startDate: promo.editingStartDate || promo.NGAYBD,
+                                            endDate: promo.editingEndDate || promo.NGAYKT,
+                                            discount: promo.editingDiscount !== undefined ? promo.editingDiscount : promo.PHANTRAM
+                                        });
+                                    }}>Lưu</button>
+                                ) : (
+                                    <button onClick={() => handlePromoChange(promo.ID, 'isEditing', true)}>Chỉnh sửa</button>
+                                )}
+                            </td>
                         </tr>
                     ))}
+
                 </tbody>
             </table>
 

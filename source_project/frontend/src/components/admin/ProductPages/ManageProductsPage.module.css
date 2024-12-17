@@ -1,0 +1,111 @@
+.container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.heading {
+    margin-bottom: 20px;
+}
+
+.inputGroup {
+    margin-bottom: 10px;
+}
+
+.input {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.select {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.errorMessage {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.successMessage {
+    color: green;
+    margin-bottom: 10px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.th, .td {
+    border: 1px solid #ccc;
+    padding: 0px;
+    text-align: center;
+}
+
+.th {
+    background-color: #f9f9f9;
+}
+
+/* Hiển thị hình ảnh */
+.thumbnailWrapper {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    width: 50px; 
+    height: 50px;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.thumbnailWrapper:hover .thumbnail {
+    transform: scale(4); /* Phóng to ảnh */
+    z-index: 10;
+    position: relative;
+}
+
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    align-items: center;
+    gap: 5px;
+}
+
+.paginationButton {
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.paginationButtonDisabled {
+    cursor: not-allowed;
+}
+
+.paginationInput {
+    width: 60px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.paginationGoButton {
+    padding: 5px 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
