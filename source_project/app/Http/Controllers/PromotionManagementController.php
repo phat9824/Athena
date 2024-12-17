@@ -99,4 +99,30 @@ class PromotionManagementController extends Controller
     {
         return KhuyenMai::checkCodeExists($code); // Gọi phương thức công khai từ model
     }
+
+    public function updateKhuyenMai($id, Request $request)
+    {
+        try {
+            // Validate dữ liệu đầu vào
+            $data = $request->validate([
+                'NGAYBD' => 'required|date',
+                'NGAYKT' => 'required|date|after_or_equal:NGAYBD',
+                'PHANTRAM' => 'required|numeric|min:0|max:100',
+            ]);
+
+            // Tìm khuyến mãi
+            $promo = KhuyenMai::findKhuyenMaiById($id);
+            if (!$promo) {
+                return response()->json(['message' => 'Không tìm thấy khuyến mãi'], 404);
+            }
+
+            // Cập nhật khuyến mãi
+            KhuyenMai::updateKhuyenMai($id, $data);
+
+            return response()->json(['message' => 'Cập nhật khuyến mãi thành công!'], 200);
+        } catch (Exception $e) {
+            Log::error('Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
+        }
+    }
 }
