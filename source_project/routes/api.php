@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\PromotionManagementController;
+use App\Http\Controllers\ThongKeController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -18,6 +19,8 @@ Route::post('/api/register', [AuthController::class, 'register']);
 Route::post('/api/login', [AuthController::class, 'login']);
 Route::get('/api/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
 Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
+Route::get('/api/thongke', [ThongKeController::class, 'getStatistics']);
+
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/admin/dashboard', [TestAPIController::class, 'adminDashboard']);
