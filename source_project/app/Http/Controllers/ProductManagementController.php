@@ -35,8 +35,8 @@ class ProductManagementController extends Controller
 
             $filters = [
                 'category' => $request->query('category', ''),
-                'priceMin' => $request->query('priceMin', ''), 
-                'priceMax' => $request->query('priceMax', ''), 
+                'priceMin' => $request->query('priceMin', ''),
+                'priceMax' => $request->query('priceMax', ''),
             ];
             $search = $request->query('search', '');
             $sort = $request->query('sort', 'asc');
@@ -101,6 +101,48 @@ class ProductManagementController extends Controller
             TrangSuc::createProduct($data);
 
             return response()->json(['message' => 'Thêm sản phẩm thành công!'], 201);
+        } catch (Exception $e) {
+            Log::error('Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
+        }
+    }
+    public static function updateProduct($id, Request $request)
+    {
+        try {
+            // Validate dữ liệu
+            $data = $request->validate([
+                'GIANIEMYET' => 'required|numeric',
+                'SLTK' => 'required|integer',
+                'deleted' => 'required|boolean'
+            ]);
+
+            // Tìm sản phẩm
+            $product = TrangSuc::findProductById($id);
+            if (!$product) {
+                return response()->json(['message' => 'Sản phẩm không tồn tại'], 404);
+            }
+
+            // Chuẩn bị dữ liệu cập nhật
+            $updateData = [
+                'GIANIEMYET' => $data['GIANIEMYET'],
+                'SLTK' => $data['SLTK']
+            ];
+
+            // Xử lý DELETED_AT
+            if ($data['deleted'] === true) {
+                $updateData['DELETED_AT'] = date('Y-m-d H:i:s'); // Set DELETED_AT là thời điểm hiện tại
+            } else {
+                $updateData['DELETED_AT'] = null; // Set DELETED_AT = null để khôi phục
+            }
+
+            // Gọi hàm cập nhật trong model
+            $res = TrangSuc::updateProductById($id, $updateData);
+
+            if ($res) {
+                return response()->json(['message' => 'Cập nhật sản phẩm thành công!'], 200);
+            } else {
+                return response()->json(['error' => 'Không thể cập nhật sản phẩm'], 500);
+            }
         } catch (Exception $e) {
             Log::error('Error: ' . $e->getMessage());
             return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
