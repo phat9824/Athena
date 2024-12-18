@@ -52,13 +52,13 @@ class AuthController extends Controller
                 ], 409);
             }
         }
-
+        
         try {
             $userData = [
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'role' => 0,
-                'tinhtrang' => 1
+                'EMAIL' => $request->email,
+                'PASSWORD' => Hash::make($request->password),
+                'ROLE' => 0,
+                'TINHTRANG' => 1
             ];
             
             $taiKhoan = TaiKhoan::createUser($userData);
