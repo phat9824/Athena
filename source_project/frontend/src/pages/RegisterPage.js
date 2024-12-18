@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../AppContext.js';
+import '../styles/RegisterPage.css';
 
 const Register = () => {
     const { getCSRFToken, getCookie, baseUrl} = useAppContext();
@@ -53,8 +54,8 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h1>Trang Đăng Ký</h1>
+        <div class="register-container"> 
+            <h1>Đăng ký tài khoản</h1>
             {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
             <form onSubmit={handleRegister}>
@@ -82,7 +83,7 @@ const Register = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                <button type="submit">Đăng Ký</button>
+                <button id="button-register" type="submit">Đăng Ký</button>
             </form>
         </div>
     );

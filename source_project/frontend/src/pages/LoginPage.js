@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../AppContext.js';
 import Notification from '../components/user-components/Notification.js';
+import '../styles/LoginPage.css';
 
 const Login = () => {
     const { getCSRFToken, getCookie, baseUrl, login} = useAppContext();
@@ -50,8 +51,9 @@ const Login = () => {
     };
 
     return (
-        <div>
-            <h1>Trang Đăng Nhập</h1>
+        <div class="login-container"> 
+            <h1>Chào mừng bạn trở lại</h1> 
+            <h2> Đăng nhập để tiếp tục</h2>
             <form onSubmit={handleLogin}>
                 <input
                     id="email-login"
@@ -69,7 +71,7 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit" disabled={isLoading}>
+                <button id="button-login"type="submit" disabled={isLoading}>
                     {isLoading ? 'Đang xử lý...' : 'Đăng Nhập'}
                 </button>
 
@@ -85,7 +87,7 @@ const Login = () => {
             <p>
                 Chưa có tài khoản?{' '}
                 <span className="register-link" onClick={() => navigate('../Register')}>
-                    Đăng ký
+                    <b id="b-dangky"> Đăng ký </b>
                 </span>
             </p>
         </div>
