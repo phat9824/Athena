@@ -129,6 +129,9 @@ SET @admin_id = LAST_INSERT_ID();
 INSERT INTO ADMIN (ID, TENADMIN, SDT, DIACHI) 
 VALUES (@admin_id, 'Trần Tiến P', '0123456780', '505 Đường G, HCM');
 
+
+-- admin1@gmail.com
+-- 123456
 INSERT INTO TAIKHOAN (EMAIL, PASSWORD, ROLE, TINHTRANG) 
 VALUES ('admin1@gmail.com', '$2y$10$DPKNeF3xz/clbIKX.uTML./3pdsWJxl1l/abqpp0OnUknnHL5Wwiu', 2, 1);
 SET @admin_id = LAST_INSERT_ID();

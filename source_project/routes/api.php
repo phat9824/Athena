@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\PromotionManagementController;
+use App\Http\Controllers\EmployeeManagerController;
 use App\Http\Controllers\ThongKeController;
 
 // Test API
@@ -41,6 +42,14 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
     Route::post('/api/danhmucts/create', [DanhMucController::class, 'createDanhMuc']);
     Route::put('/api/danhmucts/update/{id}', [DanhMucController::class, 'updateDanhMuc']);
+
+    // quản lý nhân viên
+    Route::get('/api/admin/employees', [EmployeeManagerController::class, 'getEmployees']);
+    Route::post('/api/admin/employees/create', [EmployeeManagerController::class, 'createEmployee']);
+
+    Route::post('/api/admin/employees/update-info', [EmployeeManagerController::class, 'updateEmployeeInfo']);
+    Route::post('/api/admin/employees/update-password', [EmployeeManagerController::class, 'updateEmployeePassword']);
+
 });
 
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {
