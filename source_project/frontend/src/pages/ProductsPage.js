@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../AppContext.js";
 import { useNavigate } from "react-router-dom";
+import Banner from '../components/user-components/banner-product.js';
 import styles from "./ProductsPage.module.css";
 
 const ProductsPage = () => {
@@ -179,8 +180,9 @@ const ProductsPage = () => {
     };
 
     return (
+        <div>
+            <Banner/>
         <div className={styles.container}>
-            <h1>Sản phẩm</h1>
             {notification && (
                 <div
                     className={styles.notification}
@@ -266,6 +268,7 @@ const ProductsPage = () => {
             )}
             {renderPagination()}
         </div>
+    </div>
     );
 };
 

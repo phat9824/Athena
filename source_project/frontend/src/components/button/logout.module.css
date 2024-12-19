@@ -1,14 +1,16 @@
 .btnLogout1 {
     margin-top: auto; 
     padding: 15px 20px;
-    background-color: #8b2133;
+    background-color: darkblue;
+    color: white;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .btnLogout1:hover {
-    background-color: #e6476f;
+    background-color:#7296f9;
+    color: black;
 }
 
 .logoutLink {
