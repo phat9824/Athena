@@ -46,7 +46,7 @@ form {
 }
 
 #email-login:hover {
-    border-color: #4CAF50;
+    border-color: #4e4741;
 }
 
 #email-login:disabled {
@@ -75,7 +75,7 @@ form {
 }
 
 #password-login:hover {
-    border-color: #4CAF50; 
+    border-color: #4e4741; 
 }
 
 #password-login:disabled {
@@ -86,7 +86,7 @@ form {
 }
 
 #button-login {
-    background-color: #4CAF50; 
+    background-color: #4e4741; 
     color: white; 
     padding: 12px 24px; 
     font-size: 16px; 
@@ -100,13 +100,14 @@ form {
 }
 
 #button-login:hover {
-    background-color: #45a049; 
+    background-color:#666666; 
+    color: white;
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); 
     transform: translateY(-2px); 
 }
 
 #button-login:active {
-    background-color: #3e8e41; 
+    background-color: #4e4741; 
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
     transform: translateY(1px);
 }

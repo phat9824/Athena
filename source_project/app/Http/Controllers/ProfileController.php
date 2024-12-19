@@ -40,6 +40,38 @@ class ProfileController extends Controller
         }
     }
 
+    public function getCustomerandAccount()
+    {
+        try {
+            $pdo = DB::connection()->getPdo();
+
+            $sql = "SELECT 
+                        TAIKHOAN.ID,
+                        TAIKHOAN.EMAIL,
+                        TAIKHOAN.ROLE,
+                        TAIKHOAN.TINHTRANG,
+                        KHACHHANG.TENKH,
+                        KHACHHANG.SDT,
+                        KHACHHANG.DIACHI,
+                        KHACHHANG.LOAI,
+                        KHACHHANG.GIOITINH,
+                        KHACHHANG.IMAGEURL
+                    FROM TAIKHOAN
+                    JOIN KHACHHANG ON TAIKHOAN.ID = KHACHHANG.ID
+                    WHERE TAIKHOAN.ROLE = 0
+                      AND TAIKHOAN.DELETED_AT IS NULL";
+
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+            $customers = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            return response()->json($customers);
+        } catch (Exception $e) {
+            Log::error('Lỗi khi lấy dữ liệu khách hàng và tài khoản: ' . $e->getMessage());
+            return response()->json(['error' => 'Có lỗi xảy ra: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function updateProfile(Request $request)
     {
         try {
