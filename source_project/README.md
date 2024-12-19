@@ -132,3 +132,7 @@ npm start
 Đang cập nhật ...
 **Triển khai công khai trên internet**
 Đang cập nhật ...
+
+- Từ thu mục frontend, chạy lệnh để tạo các chart
+```bash
+npm install chart.js react-chartjs-2
