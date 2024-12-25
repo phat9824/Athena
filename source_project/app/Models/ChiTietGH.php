@@ -142,6 +142,52 @@ class ChiTietGH extends Model
         }
     }
 
+    public static function addOrUpdateCartItem($cartId, $productId, $quantity)
+    {
+        $pdo = self::getPDOConnection();
+
+        try {
+            // Kiểm tra xem sản phẩm đã tồn tại trong giỏ hàng chưa
+            $sqlCheck = "SELECT SOLUONG FROM CHITIETGH WHERE ID_GIOHANG = :cartId AND ID_TRANGSUC = :productId";
+            $stmtCheck = $pdo->prepare($sqlCheck);
+            $stmtCheck->execute([
+                'cartId' => $cartId,
+                'productId' => $productId,
+            ]);
+            $existingItem = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+            if ($existingItem) {
+                // Nếu đã tồn tại, cập nhật số lượng
+                $newQuantity = $existingItem['SOLUONG'] + $quantity;
+                $sqlUpdate = "UPDATE CHITIETGH SET SOLUONG = :newQuantity WHERE ID_GIOHANG = :cartId AND ID_TRANGSUC = :productId";
+                $stmtUpdate = $pdo->prepare($sqlUpdate);
+                $stmtUpdate->execute([
+                    'newQuantity' => $newQuantity,
+                    'cartId' => $cartId,
+                    'productId' => $productId,
+                ]);
+            } else {
+                // Nếu chưa tồn tại, thêm sản phẩm mới
+                $sqlInsert = "INSERT INTO CHITIETGH (ID_GIOHANG, ID_TRANGSUC, SOLUONG) VALUES (:cartId, :productId, :quantity)";
+                $stmtInsert = $pdo->prepare($sqlInsert);
+                $stmtInsert->execute([
+                    'cartId' => $cartId,
+                    'productId' => $productId,
+                    'quantity' => $quantity,
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Error adding or updating cart item', [
+                'cartId' => $cartId,
+                'productId' => $productId,
+                'quantity' => $quantity,
+                'exception' => $e->getMessage(),
+            ]);
+            throw $e;
+        }
+    }
+
+
     public static function deleteCartItemsByCartId($cartId)
     {
         $pdo = DB::connection()->getPdo();

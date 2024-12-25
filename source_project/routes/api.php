@@ -19,6 +19,8 @@ Route::post('/api/upload', [TestAPIController::class, 'upload']);
 Route::post('/api/register', [AuthController::class, 'register']);
 Route::post('/api/login', [AuthController::class, 'login']);
 Route::get('/api/trangsuc', [ProductManagementController::class, 'getPaginatedProducts']);
+Route::get('/api/trangsuc/{id}', [ProductManagementController::class, 'getProductDetails']);
+Route::get('/api/trangsuc/random/{excludeId}', [ProductManagementController::class, 'getRandomProducts']);
 Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
 Route::get('/api/thongke', [ThongKeController::class, 'getStatistics']);
 
@@ -60,5 +62,6 @@ Route::middleware(['auth:api', 'check.role:0'])->group(function () {
     Route::get('api/customer/cart', [OrderController::class, 'getCart']);
     Route::post('api/customer/cart/update', [OrderController::class, 'updateCart']);
     Route::post('/api/customer/cart/checkout', [OrderController::class, 'checkout']);
+    Route::post('/api/customer/cart/add', [OrderController::class, 'addToCart']);
     Route::get('api/customer/history/', [OrderController::class, 'getOrderHistory']);
 });

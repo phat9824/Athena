@@ -85,5 +85,31 @@ class OrderController extends Controller
         }
     }
 
+    public function addToCart(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+            $userId = $user->ID;
+            $cart = GioHang::getCartByUserId($userId);
+
+            if (!$cart) {
+                $cartId = GioHang::createCartForUser($userId);
+                $cart = ['ID_GIOHANG' => $cartId];
+            }
+
+            $productId = $request->input('ID_TRANGSUC');
+            $quantity = $request->input('SOLUONG', 1);
+            ChiTietGH::addOrUpdateCartItem($cart['ID_GIOHANG'], $productId, $quantity);
+
+            return response()->json(['message' => 'Sản phẩm đã được thêm vào giỏ hàng'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error adding product to cart', [
+                'exception' => $e->getMessage(),
+            ]);
+            return response()->json(['message' => 'Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng'], 500);
+        }
+    }
+
+
 }
 
