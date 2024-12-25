@@ -424,8 +424,8 @@ INSERT INTO CHITIETHD VALUES
 
 -- Thêm dữ liệu KHUYENMAI ----------------------------------------------------------------
 INSERT INTO KHUYENMAI (MAKM, TENKM, NGAYBD, NGAYKT, PHANTRAM) VALUES
-('KM001', 'Khuyến mãi Tết Nguyên Đán', '2024-01-15', '2024-01-31', 15),
-('KM002', 'Mùa Valentine yêu thương', '2024-02-01', '2024-02-14', 20),
+('KM001', 'Khuyến mãi đặc biệt', '2024-01-01', '2024-12-31', 15),
+('KM002', 'Giáng sinh', '2024-12-20', '2024-12-30', 30),
 ('KM003', 'Ưu đãi Quốc tế Phụ nữ', '2024-03-01', '2024-03-08', 25),
 ('KM004', 'Chào Hè rực rỡ', '2024-05-01', '2024-05-31', 10),
 ('KM005', 'Giảm giá Quốc tế Lao động', '2024-05-01', '2024-05-07', 30),
@@ -434,3 +434,18 @@ INSERT INTO KHUYENMAI (MAKM, TENKM, NGAYBD, NGAYKT, PHANTRAM) VALUES
 ('KM008', 'Mùa lễ hội Giáng sinh', '2024-12-01', '2024-12-25', 35),
 ('KM009', 'Ưu đãi Black Friday', '2024-11-25', '2024-11-30', 50),
 ('KM010', 'Khuyến mãi chào năm mới', '2024-12-26', '2025-01-05', 40);
+
+INSERT INTO KM_DANHMUC (ID_KHUYENMAI, MADM) VALUES
+(1, 'DM00'),
+(1, 'DM01'),
+(1, 'DM02'),
+(1, 'DM03'),
+(1, 'DM04');
+
+INSERT INTO KM_TRANGSUC (ID_KHUYENMAI, ID_TRANGSUC) VALUES
+(1, 1),
+(1, 3);
+(2, 5),
+(2, 6);
+(2, 7),
+(2, 8);

@@ -29,4 +29,14 @@ class GioHang extends Model
         $stmt->execute(['userId' => $userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public static function createCartForUser($userId)
+    {
+        $pdo = self::getPDOConnection();
+        $sql = "INSERT INTO GIOHANG (ID_KHACHHANG) VALUES (:userId)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute(['userId' => $userId]);
+        return $pdo->lastInsertId();
+    }
+
 }

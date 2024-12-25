@@ -118,6 +118,131 @@ class TrangSuc extends Model
         ];
     }
 
+    public static function applyBestDiscount($products)
+    {
+        $pdo = self::getPDOConnection();
+
+        foreach ($products as &$product) {
+            $productId = $product['ID'];
+            $categoryId = $product['MADM'];
+
+            // Lấy phần trăm khuyến mãi từ KM_TRANGSUC
+            $queryProductDiscount = "SELECT MAX(PHANTRAM) AS max_discount 
+                                    FROM KHUYENMAI 
+                                    JOIN KM_TRANGSUC ON KHUYENMAI.ID = KM_TRANGSUC.ID_KHUYENMAI 
+                                    WHERE KM_TRANGSUC.ID_TRANGSUC = :productId 
+                                    AND NOW() BETWEEN NGAYBD AND NGAYKT";
+            $stmtProduct = $pdo->prepare($queryProductDiscount);
+            $stmtProduct->bindValue(':productId', $productId, PDO::PARAM_INT);
+            $stmtProduct->execute();
+            $productDiscount = $stmtProduct->fetch(PDO::FETCH_ASSOC)['max_discount'];
+
+            // Lấy phần trăm khuyến mãi từ KM_DANHMUC
+            $queryCategoryDiscount = "SELECT MAX(PHANTRAM) AS max_discount 
+                                    FROM KHUYENMAI 
+                                    JOIN KM_DANHMUC ON KHUYENMAI.ID = KM_DANHMUC.ID_KHUYENMAI 
+                                    WHERE KM_DANHMUC.MADM = :categoryId 
+                                        AND NOW() BETWEEN NGAYBD AND NGAYKT";
+            $stmtCategory = $pdo->prepare($queryCategoryDiscount);
+            $stmtCategory->bindValue(':categoryId', $categoryId, PDO::PARAM_STR);
+            $stmtCategory->execute();
+            $categoryDiscount = $stmtCategory->fetch(PDO::FETCH_ASSOC)['max_discount'];
+
+            // Lấy khuyến mãi cao nhất
+            $bestDiscount = max($productDiscount, $categoryDiscount);
+            $product['BEST_DISCOUNT'] = $bestDiscount ?: 0;
+            $product['DISCOUNTED_PRICE'] = $product['GIANIEMYET'] * (1 - $product['BEST_DISCOUNT'] / 100);
+        }
+
+        return $products;
+    }
+
+    // Tìm và phân trang với khuyến mãi
+    public static function filterProducts2($filters = [], $search = '', $offset = 0, $limit = 10, $sort = 'asc', $sortBy = 'price')
+    {
+        $pdo = self::getPDOConnection();
+        $params = [];
+        $baseSql = "FROM TRANGSUC 
+                    LEFT JOIN (
+                        SELECT KM_TRANGSUC.ID_TRANGSUC, MAX(PHANTRAM) AS BEST_DISCOUNT
+                        FROM KHUYENMAI
+                        JOIN KM_TRANGSUC ON KHUYENMAI.ID = KM_TRANGSUC.ID_KHUYENMAI
+                        WHERE NOW() BETWEEN NGAYBD AND NGAYKT
+                        GROUP BY KM_TRANGSUC.ID_TRANGSUC
+                    ) AS KM1 ON TRANGSUC.ID = KM1.ID_TRANGSUC
+                    LEFT JOIN (
+                        SELECT MADM, MAX(PHANTRAM) AS CATEGORY_DISCOUNT
+                        FROM KHUYENMAI
+                        JOIN KM_DANHMUC ON KHUYENMAI.ID = KM_DANHMUC.ID_KHUYENMAI
+                        WHERE NOW() BETWEEN NGAYBD AND NGAYKT
+                        GROUP BY MADM
+                    ) AS KM2 ON TRANGSUC.MADM = KM2.MADM";
+
+        $baseSql .= " WHERE DELETED_AT IS NULL";
+
+        // Lọc theo danh mục
+        if (!empty($filters['category'])) {
+            $baseSql .= " AND TRANGSUC.MADM = :category";
+            $params[':category'] = $filters['category'];
+        }
+
+        // Lọc theo giá tối thiểu sau khi giảm
+        if (!empty($filters['priceMin'])) {
+            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) >= :priceMin";
+            $params[':priceMin'] = $filters['priceMin'];
+        }
+
+        // Lọc theo giá tối đa sau khi giảm
+        if (!empty($filters['priceMax'])) {
+            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) <= :priceMax";
+            $params[':priceMax'] = $filters['priceMax'];
+        }
+
+        // Tìm kiếm theo tên sản phẩm
+        if (!empty($search)) {
+            $baseSql .= " AND TENTS LIKE :search";
+            $params[':search'] = "%$search%";
+        }
+
+        // Sắp xếp
+        $sortColumn = match ($sortBy) {
+            'discount' => "COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT), 0)",
+            'price' => "GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))",
+            default => "GIANIEMYET",
+        };
+
+        // Tính tổng số sản phẩm
+        $countSql = "SELECT COUNT(*) AS total " . $baseSql;
+        $countStmt = $pdo->prepare($countSql);
+        foreach ($params as $key => $value) {
+            $countStmt->bindValue($key, $value);
+        }
+        $countStmt->execute();
+        $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        // Lấy danh sách sản phẩm với phân trang và sắp xếp
+        $productSql = "SELECT TRANGSUC.*, 
+                            COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT), 0) AS BEST_DISCOUNT,
+                            (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) AS DISCOUNTED_PRICE 
+                    " . $baseSql . " 
+                    ORDER BY $sortColumn " . ($sort === 'desc' ? 'DESC' : 'ASC') . " 
+                    LIMIT :offset, :limit";
+        $params[':offset'] = $offset;
+        $params[':limit'] = $limit;
+
+        $productStmt = $pdo->prepare($productSql);
+        foreach ($params as $key => $value) {
+            $productStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
+        $productStmt->execute();
+        $products = $productStmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'total' => $total,
+            'products' => $products,
+        ];
+    }
+
 
     // Đếm tổng số sản phẩm
     public static function countAllProducts()
@@ -243,4 +368,23 @@ class TrangSuc extends Model
 
         return $stmt->fetchAll();
     }
+
+    // Lấy sản phẩm ngẫu nhiên
+    public static function findRandomProducts($excludeId, $limit = 20)
+    {
+        $pdo = self::getPDOConnection();
+        $sql = "
+            SELECT * 
+            FROM TRANGSUC 
+            WHERE ID != :excludeId AND DELETED_AT IS NULL 
+            ORDER BY RAND() 
+            LIMIT :limit
+        ";
+        $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':excludeId', $excludeId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

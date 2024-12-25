@@ -19,6 +19,7 @@ const ProductsPage = () => {
         priceMin: "",
         priceMax: "",
         sort: "asc",
+        sortBy: "",
     });
 
     const perPage = 16;
@@ -181,94 +182,105 @@ const ProductsPage = () => {
 
     return (
         <div>
-            <Banner/>
-        <div className={styles.container}>
-            {notification && (
-                <div
-                    className={styles.notification}
-                    style={{ color: notification.type === "error" ? "red" : "green" }}
-                >
-                    {notification.message}
+            <Banner />
+            <div className={styles.container}>
+                {notification && (
+                    <div
+                        className={styles.notification}
+                        style={{ color: notification.type === "error" ? "red" : "green" }}
+                    >
+                        {notification.message}
+                    </div>
+                )}
+                <div className={styles.filters}>
+                    <select
+                        value={filters.category}
+                        onChange={(e) => handleFilterChange("category", e.target.value)}
+                        className={styles.filterSelect}
+                    >
+                        <option value="">Tất cả danh mục</option>
+                        {categories.map((category) => (
+                            <option key={category.MADM} value={category.MADM}>
+                                {category.TENDM}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        type="number"
+                        placeholder="Giá thấp nhất"
+                        value={filters.priceMin}
+                        onChange={(e) => handleFilterChange("priceMin", e.target.value)}
+                        className={styles.filterInput}
+                    />
+                    <input
+                        type="number"
+                        placeholder="Giá cao nhất"
+                        value={filters.priceMax}
+                        onChange={(e) => handleFilterChange("priceMax", e.target.value)}
+                        className={styles.filterInput}
+                    />
+                    <select
+                        value={filters.sortBy}
+                        onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+                        className={styles.filterSelect}
+                    >
+                        <option value="price">Giá</option>
+                        <option value="discount">Khuyến mãi (%)</option>
+                    </select>
+
+                    <select
+                        value={filters.sort}
+                        onChange={(e) => handleFilterChange("sort", e.target.value)}
+                        className={styles.filterSelect}
+                    >
+                        <option value="asc">Tăng dần</option>
+                        <option value="desc">Giảm dần</option>
+                    </select>
                 </div>
-            )}
-            <div className={styles.filters}>
-                <select
-                    value={filters.category}
-                    onChange={(e) => handleFilterChange("category", e.target.value)}
-                    className={styles.filterSelect}
-                >
-                    <option value="">Tất cả danh mục</option>
-                    {categories.map((category) => (
-                        <option key={category.MADM} value={category.MADM}>
-                            {category.TENDM}
-                        </option>
-                    ))}
-                </select>
-                <input
-                    type="number"
-                    placeholder="Giá thấp nhất"
-                    value={filters.priceMin}
-                    onChange={(e) => handleFilterChange("priceMin", e.target.value)}
-                    className={styles.filterInput}
-                />
-                <input
-                    type="number"
-                    placeholder="Giá cao nhất"
-                    value={filters.priceMax}
-                    onChange={(e) => handleFilterChange("priceMax", e.target.value)}
-                    className={styles.filterInput}
-                />
-                <select
-                    value={filters.sort}
-                    onChange={(e) => handleFilterChange("sort", e.target.value)}
-                    className={styles.filterSelect}
-                >
-                    <option value="asc">Giá tăng dần</option>
-                    <option value="desc">Giá giảm dần</option>
-                </select>
-            </div>
-            {isLoading ? (
-                <p>Đang tải...</p>
-            ) : (
-                <div className={styles.productsGrid}>
-                    {products.map((product) => (
-                        <div key={product.ID} className={styles.productCard}>
-                            <img
-                                src={`${baseUrl}${product.IMAGEURL}`}
-                                alt={product.TENTS}
-                                className={styles.productImage}
-                            />
-                            <h3 className={styles.productName}>
-                                {product.TENTS}
-                            </h3>
-                            <div className={styles.priceDetails}>
-                                <div className={styles.priceLeft}>
-                                    <p className={styles.productPrice}>
-                                        {product.GIANIEMYET.toLocaleString()} VND
-                                    </p>
-                                    <p className={styles.discountPrice}>
-                                        {(product.GIANIEMYET * 0.9).toLocaleString()} VND
-                                    </p>
-                                </div>
-                                <div className={styles.priceRight}>
-                                    <div className={styles.discountPercent}>
-                                        <i className="fas fa-tag"></i> -10%
+                {isLoading ? (
+                    <p>Đang tải...</p>
+                ) : (
+                    <div className={styles.productsGrid}>
+                        {products.map((product) => (
+                            <div key={product.ID} className={styles.productCard}>
+                                <img
+                                    src={`${baseUrl}${product.IMAGEURL}`}
+                                    alt={product.TENTS}
+                                    className={styles.productImage}
+                                />
+                                <h3 className={styles.productName}>
+                                    {product.TENTS}
+                                </h3>
+                                <div className={styles.priceDetails}>
+                                    <div className={styles.priceLeft}>
+                                        <p className={styles.productPrice}>
+                                            {product.GIANIEMYET.toLocaleString()} VND
+                                        </p>
+                                        <p className={styles.discountPrice}>
+                                            {product.DISCOUNTED_PRICE.toLocaleString()} VND
+                                        </p>
                                     </div>
-                                    <button
-                                        onClick={() => handleViewDetails(product.ID)}
-                                        className={styles.detailButton}
-                                    >
-                                        Mua ngay 
-                                    </button>
+                                    <div className={styles.priceRight}>
+                                        {product.BEST_DISCOUNT > 0 && (
+                                            <div className={styles.discountPercent}>
+                                                <i className="fas fa-tag"></i> {product.BEST_DISCOUNT}%
+                                            </div>
+                                        )}
+                                        <button
+                                            onClick={() => handleViewDetails(product.ID)}
+                                            className={styles.detailButton}
+                                        >
+                                            Mua ngay
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-            {renderPagination()}
+                        ))}
+                    </div>
+                )}
+                {renderPagination()}
+            </div>
         </div>
-    </div>
     );
 };
 

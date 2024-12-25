@@ -40,12 +40,16 @@ class ProductManagementController extends Controller
             ];
             $search = $request->query('search', '');
             $sort = $request->query('sort', 'asc');
+            $sortBy = $request->query('sortBy', 'price');
 
             $offset = ($page - 1) * $perPage;
 
-            $result = TrangSuc::filterProducts($filters, $search, $offset, $perPage, $sort);
+            //$result = TrangSuc::filterProducts($filters, $search, $offset, $perPage, $sort);
+            $result = TrangSuc::filterProducts2($filters, $search, $offset, $perPage, $sort, $sortBy);
             $products = $result['products'];
             $total = $result['total'];
+
+            $products = TrangSuc::applyBestDiscount($products);
 
             return response()->json([
                 'data' => $products,
@@ -148,4 +152,40 @@ class ProductManagementController extends Controller
             return response()->json(['error' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
         }
     }
+
+    public static function getProductDetails($id)
+    {
+        try {
+            $product = TrangSuc::findProductById($id);
+    
+            if (!$product) {
+                return response()->json(['error' => 'Sản phẩm không tồn tại!'], 404);
+            }
+
+            $productsWithDiscount = TrangSuc::applyBestDiscount([$product]);
+            $productWithDiscount = $productsWithDiscount[0];
+    
+            return response()->json($productWithDiscount);
+        } catch (Exception $e) {
+            Log::error('Error fetching product details: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function getRandomProducts($excludeId)
+    {
+        try {
+            $randomProducts = TrangSuc::findRandomProducts($excludeId);
+
+            $randomProducts = TrangSuc::applyBestDiscount($randomProducts);
+
+            return response()->json($randomProducts);
+        } catch (Exception $e) {
+            Log::error('Error fetching random products: ' . $e->getMessage());
+            return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+
 }
