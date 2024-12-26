@@ -60,9 +60,11 @@ class HoaDon extends Model
             if (empty($cartItems)) {
                 throw new \Exception('Giỏ hàng trống');
             }
+            $cartItems = TrangSuc::applyBestDiscount($cartItems);
 
             $totalValue = array_reduce($cartItems, function ($sum, $item) {
-                return $sum + $item['GIANIEMYET'] * $item['SOLUONG'];
+                $discountedPrice = $item['GIANIEMYET'] * (1 - ($item['BEST_DISCOUNT'] ?? 0) / 100);
+                return $sum + $discountedPrice * $item['SOLUONG'];
             }, 0);
 
             $sqlHoaDon = "INSERT INTO HOADON (ID_KHACHHANG, NGAYLAPHD, TRIGIAHD, TIENPHAITRA, TRANGTHAI) 
@@ -85,7 +87,7 @@ class HoaDon extends Model
                     'idHoaDon' => $invoiceId,
                     'idTrangSuc' => $item['ID_TRANGSUC'],
                     'soLuong' => $item['SOLUONG'],
-                    'giaSP' => $item['GIANIEMYET'],
+                    'giaSP' => $item['GIANIEMYET'] * (1 - ($item['BEST_DISCOUNT'] ?? 0) / 100),
                 ]);
             }
 

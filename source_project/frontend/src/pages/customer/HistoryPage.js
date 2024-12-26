@@ -37,8 +37,8 @@ const HistoryPage = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const orderData = await response.json();
-            setOrders(orderData);
+            const data = await response.json();
+            setOrders(data.orders);
         } catch (error) {
             console.error('Error fetching order history:', error);
             setNotification({ message: 'Đã xảy ra lỗi khi tải lịch sử đơn hàng!', type: 'error' });
@@ -69,12 +69,12 @@ const HistoryPage = () => {
         .filter((order) => filters.status === 'all')
         .sort((a, b) => {
             if (filters.sortBy === 'time') {
-                return filters.sortOrder === 'asc' 
+                return filters.sortOrder === 'asc'
                     ? new Date(a.NGAYLAPHD) - new Date(b.NGAYLAPHD) // Sắp xếp tăng dần
                     : new Date(b.NGAYLAPHD) - new Date(a.NGAYLAPHD);
             }
             if (filters.sortBy === 'value') {
-                return filters.sortOrder === 'asc' 
+                return filters.sortOrder === 'asc'
                     ? a.TRIGIAHD - b.TRIGIAHD // Sắp xếp tăng dần
                     : b.TRIGIAHD - a.TRIGIAHD;
             }
@@ -88,17 +88,17 @@ const HistoryPage = () => {
     return (
         <div className={styles.historyPage}>
             <div className={styles.historyContainer}>
-                <h1>Lịch sử đơn hàng</h1>
+                
                 <div className={styles.filtersContainer}>
                     <select name="sortBy" value={filters.sortBy} onChange={handleFilterChange}>
-                        <option value="time">Sắp xếp theo thời gian</option>
-                        <option value="value">Sắp xếp theo giá trị</option>
+                        <option value="time">Thời gian</option>
+                        <option value="value">Giá trị</option>
                     </select>
                     <button
                         className={`${styles.sortOrderToggle} ${filters.sortOrder === 'asc' ? styles.active : ''}`}
                         onClick={() => setFilters((prev) => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
                     >
-                        {filters.sortOrder === 'asc' ? '▲' : '▼'}
+                        {filters.sortOrder === 'asc' ? '▲ Tăng dần' : '▼ Giảm dần'}
                     </button>
                     <select name="status" value={filters.status} onChange={handleFilterChange}>
                         <option value="all">Tất cả trạng thái</option>
@@ -127,10 +127,7 @@ const HistoryPage = () => {
                                                 <FontAwesomeIcon icon={faCalendar} className={styles.icon} />
                                                 <p>Ngày Mua: {order.NGAYLAPHD}</p>
                                             </div>
-                                            <div className={styles.iconText}>
-                                                <FontAwesomeIcon icon={order.TRANGTHAI === 0 ? faCheck : faBan} className={styles.icon} />
-                                                <p>Trạng Thái: {order.TRANGTHAI === 0 ? 'Chờ xử lý' : order.TRANGTHAI === 1 ? 'Đã xử lý' : 'Đã hủy'}</p>
-                                            </div>
+
                                         </div>
 
                                         <div className={styles.orderFooter}>
@@ -139,12 +136,8 @@ const HistoryPage = () => {
                                                 <p>Tổng Giá Trị: {order.TRIGIAHD.toLocaleString()} VNĐ</p>
                                             </div>
                                             <div className={styles.iconText}>
-                                                <FontAwesomeIcon icon={faMoneyBill} className={styles.icon} />
-                                                <p>Số Tiền Trả: {order.TIENPHAITRA.toLocaleString()} VNĐ</p>
-                                            </div>
-                                            <div className={styles.iconText}>
-                                                <FontAwesomeIcon icon={faHandHoldingUsd} className={styles.icon} />
-                                                <p>Tiết Kiệm: {tienTietKiem.toLocaleString()} VNĐ</p>
+                                                <FontAwesomeIcon icon={order.TRANGTHAI === 0 ? faCheck : faBan} className={styles.icon} />
+                                                <p>Trạng Thái: {order.TRANGTHAI === 0 ? 'Chờ xử lý' : order.TRANGTHAI === 1 ? 'Đã xử lý' : 'Đã hủy'}</p>
                                             </div>
                                         </div>
 

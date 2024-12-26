@@ -23,7 +23,8 @@ class ChiTietGH extends Model
     {
         $pdo = self::getPDOConnection();
         $sql = "SELECT 
-                    TRANGSUC.ID AS ID_TRANGSUC, 
+                    TRANGSUC.ID AS ID_TRANGSUC,
+                    TRANGSUC.MADM,
                     TRANGSUC.TENTS, 
                     TRANGSUC.GIANIEMYET, 
                     TRANGSUC.IMAGEURL, 

@@ -9,7 +9,7 @@ const ProductDetailsPage = () => {
     const { id } = useParams(); 
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
     const [product, setProduct] = useState(null);
-    const [quantity, setQuantity] = useState(1); // Trạng thái quản lý số lượng
+    const [quantity, setQuantity] = useState(1);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [isLoadingProduct, setIsLoadingProduct] = useState(false);
     const [isLoadingRelated, setIsLoadingRelated] = useState(false);
