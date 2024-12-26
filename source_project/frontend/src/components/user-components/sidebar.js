@@ -40,7 +40,7 @@ const Sidebar = ({ className }) => {
                         Giỏ hàng
                     </NavLink>
                 </li>
-                <li>
+                {/* <li>
                     <NavLink
                         to="Coupons"
                         className={({ isActive }) =>
@@ -49,7 +49,7 @@ const Sidebar = ({ className }) => {
                     >
                         Mã khuyến mãi
                     </NavLink>
-                </li>
+                </li> */}
                 <LogoutButton onLogout={logout}/>
             </ul>
         </aside>

@@ -123,7 +123,7 @@ class TrangSuc extends Model
         $pdo = self::getPDOConnection();
 
         foreach ($products as &$product) {
-            $productId = $product['ID'];
+            $productId = $product['ID'] ?? $product['ID_TRANGSUC'] ?? null;
             $categoryId = $product['MADM'];
 
             // Lấy phần trăm khuyến mãi từ KM_TRANGSUC

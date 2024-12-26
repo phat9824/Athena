@@ -95,6 +95,7 @@ class ProfileController extends Controller
                 // Lưu vào storage/app/public/images
                 $file->storeAs('images', $filename, 'public');
                 $updateData['IMAGEURL'] = '/storage/images/' . $filename; 
+                KhachHang::updateAttributeById($user->ID, 'IMAGEURL', $updateData['IMAGEURL']);
             }
 
             // Lấy lại thông tin mới

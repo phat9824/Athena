@@ -10,6 +10,7 @@ use App\Models\GioHang;
 use App\Models\ChiTietGH;
 use App\Models\HoaDon;
 use App\Models\ChiTietHD;
+use App\Models\TrangSuc;
 
 class OrderController extends Controller
 {
@@ -25,6 +26,7 @@ class OrderController extends Controller
             }
 
             $cartItems = ChiTietGH::getCartItemsByCartId($cart['ID_GIOHANG']);
+            $cartItems = TrangSuc::applyBestDiscount($cartItems);
             return response()->json($cartItems, 200);
         } catch (\Exception $e) {
             Log::error('Get Cart Error: ' . $e->getMessage());
@@ -50,6 +52,7 @@ class OrderController extends Controller
             ChiTietGH::updateCartItems($cart['ID_GIOHANG'], $items);
 
             $cartItems = ChiTietGH::getCartItemsByCartId($cart['ID_GIOHANG']);
+            $cartItems = TrangSuc::applyBestDiscount($cartItems);
             return response()->json($cartItems, 200);
         } catch (\Exception $e) {
             Log::error('Update Cart Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -63,7 +66,10 @@ class OrderController extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $idKhachHang = $user->ID;
             $hoadonData = HoaDon::getAllByIDKhachHang($idKhachHang);
-            return response()->json($hoadonData);
+
+            return response()->json([
+                'orders' => $hoadonData,
+            ]);
         } catch (\Exception $e) {
             Log::error('Error' . $e->getMessage());
             return response()->json(['message' => 'Lỗi server'], 500);

@@ -20,13 +20,14 @@ const CartPage = () => {
     const [paymentMethod, setPaymentMethod] = useState('credit_card');
     const [processingPayment, setProcessingPayment] = useState(false);
 
+
     useEffect(() => {
         fetchCartItems();
     }, []);
 
     const updateCartSummaryInLocalStorage = (items) => {
         const activeItemsCount = items.filter(item => item.SOLUONG > 0).length;
-        localStorage.setItem('cartCateItemCount', activeItemsCount); 
+        localStorage.setItem('cartCateItemCount', activeItemsCount);
     };
 
     useEffect(() => {
@@ -90,7 +91,7 @@ const CartPage = () => {
             setLoading(true);
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
-            
+
             //const updatedItems = editingItems.filter(item => item.SOLUONG > 0);
             console.log('Items sent to backend:', editingItems);
 
@@ -104,11 +105,11 @@ const CartPage = () => {
                 credentials: 'include',
                 body: JSON.stringify({ items: editingItems }),
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             const res = await response.json();
             setCartItems(res);
             setEditingItems([]);
@@ -135,7 +136,7 @@ const CartPage = () => {
         try {
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
-    
+
             const response = await fetch(`${baseUrl}/api/customer/cart/checkout`, {
                 method: 'POST',
                 headers: {
@@ -145,11 +146,11 @@ const CartPage = () => {
                 },
                 credentials: 'include',
             });
-    
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             const res = await response.json();
             setNotification({ message: res.message || 'Thanh toán thành công', type: 'success' });
             setCartItems([]);
@@ -165,41 +166,50 @@ const CartPage = () => {
         <div className={styles.cartPage}>
             <div className={styles.cartContainer}>
                 <div className={styles.cartItemsContainer}>
-                    <h1>Giỏ Hàng</h1>
-                    {loading &&  <Loader />}
+                    {loading && <Loader />}
                     {!loading && cartItems.length === 0 && (
                         <p>Giỏ hàng của bạn đang trống.</p>
                     )}
                     {!loading && cartItems.length > 0 && (
                         <>
                             <div className={styles.cartItems}>
-                                {(editingItems.length > 0 ? editingItems : cartItems).filter((item) => item.SOLUONG > 0).map((item) => (
-                                    <div key={item.ID_TRANGSUC} className={styles.cartItem}>
-                                        <div className={styles.itemImage}>
-                                            <img
-                                                src={item.IMAGEURL ? `${baseUrl}${item.IMAGEURL}` : defaultItem}
-                                                alt={item.TENTS}
-                                            />
-                                        </div>
-                                        <div className={styles.itemInfo}>
-                                            <h2>{item.TENTS}</h2>
-                                            <p>Giá: {item.GIANIEMYET.toLocaleString()} VNĐ</p>
-                                            <div className={styles.quantity}>
-                                                <span>Số lượng: {item.SOLUONG}</span>
-                                                {editingItems.length > 0 && (
-                                                    <div className={styles.editButtons}>
-                                                        <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, -1)}>
-                                                            -
-                                                        </button>
-                                                        <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, 1)}>
-                                                            +
-                                                        </button>
+                                {(editingItems.length > 0 ? editingItems : cartItems)
+                                    .filter((item) => item.SOLUONG > 0)
+                                    .map((item) => {
+                                        const discountedPrice = item.GIANIEMYET * (1 - (item.BEST_DISCOUNT || 0) / 100); // Giá đã giảm
+                                        return (
+                                            <div key={item.ID_TRANGSUC} className={styles.cartItem}>
+                                                <div className={styles.itemImage}>
+                                                    <img
+                                                        src={item.IMAGEURL ? `${baseUrl}${item.IMAGEURL}` : defaultItem}
+                                                        alt={item.TENTS}
+                                                    />
+                                                </div>
+                                                <div className={styles.itemInfo}>
+                                                    <h2>{item.TENTS}</h2>
+                                                    <p className={styles.originalPrice}>
+                                                        {item.GIANIEMYET.toLocaleString()} VNĐ
+                                                    </p>
+                                                    <p className={styles.discountedPrice}>
+                                                        {discountedPrice.toLocaleString()} VNĐ
+                                                    </p>
+                                                    <div className={styles.quantity}>
+                                                        <span>Số lượng: {item.SOLUONG}</span>
+                                                        {editingItems.length > 0 && (
+                                                            <div className={styles.editButtons}>
+                                                                <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, -1)}>
+                                                                    -
+                                                                </button>
+                                                                <button onClick={() => handleQuantityChange(item.ID_TRANGSUC, 1)}>
+                                                                    +
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                ))}
+                                        );
+                                    })}
                             </div>
                             {editingItems.length === 0 ? (
                                 <button className={styles.editButton} onClick={handleEdit}>Chỉnh sửa</button>
@@ -215,25 +225,25 @@ const CartPage = () => {
 
                 {!loading && cartItems.length > 0 && (
                     <div className={styles.cartSummary}>
-                    <h2>Thông tin thanh toán</h2>
-                    <div className={styles.summaryRow}>
-                        <span>Giá gốc:</span>
-                        <span>{originalTotal.toLocaleString()} VNĐ</span>
-                    </div>
-                    <div className={styles.summaryRow}>
-                        <span>Giảm giá:</span>
-                        <span>-{discount.toLocaleString()} VNĐ</span>
-                    </div>
-                    <div className={styles.summaryRow}>
-                        <span>Phí ship:</span>
-                        <span>{shippingFee.toLocaleString()} VNĐ</span>
-                    </div>
-                    <div className={styles.summaryRowTotal}>
-                        <span>Tổng cộng:</span>
-                        <span>{finalTotal.toLocaleString()} VNĐ</span>
-                    </div>
+                        <h2>Thông tin thanh toán</h2>
+                        <div className={styles.summaryRow}>
+                            <span>Giá gốc:</span>
+                            <span>{originalTotal.toLocaleString()} VNĐ</span>
+                        </div>
+                        <div className={styles.summaryRow}>
+                            <span>Giảm giá:</span>
+                            <span>-{discount.toLocaleString()} VNĐ</span>
+                        </div>
+                        <div className={styles.summaryRow}>
+                            <span>Phí ship:</span>
+                            <span>{shippingFee.toLocaleString()} VNĐ</span>
+                        </div>
+                        <div className={styles.summaryRowTotal}>
+                            <span>Tổng cộng:</span>
+                            <span>{finalTotal.toLocaleString()} VNĐ</span>
+                        </div>
 
-                    <h3>Thông tin giao hàng</h3>
+                        <h3>Thông tin giao hàng</h3>
                         <input
                             type="text"
                             placeholder="Người nhận"
@@ -256,20 +266,20 @@ const CartPage = () => {
                             className={styles.inputField}
                         />
 
-                    <h3>Phương thức thanh toán</h3>
-                    <select
-                        value={paymentMethod}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className={styles.paymentSelect}
-                    >
-                        <option value="credit_card">Thẻ tín dụng</option>
-                        <option value="bank_transfer">Chuyển khoản</option>
-                    </select>
+                        <h3>Phương thức thanh toán</h3>
+                        <select
+                            value={paymentMethod}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className={styles.paymentSelect}
+                        >
+                            <option value="credit_card">Thẻ tín dụng</option>
+                            <option value="bank_transfer">Chuyển khoản</option>
+                        </select>
 
-                    <button className={styles.checkoutButton} onClick={handleCheckout} disabled={processingPayment}>
-                        {processingPayment ? 'Đang thanh toán...' : 'Thanh toán'}
-                    </button>
-                </div>
+                        <button className={styles.checkoutButton} onClick={handleCheckout} disabled={processingPayment}>
+                            {processingPayment ? 'Đang thanh toán...' : 'Thanh toán'}
+                        </button>
+                    </div>
                 )}
             </div>
             {notification && (
