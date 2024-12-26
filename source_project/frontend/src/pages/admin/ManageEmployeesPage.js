@@ -1,7 +1,8 @@
-// src/pages/admin/ManageEmployeesPage.js
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { useAppContext } from "../../AppContext.js";
 import styles from "./ManageEmployeesPage.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faSave } from "@fortawesome/free-solid-svg-icons";
 
 const ManageEmployeesPage = () => {
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
@@ -10,7 +11,10 @@ const ManageEmployeesPage = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [isFetching, setIsFetching] = useState(false);
 
-    // State cho form đổi mật khẩu
+    // State for search query
+    const [searchQuery, setSearchQuery] = useState('');
+
+    // State for password change form
     const [emailForPass, setEmailForPass] = useState('');
     const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
@@ -41,13 +45,13 @@ const ManageEmployeesPage = () => {
             });
 
             if (!response.ok) {
-                throw new Error(`Lỗi khi lấy danh sách nhân viên: ${response.status}`);
+                throw new Error(`Error fetching employees: ${response.status}`);
             }
 
             const res = await response.json();
             setEmployees(res);
         } catch (error) {
-            setErrorMessage(error.message || "Đã xảy ra lỗi khi lấy danh sách nhân viên.");
+            setErrorMessage(error.message || "Có lỗi xảy ra khi tải danh sách nhân viên.");
         } finally {
             setIsFetching(false);
         }
@@ -64,7 +68,7 @@ const ManageEmployeesPage = () => {
 
         const { EMAIL, PASSWORD, TENADMIN, SDT, DIACHI } = newEmployee;
         if (!EMAIL || !PASSWORD || !TENADMIN) {
-            setErrorMessage("Vui lòng điền đủ Email, Password, Tên nhân viên!");
+            setErrorMessage("Vui lòng điền Email, Mật khẩu và Tên nhân viên!");
             return;
         }
 
@@ -88,27 +92,24 @@ const ManageEmployeesPage = () => {
                 throw new Error(res.error || res.message || "Không thể thêm nhân viên.");
             }
 
-            setSuccessMessage("Thêm nhân viên thành công!");
+            setSuccessMessage("Nhân viên đã được thêm thành công!");
             setErrorMessage("");
             // Reset form
             setNewEmployee({ EMAIL: "", PASSWORD: "", TENADMIN: "", SDT: "", DIACHI: "" });
-            // Refresh danh sách nhân viên
+            // Refresh employee list
             fetchEmployees();
         } catch (error) {
             setErrorMessage(error.message);
         }
     };
 
-
-
-
     const handleEditClick = (id) => {
         setEmployees(prev => prev.map(emp => emp.ID === id ? {...emp, isEditing: true} : emp));
-    }
+    };
 
     const handleFieldChange = (id, field, value) => {
         setEmployees(prev => prev.map(emp => emp.ID === id ? {...emp, [field]: value} : emp));
-    }
+    };
 
     const saveEmployeeInfo = async (id) => {
         setErrorMessage("");
@@ -117,7 +118,7 @@ const ManageEmployeesPage = () => {
         const emp = employees.find(e => e.ID === id);
         const { editingTENADMIN, editingSDT, editingDIACHI } = emp;
         if (!editingTENADMIN) {
-            setErrorMessage("Tên nhân viên không được để trống!");
+            setErrorMessage("Tên nhân viên không thể để trống!");
             return;
         }
 
@@ -143,16 +144,16 @@ const ManageEmployeesPage = () => {
 
             const res = await response.json();
             if (!response.ok) {
-                throw new Error(res.error || res.message || "Không thể cập nhật thông tin.");
+                throw new Error(res.error || res.message || "Không thể cập nhật thông tin nhân viên.");
             }
 
-            setSuccessMessage("Cập nhật thông tin thành công!");
-            // Cập nhật state
+            setSuccessMessage("Thông tin nhân viên đã được cập nhật thành công!");
+            // Update state
             setEmployees(prev => prev.map(e => e.ID === id ? {...e, TENADMIN: editingTENADMIN, SDT: editingSDT, DIACHI: editingDIACHI, isEditing: false} : e));
         } catch (error) {
             setErrorMessage(error.message);
         }
-    }
+    };
 
     const updatePassword = async (e) => {
         e.preventDefault();
@@ -160,7 +161,7 @@ const ManageEmployeesPage = () => {
         setSuccessMessage("");
 
         if (!emailForPass || !oldPass || !newPass) {
-            setErrorMessage("Vui lòng nhập đủ Email, Mật khẩu cũ, Mật khẩu mới!");
+            setErrorMessage("Vui lòng điền Email, Mật khẩu cũ và Mật khẩu mới!");
             return;
         }
 
@@ -185,17 +186,27 @@ const ManageEmployeesPage = () => {
 
             const res = await response.json();
             if (!response.ok) {
-                throw new Error(res.error || res.message || "Không thể cập nhật mật khẩu.");
+                throw new Error(res.error || res.message || "Không thể thay đổi mật khẩu.");
             }
 
-            setSuccessMessage("Cập nhật mật khẩu thành công!");
+            setSuccessMessage("Mật khẩu đã được cập nhật thành công!");
             setEmailForPass('');
             setOldPass('');
             setNewPass('');
         } catch (error) {
             setErrorMessage(error.message);
         }
-    }
+    };
+
+    // Search filter function
+    const filteredEmployees = employees.filter(emp => {
+        return (
+            emp.EMAIL.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            emp.TENADMIN.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            emp.SDT.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            emp.DIACHI.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    });
 
     return (
         <div className={styles.container}>
@@ -204,22 +215,33 @@ const ManageEmployeesPage = () => {
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
             {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
-            {/* Bảng danh sách nhân viên */}
+            {/* Search input */}
+            <div className={styles.searchSection}>
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm nhân viên..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={styles.searchInput}
+                />
+            </div>
+
+            {/* Employee list table */}
             <table className={styles.table}>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Email</th>
                         <th>Tên nhân viên</th>
-                        <th>Số điện thoại</th>
+                        <th>Điện thoại</th>
                         <th>Địa chỉ</th>
-                        <th>Tình trạng</th>
-                        <th>Ảnh</th>
+                        <th>Trạng thái</th>
+                        <th>Hình ảnh</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {employees.map(emp => (
+                    {filteredEmployees.map(emp => (
                         <tr key={emp.ID}>
                             <td>{emp.ID}</td>
                             <td>{emp.EMAIL}</td>
@@ -247,17 +269,21 @@ const ManageEmployeesPage = () => {
                                     />
                                 ) : emp.DIACHI}
                             </td>
-                            <td>{emp.TINHTRANG === 1 ? 'Hoạt động' : 'Đã khóa'}</td>
+                            <td>{emp.TINHTRANG === 1 ? 'Hoạt động' : 'Khóa'}</td>
                             <td>
                                 {emp.IMAGEURL ? (
-                                    <img src={`${baseUrl}${emp.IMAGEURL}`} alt="Employee" className={styles.thumbnail}/>
-                                ) : 'Chưa có ảnh'}
+                                    <img src={`${baseUrl}${emp.IMAGEURL}`} alt="Employee" className={styles.thumbnail} />
+                                ) : 'Không có ảnh'}
                             </td>
                             <td>
                                 {emp.isEditing ? (
-                                    <button onClick={() => saveEmployeeInfo(emp.ID)}>Lưu</button>
+                                    <button className={styles.iconButton} onClick={() => saveEmployeeInfo(emp.ID)}>
+                                        <FontAwesomeIcon icon={faSave} />
+                                    </button>
                                 ) : (
-                                    <button onClick={() => handleEditClick(emp.ID)}>Chỉnh sửa</button>
+                                    <button className={styles.iconButton} onClick={() => handleEditClick(emp.ID)}>
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </button>
                                 )}
                             </td>
                         </tr>
@@ -265,9 +291,7 @@ const ManageEmployeesPage = () => {
                 </tbody>
             </table>
 
-
-
-            {/* Form thêm nhân viên mới */}
+            {/* Add new employee form */}
             <div className={styles.addEmployeeSection}>
                 <h2>Thêm nhân viên mới</h2>
                 <form onSubmit={addEmployee} className={styles.addEmployeeForm}>
@@ -275,42 +299,42 @@ const ManageEmployeesPage = () => {
                         type="email"
                         placeholder="Email"
                         value={newEmployee.EMAIL}
-                        onChange={(e) => setNewEmployee(prev => ({ ...prev, EMAIL: e.target.value }))}
+                        onChange={(e) => setNewEmployee(prev => ({ ...prev, EMAIL: e.target.value }))} 
                         required
                     />
                     <input
                         type="password"
-                        placeholder="Password"
+                        placeholder="Mật khẩu"
                         value={newEmployee.PASSWORD}
-                        onChange={(e) => setNewEmployee(prev => ({ ...prev, PASSWORD: e.target.value }))}
+                        onChange={(e) => setNewEmployee(prev => ({ ...prev, PASSWORD: e.target.value }))} 
                         required
                     />
                     <input
                         type="text"
                         placeholder="Tên nhân viên"
                         value={newEmployee.TENADMIN}
-                        onChange={(e) => setNewEmployee(prev => ({ ...prev, TENADMIN: e.target.value }))}
+                        onChange={(e) => setNewEmployee(prev => ({ ...prev, TENADMIN: e.target.value }))} 
                         required
                     />
                     <input
                         type="text"
-                        placeholder="Số điện thoại"
+                        placeholder="Điện thoại"
                         value={newEmployee.SDT}
-                        onChange={(e) => setNewEmployee(prev => ({ ...prev, SDT: e.target.value }))}
+                        onChange={(e) => setNewEmployee(prev => ({ ...prev, SDT: e.target.value }))} 
                     />
                     <input
                         type="text"
                         placeholder="Địa chỉ"
                         value={newEmployee.DIACHI}
-                        onChange={(e) => setNewEmployee(prev => ({ ...prev, DIACHI: e.target.value }))}
+                        onChange={(e) => setNewEmployee(prev => ({ ...prev, DIACHI: e.target.value }))} 
                     />
                     <button type="submit">Thêm</button>
                 </form>
             </div>
 
-            {/* Form đổi mật khẩu */}
+            {/* Password change form */}
             <div className={styles.changePasswordSection}>
-                <h2>Đổi mật khẩu nhân viên</h2>
+                <h2>Thay đổi mật khẩu nhân viên</h2>
                 <form onSubmit={updatePassword} className={styles.changePassForm}>
                     <input 
                         type="email"
@@ -333,11 +357,9 @@ const ManageEmployeesPage = () => {
                         onChange={(e) => setNewPass(e.target.value)}
                         required
                     />
-                    <button type="submit">Đổi mật khẩu</button>
+                    <button type="submit">Thay đổi mật khẩu</button>
                 </form>
             </div>
-
-
         </div>
     );
 };

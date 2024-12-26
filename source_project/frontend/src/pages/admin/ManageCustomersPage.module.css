@@ -10,6 +10,7 @@
 
 .heading {
     font-size: 24px;
+    text-align: center;
     font-weight: bold;
     color: darkblue;
     margin-bottom: 20px;
@@ -51,30 +52,40 @@
     margin-top: 20px;
 }
 
-/* Style cho các hàng trong bảng */
-.table tr:nth-child(odd) {
-    background-color: #CFEBFC;  /* Màu nền cho hàng lẻ */
-}
-
-.table tr:nth-child(even) {
-    background-color: #ffffff;  /* Màu nền cho hàng chẵn */
-}
-
+/* Xóa đường viền nhưng vẫn giữ cấu trúc bảng */
 .table th, .table td {
     padding: 12px;
     text-align: left;
-    border: 1px solid #ddd;
 }
 
+/* Tạo màu nền xen kẽ để phân biệt các hàng */
+.table tr:nth-child(odd) {
+    background-color: #CFEBFC; /* Màu nền cho hàng lẻ */
+}
+
+.table tr:nth-child(even) {
+    background-color: #ffffff; /* Màu nền cho hàng chẵn */
+}
+
+/* Giữ màu tiêu đề */
 .table th {
     background-color: darkblue;
     color: white;
     font-weight: bold;
 }
 
+/* Thêm hiệu ứng hover */
+.table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+
 .errorMessage {
     color: red;
     margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .table tr:hover {

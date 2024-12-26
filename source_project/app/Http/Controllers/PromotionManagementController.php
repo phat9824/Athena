@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KhuyenMai; // Assuming KhuyenMai model is defined
+use App\Models\KhuyenMai; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str; // Thêm dòng này để sử dụng Str
