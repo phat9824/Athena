@@ -1,38 +1,97 @@
 .container {
     padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    border-radius: 10px;
+    max-width: 1200px;
+    margin: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .heading {
     font-size: 24px;
     font-weight: bold;
+    text-align: center;
+    color: darkblue;
     margin-bottom: 20px;
 }
 
 .errorMessage {
     color: red;
     margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
+.successMessage {
+    color: green;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
+}
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
-.table thead th {
-    background: #f0f0f0;
+/* Xóa đường viền nhưng vẫn giữ cấu trúc bảng */
+.table th, .table td {
+    padding: 12px;
     text-align: left;
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
 }
 
-.table td {
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
+/* Tạo màu nền xen kẽ để phân biệt các hàng */
+.table tr:nth-child(odd) {
+    background-color: #CFEBFC; /* Màu nền cho hàng lẻ */
+}
+
+.table tr:nth-child(even) {
+    background-color: #ffffff; /* Màu nền cho hàng chẵn */
+}
+
+/* Giữ màu tiêu đề */
+.table th {
+    background-color: darkblue;
+    color: white;
+    font-weight: bold;
+}
+
+/* Thêm hiệu ứng hover */
+.table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
 }
 
 .thumbnail {
     width: 50px;
     height: 50px;
     object-fit: cover;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: darkblue;
+    font-size: 18px;   
+}
+
+.iconButton:hover {
+    color: #0056b3;
+}
+
+.searchBox {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.searchInput {
+    padding: 8px 16px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
 }

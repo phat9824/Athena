@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../AppContext.js";
 import styles from "./ManagePromotionsPage.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faSave } from "@fortawesome/free-solid-svg-icons";
 
 const ManagePromotionsPage = () => {
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
@@ -19,14 +21,14 @@ const ManagePromotionsPage = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
+    // Hàm cập nhật thông tin khuyến mãi
     const handlePromoChange = (id, field, value) => {
-        setPromotions(prev =>
-            prev.map(p => p.ID === id ? { ...p, [field]: value } : p)
+        setPromotions((prev) =>
+            prev.map((p) => (p.ID === id ? { ...p, [field]: value } : p))
         );
     };
 
-
-    // Fetch promotions
+    // Fetch khuyến mãi từ API
     const fetchPromotions = async (page) => {
         if (isFetching) return;
         setIsFetching(true);
@@ -35,14 +37,17 @@ const ManagePromotionsPage = () => {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
 
-            const response = await fetch(`${baseUrl}/api/admin/khuyenmai?page=${page}&perPage=10&search=${searchQuery}`, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
-                },
-                credentials: "include",
-            });
+            const response = await fetch(
+                `${baseUrl}/api/admin/khuyenmai?page=${page}&perPage=10&search=${searchQuery}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json",
+                        "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                    },
+                    credentials: "include",
+                }
+            );
 
             if (!response.ok) {
                 throw new Error(`Lỗi khi lấy khuyến mãi: ${response.status}`);
@@ -63,7 +68,7 @@ const ManagePromotionsPage = () => {
         fetchPromotions(currentPage);
     }, [currentPage, searchQuery]);
 
-    // Add new promotion
+    // Hàm thêm khuyến mãi mới
     const addPromotion = async () => {
         if (!newPromotion.name || !newPromotion.startDate || !newPromotion.endDate || !newPromotion.discount) {
             setErrorMessage("Vui lòng điền đầy đủ thông tin khuyến mãi!");
@@ -96,18 +101,20 @@ const ManagePromotionsPage = () => {
             }
 
             setSuccessMessage("Thêm khuyến mãi thành công!");
-            setErrorMessage("");
-            setNewPromotion({ name: "", startDate: "", endDate: "", discount: "" });
-            fetchPromotions(1); // Refresh promotions list
+            setErrorMessage("");  // Reset lỗi
+            setNewPromotion({ name: "", startDate: "", endDate: "", discount: "" });  // Reset form
+            fetchPromotions(1);  // Refresh danh sách khuyến mãi sau khi thêm mới
         } catch (error) {
             setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm khuyến mãi!");
         }
     };
 
+    // Hàm tìm kiếm
     const handleSearch = (e) => {
         setSearchQuery(e.target.value);
     };
 
+    // Hiển thị phân trang
     const renderPagination = () => {
         if (totalPages <= 1) return null;
 
@@ -130,7 +137,6 @@ const ManagePromotionsPage = () => {
 
         return (
             <div className={styles.pagination}>
-                {/* Nút quay lại */}
                 <button
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
@@ -139,7 +145,6 @@ const ManagePromotionsPage = () => {
                     ←
                 </button>
 
-                {/* Các nút số trang */}
                 {pageNumbers.map((page) => (
                     <button
                         key={page}
@@ -151,7 +156,6 @@ const ManagePromotionsPage = () => {
                     </button>
                 ))}
 
-                {/* Nút tiếp theo */}
                 <button
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage === totalPages}
@@ -180,7 +184,7 @@ const ManagePromotionsPage = () => {
                 body: JSON.stringify({
                     NGAYBD: updatedData.startDate,
                     NGAYKT: updatedData.endDate,
-                    PHANTRAM: updatedData.discount
+                    PHANTRAM: updatedData.discount,
                 }),
             });
 
@@ -197,11 +201,11 @@ const ManagePromotionsPage = () => {
         }
     };
 
-
     return (
         <div className={styles.container}>
             <h1 className={styles.heading}>Quản lý chương trình khuyến mãi</h1>
 
+            {/* Thanh tìm kiếm */}
             <div className={styles.inputGroup}>
                 <input
                     type="text"
@@ -215,6 +219,7 @@ const ManagePromotionsPage = () => {
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
             {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
+            {/* Bảng danh sách khuyến mãi */}
             <table className={styles.table}>
                 <thead>
                     <tr>
@@ -263,25 +268,36 @@ const ManagePromotionsPage = () => {
                             </td>
                             <td>
                                 {promo.isEditing ? (
-                                    <button onClick={() => {
-                                        updatePromotion(promo.ID, {
-                                            startDate: promo.editingStartDate || promo.NGAYBD,
-                                            endDate: promo.editingEndDate || promo.NGAYKT,
-                                            discount: promo.editingDiscount !== undefined ? promo.editingDiscount : promo.PHANTRAM
-                                        });
-                                    }}>Lưu</button>
+                                    <button
+                                        onClick={() => {
+                                            updatePromotion(promo.ID, {
+                                                startDate: promo.editingStartDate || promo.NGAYBD,
+                                                endDate: promo.editingEndDate || promo.NGAYKT,
+                                                discount: promo.editingDiscount !== undefined ? promo.editingDiscount : promo.PHANTRAM,
+                                            });
+                                            handlePromoChange(promo.ID, "isEditing", false);
+                                        }}
+                                        className={styles.iconButton}
+                                    >
+                                        <FontAwesomeIcon icon={faSave} />
+                                    </button>
                                 ) : (
-                                    <button onClick={() => handlePromoChange(promo.ID, 'isEditing', true)}>Chỉnh sửa</button>
+                                    <button
+                                        onClick={() => handlePromoChange(promo.ID, "isEditing", true)}
+                                        className={styles.iconButton}
+                                    >
+                                        <FontAwesomeIcon icon={faEdit} />
+                                    </button>
                                 )}
                             </td>
                         </tr>
                     ))}
-
                 </tbody>
             </table>
 
             {renderPagination()}
 
+            {/* Form thêm khuyến mãi mới */}
             <h2>Thêm chương trình khuyến mãi mới</h2>
             <form
                 onSubmit={(e) => {

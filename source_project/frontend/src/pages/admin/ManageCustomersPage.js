@@ -44,7 +44,7 @@ const ManageCustomersPage = () => {
     // Hàm tìm kiếm
     const handleSearch = (query) => {
         setSearchQuery(query);
-        if (query.trim() === "") {
+        if (!query.trim()) {
             setFilteredCustomers(customers);  // Nếu không có từ khóa tìm kiếm, hiển thị tất cả khách hàng
         } else {
             const filtered = customers.filter(customer =>
@@ -71,7 +71,7 @@ const ManageCustomersPage = () => {
                     type="text"
                     placeholder="Tìm kiếm khách hàng"
                     value={searchQuery}
-                    onChange={(e) => handleSearch(e.target.value)}  // Gọi hàm handleSearch khi người dùng nhập
+                    onChange={(e) => handleSearch(e.target.value)} // Gọi hàm handleSearch khi người dùng nhập
                     className={styles.searchInput}
                 />
                 <i className={`fa fa-search ${styles.searchIcon}`} aria-hidden="true"></i>
@@ -96,25 +96,29 @@ const ManageCustomersPage = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {filteredCustomers.map(customer => (
-                        <tr key={customer.ID}>
-                            <td>{customer.ID}</td>
-                            <td>{customer.EMAIL}</td>
-                            <td>{customer.TENKH || "N/A"}</td>
-                            <td>{customer.SDT || "N/A"}</td>
-                            <td>{customer.DIACHI || "N/A"}</td>
-                            <td>{customer.LOAI || "N/A"}</td>
-                            <td>{customer.GIOITINH === 1 ? "Nam" : customer.GIOITINH === 2 ? "Nữ" : "Khác"}</td>
-                            <td>{customer.TINHTRANG === 1 ? "Hoạt động" : "Đã khóa"}</td>
-                            <td>
-                                {customer.IMAGEURL ? (
-                                    <img src={`${baseUrl}${customer.IMAGEURL}`} alt="Customer" className={styles.thumbnail} />
-                                ) : (
-                                    "Chưa có ảnh"
-                                )}
-                            </td>
-                        </tr>
-                    ))}
+                    {filteredCustomers.length === 0 ? (
+                        <tr><td colSpan="9">Không có khách hàng phù hợp.</td></tr>
+                    ) : (
+                        filteredCustomers.map(customer => (
+                            <tr key={customer.ID}>
+                                <td>{customer.ID}</td>
+                                <td>{customer.EMAIL}</td>
+                                <td>{customer.TENKH || "N/A"}</td>
+                                <td>{customer.SDT || "N/A"}</td>
+                                <td>{customer.DIACHI || "N/A"}</td>
+                                <td>{customer.LOAI || "N/A"}</td>
+                                <td>{customer.GIOITINH === 1 ? "Nam" : customer.GIOITINH === 2 ? "Nữ" : "Khác"}</td>
+                                <td>{customer.TINHTRANG === 1 ? "Hoạt động" : "Đã khóa"}</td>
+                                <td>
+                                    {customer.IMAGEURL ? (
+                                        <img src={`${baseUrl}${customer.IMAGEURL}`} alt="Customer" className={styles.thumbnail} />
+                                    ) : (
+                                        "Chưa có ảnh"
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>

@@ -118,7 +118,7 @@ php artisan serve
 php artisan storage:link
 ```
 
-- Từ thu mục frontend, chạy lệnh
+- Từ thư mục frontend, chạy lệnh
 ```bash
 npm install chart.js react-chartjs-2
 npm install @fortawesome/fontawesome-free
@@ -133,7 +133,3 @@ npm start
 Đang cập nhật ...
 **Triển khai công khai trên internet**
 Đang cập nhật ...
-
-- Từ thư mục frontend, chạy lệnh để tạo các chart
-```bash
-npm install chart.js react-chartjs-2
