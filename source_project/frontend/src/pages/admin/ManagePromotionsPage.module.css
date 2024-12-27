@@ -1,43 +1,84 @@
 .container {
     padding: 20px;
     font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    border-radius: 10px;
+    max-width: 1200px;
+    margin: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .heading {
     margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: darkblue;
 }
 
 .inputGroup {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
 }
 
 .input {
-    padding: 5px 10px;
+    padding: 10px 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-right: 10px;
+    font-size: 16px;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .errorMessage {
     color: red;
     margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .successMessage {
     color: green;
     margin-bottom: 10px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 20px;
+    margin-top: 20px;
 }
 
+/* Xóa đường viền nhưng vẫn giữ cấu trúc bảng */
 .table th, .table td {
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
+    padding: 12px;
+    text-align: left;
+}
+
+/* Tạo màu nền xen kẽ để phân biệt các hàng */
+.table tr:nth-child(odd) {
+    background-color: #CFEBFC; /* Màu nền cho hàng lẻ */
+}
+
+.table tr:nth-child(even) {
+    background-color: #ffffff; /* Màu nền cho hàng chẵn */
+}
+
+/* Giữ màu tiêu đề */
+.table th {
+    background-color: darkblue;
+    color: white;
+    font-weight: bold;
+}
+
+/* Thêm hiệu ứng hover */
+.table tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
 }
 
 .pagination {
@@ -48,27 +89,120 @@
 }
 
 .paginationButton {
-    padding: 5px 10px;
+    padding: 8px 12px;
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.paginationButton:hover {
+    background-color: #e2e2e2;
 }
 
 .paginationButtonActive {
-    background-color: #007bff;
+    background-color: darkblue;
     color: white;
     cursor: default;
+    font-weight: bold;
+}
+
+.paginationButtonDisabled {
+    background-color: #ddd;
+    cursor: not-allowed;
 }
 
 .form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
+    max-width: 400px;
+    margin: 20px auto 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 form input {
-    padding: 5px 10px;
+    padding: 10px 15px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    font-size: 16px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+form input:focus {
+    border-color: darkblue;
+    outline: none;
+}
+
+form button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: darkblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+form button:hover {
+    background-color: darkblue;
+}
+
+.iconButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: darkblue;
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+}
+
+.iconButton:hover {
+    color: #0056b3;
+}
+
+.inputGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.searchInput {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+}
+
+.searchInput:focus {
+    border-color: darkblue;
+    box-shadow: 0 0 5px rgba(0, 0, 255, 0.2);
+}
+
+.searchButton {
+    background-color: darkblue;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.searchButton:hover {
+    background-color: #0056b3;
 }
