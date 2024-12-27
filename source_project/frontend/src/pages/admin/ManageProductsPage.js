@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../AppContext.js";
 import styles from "./ManageProductsPage.module.css";
 
-// Import các component con
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faSave } from "@fortawesome/free-solid-svg-icons";
+
 import ProductTable from "../../components/admin/ProductPages/ProductTable";
 import Pagination from "../../components/admin/ProductPages/Pagination";
 import AddCategoryForm from "../../components/admin/ProductPages/AddCategoryForm";
@@ -18,6 +20,7 @@ const ManageProductsPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+    // Danh sách sản phẩm
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -40,10 +43,11 @@ const ManageProductsPage = () => {
 
     useEffect(() => {
         fetchProducts(currentPage);
+        // eslint-disable-next-line
     }, [currentPage, filters, searchQuery]);
 
     const mapCategoryName = (madm) => {
-        const category = categories.find((cat) => cat.MADM == madm);
+        const category = categories.find((cat) => cat.MADM === madm);
         return category ? category.TENDM : "Không xác định";
     };
 
@@ -54,14 +58,14 @@ const ManageProductsPage = () => {
             const response = await fetch(`${baseUrl}/api/admin/danhmucts`, {
                 method: "GET",
                 headers: {
-                    "Accept": "application/json",
+                    Accept: "application/json",
                     "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
                 },
                 credentials: "include",
             });
-
-            if (!response.ok) throw new Error(`Lỗi khi lấy danh mục: ${response.status}`);
-
+            if (!response.ok) {
+                throw new Error(`Lỗi khi lấy danh mục: ${response.status}`);
+            }
             const res = await response.json();
             setCategories(res);
         } catch (error) {
@@ -72,22 +76,23 @@ const ManageProductsPage = () => {
     const fetchProducts = async (page) => {
         if (isFetching) return;
         setIsFetching(true);
-
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
-
-            const response = await fetch(`${baseUrl}/api/admin/trangsuc?page=${page}&perPage=10`, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
-                },
-                credentials: "include",
-            });
-
-            if (!response.ok) throw new Error(`Lỗi khi lấy sản phẩm: ${response.status}`);
-
+            const response = await fetch(
+                `${baseUrl}/api/admin/trangsuc?page=${page}&perPage=10`,
+                {
+                    method: "GET",
+                    headers: {
+                        Accept: "application/json",
+                        "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                    },
+                    credentials: "include",
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`Lỗi khi lấy sản phẩm: ${response.status}`);
+            }
             const res = await response.json();
             setProducts(res.data);
             setCurrentPage(res.currentPage);
@@ -106,39 +111,38 @@ const ManageProductsPage = () => {
         }
     };
 
+    // Hàm xử lý khi nhập vào ô input (tên SP, giá, SL, v.v.)
     const handleProductFieldChange = (productId, field, value) => {
         setProducts((prevProducts) =>
-            prevProducts.map((p) => (p.ID === productId ? { ...p, [field]: value } : p))
+            prevProducts.map((p) =>
+                p.ID === productId ? { ...p, [field]: value } : p
+            )
         );
     };
 
+    // Thêm danh mục
     const addCategory = async () => {
         if (!newCategory) {
             setErrorMessage("Tên danh mục không được để trống!");
             return;
         }
-
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
-
             const response = await fetch(`${baseUrl}/api/danhmucts/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
+                    Accept: "application/json",
                     "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
                 },
                 credentials: "include",
                 body: JSON.stringify({ TENDM: newCategory }),
             });
-
             const res = await response.json();
-
             if (!response.ok) {
                 throw new Error(res.message || "Không thể thêm danh mục.");
             }
-
             setSuccessMessage(res.message || "Thêm danh mục thành công!");
             setErrorMessage("");
             setNewCategory("");
@@ -149,12 +153,17 @@ const ManageProductsPage = () => {
         }
     };
 
+    // Thêm sản phẩm
     const addProduct = async () => {
-        if (!newProduct.name || !newProduct.price || !newProduct.stock || !newProduct.category) {
+        if (
+            !newProduct.name ||
+            !newProduct.price ||
+            !newProduct.stock ||
+            !newProduct.category
+        ) {
             setErrorMessage("Vui lòng điền đầy đủ thông tin sản phẩm!");
             return;
         }
-
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
@@ -198,35 +207,63 @@ const ManageProductsPage = () => {
         }
     };
 
+    // Cập nhật sản phẩm
     const updateProduct = async (productId) => {
         const product = products.find((p) => p.ID === productId);
 
-        const updatedPrice = product.editingPrice !== undefined ? product.editingPrice : product.GIANIEMYET;
-        const updatedStock = product.editingStock !== undefined ? product.editingStock : product.SLTK;
-        const deleted = product.deleted !== undefined ? product.deleted : (product.DELETED_AT !== null);
+        // Lấy các trường đang sửa (nếu có), nếu không thì lấy giá trị gốc
+        const updatedPrice =
+            product.editingPrice !== undefined
+                ? product.editingPrice
+                : product.GIANIEMYET;
+        const updatedStock =
+            product.editingStock !== undefined
+                ? product.editingStock
+                : product.SLTK;
+        const updatedName =
+            product.editingName !== undefined
+                ? product.editingName
+                : product.TENTS;
+        const updatedCategory =
+            product.editingMADM !== undefined
+                ? product.editingMADM
+                : product.MADM;
+
+        // Check ẩn sản phẩm
+        const deleted =
+            product.deleted !== undefined
+                ? product.deleted
+                : product.DELETED_AT !== null;
 
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
 
-            const response = await fetch(`${baseUrl}/api/admin/trangsuc/update/${productId}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    GIANIEMYET: parseInt(updatedPrice),
-                    SLTK: parseInt(updatedStock),
-                    deleted,
-                }),
-            });
+            const response = await fetch(
+                `${baseUrl}/api/admin/trangsuc/update/${productId}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                        "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
+                    },
+                    credentials: "include",
+                    body: JSON.stringify({
+                        TENTS: updatedName,
+                        MADM: updatedCategory,
+                        GIANIEMYET: parseInt(updatedPrice),
+                        SLTK: parseInt(updatedStock),
+                        deleted,
+                    }),
+                }
+            );
 
             const res = await response.json();
             if (!response.ok) {
-                throw new Error(res.error || res.message || "Không thể cập nhật sản phẩm");
+                throw new Error(
+                    res.error || res.message || "Không thể cập nhật sản phẩm"
+                );
             }
 
             setSuccessMessage("Cập nhật sản phẩm thành công!");
@@ -239,6 +276,7 @@ const ManageProductsPage = () => {
     return (
         <div className={styles.container}>
             <h2 className={styles.heading}>Danh sách sản phẩm</h2>
+
             <div className={styles.inputGroup}>
                 <input
                     type="text"
@@ -253,7 +291,7 @@ const ManageProductsPage = () => {
                 >
                     <option value="">Chọn danh mục</option>
                     {categories.map((cat) => (
-                        <option key={cat.ID} value={cat.ID}>
+                        <option key={cat.ID} value={cat.MADM}>
                             {cat.TENDM}
                         </option>
                     ))}
@@ -265,11 +303,13 @@ const ManageProductsPage = () => {
 
             <ProductTable
                 products={products}
+                categories={categories}
                 baseUrl={baseUrl}
                 mapCategoryName={mapCategoryName}
-                handleProductFieldChange={handleProductFieldChange}
+                handleProductFieldChange={handleProductFieldChange} // Đúng tên
                 updateProduct={updateProduct}
             />
+
 
             <Pagination
                 currentPage={currentPage}

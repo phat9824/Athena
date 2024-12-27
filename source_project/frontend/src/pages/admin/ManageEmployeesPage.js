@@ -11,12 +11,11 @@ const ManageEmployeesPage = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [isFetching, setIsFetching] = useState(false);
 
-    // State for search query
+    // State cho tìm kiếm
     const [searchQuery, setSearchQuery] = useState('');
 
-    // State for password change form
+    // State cho form thay đổi mật khẩu (chỉ cần email và mật khẩu mới)
     const [emailForPass, setEmailForPass] = useState('');
-    const [oldPass, setOldPass] = useState('');
     const [newPass, setNewPass] = useState('');
 
     const [newEmployee, setNewEmployee] = useState({
@@ -59,6 +58,7 @@ const ManageEmployeesPage = () => {
 
     useEffect(() => {
         fetchEmployees();
+        // eslint-disable-next-line
     }, []);
 
     const addEmployee = async (e) => {
@@ -104,11 +104,17 @@ const ManageEmployeesPage = () => {
     };
 
     const handleEditClick = (id) => {
-        setEmployees(prev => prev.map(emp => emp.ID === id ? {...emp, isEditing: true} : emp));
+        setEmployees(prev => 
+            prev.map(emp => 
+                emp.ID === id ? {...emp, isEditing: true, editingTENADMIN: emp.TENADMIN, editingSDT: emp.SDT, editingDIACHI: emp.DIACHI} : emp
+            )
+        );
     };
 
     const handleFieldChange = (id, field, value) => {
-        setEmployees(prev => prev.map(emp => emp.ID === id ? {...emp, [field]: value} : emp));
+        setEmployees(prev => 
+            prev.map(emp => emp.ID === id ? {...emp, [field]: value} : emp)
+        );
     };
 
     const saveEmployeeInfo = async (id) => {
@@ -116,6 +122,7 @@ const ManageEmployeesPage = () => {
         setSuccessMessage("");
 
         const emp = employees.find(e => e.ID === id);
+        // Lấy ra các trường đang chỉnh sửa
         const { editingTENADMIN, editingSDT, editingDIACHI } = emp;
         if (!editingTENADMIN) {
             setErrorMessage("Tên nhân viên không thể để trống!");
@@ -148,20 +155,33 @@ const ManageEmployeesPage = () => {
             }
 
             setSuccessMessage("Thông tin nhân viên đã được cập nhật thành công!");
-            // Update state
-            setEmployees(prev => prev.map(e => e.ID === id ? {...e, TENADMIN: editingTENADMIN, SDT: editingSDT, DIACHI: editingDIACHI, isEditing: false} : e));
+            // Cập nhật state
+            setEmployees(prev => 
+                prev.map(e => e.ID === id
+                    ? {
+                        ...e,
+                        TENADMIN: editingTENADMIN,
+                        SDT: editingSDT,
+                        DIACHI: editingDIACHI,
+                        isEditing: false
+                    }
+                    : e
+                )
+            );
         } catch (error) {
             setErrorMessage(error.message);
         }
     };
 
+    // Hàm cập nhật mật khẩu (chỉ cần EMAIL và NEW_PASSWORD)
     const updatePassword = async (e) => {
         e.preventDefault();
         setErrorMessage("");
         setSuccessMessage("");
 
-        if (!emailForPass || !oldPass || !newPass) {
-            setErrorMessage("Vui lòng điền Email, Mật khẩu cũ và Mật khẩu mới!");
+        // Kiểm tra trường bắt buộc
+        if (!emailForPass || !newPass) {
+            setErrorMessage("Vui lòng điền Email và Mật khẩu mới!");
             return;
         }
 
@@ -179,7 +199,6 @@ const ManageEmployeesPage = () => {
                 credentials: "include",
                 body: JSON.stringify({
                     EMAIL: emailForPass,
-                    OLD_PASSWORD: oldPass,
                     NEW_PASSWORD: newPass
                 }),
             });
@@ -191,20 +210,19 @@ const ManageEmployeesPage = () => {
 
             setSuccessMessage("Mật khẩu đã được cập nhật thành công!");
             setEmailForPass('');
-            setOldPass('');
             setNewPass('');
         } catch (error) {
             setErrorMessage(error.message);
         }
     };
 
-    // Search filter function
+    // Lọc danh sách nhân viên theo từ khoá tìm kiếm
     const filteredEmployees = employees.filter(emp => {
         return (
-            emp.EMAIL.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.TENADMIN.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.SDT.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.DIACHI.toLowerCase().includes(searchQuery.toLowerCase())
+            emp.EMAIL?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+            emp.TENADMIN?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+            emp.SDT?.toLowerCase()?.includes(searchQuery.toLowerCase()) ||
+            emp.DIACHI?.toLowerCase()?.includes(searchQuery.toLowerCase())
         );
     });
 
@@ -215,7 +233,7 @@ const ManageEmployeesPage = () => {
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
             {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
-            {/* Search input */}
+            {/* Ô tìm kiếm */}
             <div className={styles.searchSection}>
                 <input
                     type="text"
@@ -226,7 +244,7 @@ const ManageEmployeesPage = () => {
                 />
             </div>
 
-            {/* Employee list table */}
+            {/* Danh sách nhân viên */}
             <table className={styles.table}>
                 <thead>
                     <tr>
@@ -251,7 +269,9 @@ const ManageEmployeesPage = () => {
                                         value={emp.editingTENADMIN}
                                         onChange={(e) => handleFieldChange(emp.ID, 'editingTENADMIN', e.target.value)}
                                     />
-                                ) : emp.TENADMIN}
+                                ) : (
+                                    emp.TENADMIN
+                                )}
                             </td>
                             <td>
                                 {emp.isEditing ? (
@@ -259,7 +279,9 @@ const ManageEmployeesPage = () => {
                                         value={emp.editingSDT || ''}
                                         onChange={(e) => handleFieldChange(emp.ID, 'editingSDT', e.target.value)}
                                     />
-                                ) : emp.SDT}
+                                ) : (
+                                    emp.SDT
+                                )}
                             </td>
                             <td>
                                 {emp.isEditing ? (
@@ -267,21 +289,33 @@ const ManageEmployeesPage = () => {
                                         value={emp.editingDIACHI || ''}
                                         onChange={(e) => handleFieldChange(emp.ID, 'editingDIACHI', e.target.value)}
                                     />
-                                ) : emp.DIACHI}
+                                ) : (
+                                    emp.DIACHI
+                                )}
                             </td>
                             <td>{emp.TINHTRANG === 1 ? 'Hoạt động' : 'Khóa'}</td>
                             <td>
                                 {emp.IMAGEURL ? (
-                                    <img src={`${baseUrl}${emp.IMAGEURL}`} alt="Employee" className={styles.thumbnail} />
+                                    <img
+                                        src={`${baseUrl}${emp.IMAGEURL}`}
+                                        alt="Employee"
+                                        className={styles.thumbnail}
+                                    />
                                 ) : 'Không có ảnh'}
                             </td>
                             <td>
                                 {emp.isEditing ? (
-                                    <button className={styles.iconButton} onClick={() => saveEmployeeInfo(emp.ID)}>
+                                    <button
+                                        className={styles.iconButton}
+                                        onClick={() => saveEmployeeInfo(emp.ID)}
+                                    >
                                         <FontAwesomeIcon icon={faSave} />
                                     </button>
                                 ) : (
-                                    <button className={styles.iconButton} onClick={() => handleEditClick(emp.ID)}>
+                                    <button
+                                        className={styles.iconButton}
+                                        onClick={() => handleEditClick(emp.ID)}
+                                    >
                                         <FontAwesomeIcon icon={faEdit} />
                                     </button>
                                 )}
@@ -291,7 +325,7 @@ const ManageEmployeesPage = () => {
                 </tbody>
             </table>
 
-            {/* Add new employee form */}
+            {/* Form thêm nhân viên mới */}
             <div className={styles.addEmployeeSection}>
                 <h2>Thêm nhân viên mới</h2>
                 <form onSubmit={addEmployee} className={styles.addEmployeeForm}>
@@ -332,7 +366,7 @@ const ManageEmployeesPage = () => {
                 </form>
             </div>
 
-            {/* Password change form */}
+            {/* Form thay đổi mật khẩu (chỉ yêu cầu email và mật khẩu mới) */}
             <div className={styles.changePasswordSection}>
                 <h2>Thay đổi mật khẩu nhân viên</h2>
                 <form onSubmit={updatePassword} className={styles.changePassForm}>
@@ -341,13 +375,6 @@ const ManageEmployeesPage = () => {
                         placeholder="Email"
                         value={emailForPass}
                         onChange={(e) => setEmailForPass(e.target.value)}
-                        required
-                    />
-                    <input
-                        type="password"
-                        placeholder="Mật khẩu cũ"
-                        value={oldPass}
-                        onChange={(e) => setOldPass(e.target.value)}
                         required
                     />
                     <input

@@ -300,24 +300,31 @@ class TrangSuc extends Model
         $pdo = self::getPDOConnection();
 
         $sql = "UPDATE TRANGSUC SET 
+                MADM = :MADM,
+                TENTS = :TENTS,
                 GIANIEMYET = :GIANIEMYET, 
                 SLTK = :SLTK,
                 DELETED_AT = :DELETED_AT
             WHERE ID = :id";
 
         $stmt = $pdo->prepare($sql);
+        $stmt->bindValue(':MADM', $data['MADM'], PDO::PARAM_STR);
+        $stmt->bindValue(':TENTS', $data['TENTS'], PDO::PARAM_STR);
         $stmt->bindValue(':GIANIEMYET', $data['GIANIEMYET'], PDO::PARAM_INT);
         $stmt->bindValue(':SLTK', $data['SLTK'], PDO::PARAM_INT);
+
         // Nếu DELETED_AT null thì bindParam là PDO::PARAM_NULL
-        if ($data['DELETED_AT'] === null) {
-            $stmt->bindValue(':DELETED_AT', null, PDO::PARAM_NULL);
-        } else {
+        if (isset($data['DELETED_AT']) && $data['DELETED_AT'] !== null) {
             $stmt->bindValue(':DELETED_AT', $data['DELETED_AT'], PDO::PARAM_STR);
+        } else {
+            $stmt->bindValue(':DELETED_AT', null, PDO::PARAM_NULL);
         }
+
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
 
         return $stmt->execute();
     }
+
 
     // --------------------------------------------------------------------------
     // Chưa đụng tới không xài
@@ -386,5 +393,4 @@ class TrangSuc extends Model
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 }
