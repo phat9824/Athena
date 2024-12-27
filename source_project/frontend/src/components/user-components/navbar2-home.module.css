@@ -1,4 +1,4 @@
-/*.navbarBottom {
+.navbarBottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -29,11 +29,11 @@
 
 .navbarLinks li a {
     color: #888 ;
-    text-decoration: none; /* Loại bỏ gạch chân mặc định của liên kết 
+    text-decoration: none; /* Loại bỏ gạch chân mặc định của liên kết */
 }
 
 .navbarLinks li a:hover {
-    color: #C9C9C9; /* Màu khi người dùng di chuột vào liên kết 
+    color: #C9C9C9; /* Màu khi người dùng di chuột vào liên kết */
 }
 
 .searchBar {
@@ -59,8 +59,8 @@
     cursor: pointer;
     font-size: 16px;
 }
-*/
-/* Giao diện chung */
+
+/* responsiveresponsive
 .navbarBottom {
     display: flex;
     align-items: center;
@@ -116,7 +116,7 @@
     font-size: 16px;
 }
 
-/* Menu toggle */
+
 .menuToggle {
     display: none;
     flex-direction: column;
@@ -133,14 +133,14 @@
     border-radius: 3px;
 }
 
-/* Responsive cho thiết bị nhỏ */
+
 @media (max-width: 768px) {
     .menuToggle {
-        display: flex; /* Hiển thị nút menu toggle */
+        display: flex; 
     }
 
     .navbarLinks {
-        display: none; /* Ẩn menu mặc định */
+        display: none; 
         flex-direction: column;
         width: 100%;
         background-color: white;
@@ -152,7 +152,7 @@
     }
 
     .navbarLinks.active {
-        display: flex; /* Hiển thị menu khi mở */
+        display: flex; 
     }
 
     .navbarLinks li {
@@ -171,3 +171,4 @@
         width: 100%;
     }
 }
+*/
