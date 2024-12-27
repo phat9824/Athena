@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\KhachHang;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Models\TaiKhoan;
 use Illuminate\Support\Facades\DB;
@@ -114,6 +115,77 @@ class ProfileController extends Controller
         } catch (\Exception $e) {
             Log::error('Update Profile Error: ' . $e->getMessage());
             return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getAdminProfile(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $profile = Admin::find($user->ID);
+            $email = TaiKhoan::getEmailById($user->ID);
+
+            if (!$profile || !$email) {
+                return response()->json(['message' => 'Admin not found'], 404);
+            }
+
+            return response()->json([
+                "TENADMIN" => $profile->TENADMIN,
+                "SDT" => $profile->SDT,
+                "DIACHI" => $profile->DIACHI,
+                "EMAIL" => $email['EMAIL'],
+                "IMAGEURL" => $profile->IMAGEURL,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Get Admin Profile Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Unable to fetch admin profile'], 500);
+        }
+    }
+
+    public function updateAdminProfile(Request $request)
+    {
+        try {
+            $user = JWTAuth::parseToken()->authenticate();
+
+            $admin = Admin::find($user->ID);
+            if (!$admin) {
+                return response()->json(['message' => 'Admin not found'], 404);
+            }
+
+            if ($request->has('TENADMIN')) {
+                $admin->TENADMIN = $request->input('TENADMIN');
+            }
+
+            if ($request->has('SDT')) {
+                $admin->SDT = $request->input('SDT');
+            }
+
+            if ($request->has('DIACHI')) {
+                $admin->DIACHI = $request->input('DIACHI');
+            }
+
+            if ($request->hasFile('avatar')) {
+                $file = $request->file('avatar');
+                $filename = 'Admin_Avatar_' . $user->ID . '.png';
+                $path = $file->storeAs('images/admin', $filename, 'public');
+                $admin->IMAGEURL = '/storage/' . $path;
+            }
+
+            $admin->save();
+
+            $email = TaiKhoan::getEmailById($user->ID);
+
+            return response()->json([
+                "TENADMIN" => $admin->TENADMIN,
+                "SDT" => $admin->SDT,
+                "DIACHI" => $admin->DIACHI,
+                "EMAIL" => $email['EMAIL'],
+                "IMAGEURL" => $admin->IMAGEURL,
+            ]);
+        } catch (Exception $e) {
+            Log::error('Update Admin Profile Error: ' . $e->getMessage());
+            return response()->json(['error' => 'Unable to update admin profile'], 500);
         }
     }
 }
