@@ -29,18 +29,66 @@ class HoaDon extends Model
             $sql = "SELECT * FROM HOADON WHERE ID_KHACHHANG = :idkh AND DELETED_AT IS NULL ORDER BY NGAYLAPHD DESC";
             $stmt = $connection->prepare($sql);
             $stmt->execute(['idkh' => $idKhachHang]);
-            $hoadons = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $hoadons = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($hoadons as &$hd) {
-                $sqlCT = "SELECT ct.*, ts.TENTS, ts.IMAGEURL FROM CHITIETHD ct 
-                          LEFT JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID 
-                          WHERE ct.ID_HOADON = :idhd";
-                $stmtCT = $connection->prepare($sqlCT);
-                $stmtCT->execute(['idhd' => $hd['ID_HOADON']]);
-                $hd['chi_tiet'] = $stmtCT->fetchAll(\PDO::FETCH_ASSOC);
+                $hd['chi_tiet'] = self::getInvoiceDetails($hd['ID_HOADON']);
             }
             return $hoadons;
         } catch (\Exception $e) {
             Log::error('Error fetching order history: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getInvoiceDetails($invoiceId)
+    {
+        $connection = self::getPDOConnection();
+
+        try {
+            $sql = "SELECT ct.*, ts.TENTS, ts.IMAGEURL 
+                    FROM CHITIETHD ct 
+                    LEFT JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID 
+                    WHERE ct.ID_HOADON = :idhd";
+            $stmt = $connection->prepare($sql);
+            $stmt->execute(['idhd' => $invoiceId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            Log::error('Error fetching invoice details: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getAllInvoices($sortOrder = 'desc', $status = 'all')
+    {
+        $connection = self::getPDOConnection();
+
+        try {
+            $query = "SELECT * FROM HOADON WHERE DELETED_AT IS NULL";
+
+            if ($status !== 'all') {
+                $query .= " AND TRANGTHAI = :status";
+            }
+
+            $query .= " ORDER BY NGAYLAPHD $sortOrder";
+
+            $stmt = $connection->prepare($query);
+
+            $params = [];
+            if ($status !== 'all') {
+                $params['status'] = $status;
+            }
+
+            $stmt->execute($params);
+
+            $hoadons = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($hoadons as &$hd) {
+                $hd['chi_tiet'] = self::getInvoiceDetails($hd['ID_HOADON']);
+            }
+
+            return $hoadons;
+        } catch (\Exception $e) {
+            Log::error('Error fetching all invoices: ' . $e->getMessage());
             return [];
         }
     }
