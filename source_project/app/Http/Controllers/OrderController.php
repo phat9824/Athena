@@ -162,4 +162,17 @@ class OrderController extends Controller
             return response()->json(['message' => 'Lỗi server'], 500);
         }
     }
+
+    public function markOrderAsReceived(Request $request, $orderId)
+    {
+        try {
+            $receivedStatus = 3;
+            HoaDon::updateOrderStatus($orderId, $receivedStatus);
+
+            return response()->json(['message' => 'Đơn hàng đã được đánh dấu là Đã Nhận Hàng.'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error marking order as received: ' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi server khi cập nhật trạng thái'], 500);
+        }
+    }
 }

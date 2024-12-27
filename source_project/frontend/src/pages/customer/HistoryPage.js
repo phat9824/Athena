@@ -81,6 +81,40 @@ const HistoryPage = () => {
             return 0;  // Không thay đổi
         });
 
+        const markOrderAsReceived = useCallback(async (orderId) => {
+            setLoading(true);
+            try {
+                await getCSRFToken();
+                const xsrfToken = getCookie('XSRF-TOKEN');
+                const response = await fetch(`${baseUrl}/api/customer/orders/${orderId}/mark-received`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({ orderId }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                setOrders((prevOrders) =>
+                    prevOrders.map((order) =>
+                        order.ID_HOADON === orderId ? { ...order, TRANGTHAI: 3 } : order
+                    )
+                );
+                setNotification({ message: 'Đơn hàng đã được cập nhật thành Đã Nhận Hàng.', type: 'success' });
+            } catch (error) {
+                console.error('Error marking order as received:', error);
+                setNotification({ message: 'Không thể cập nhật trạng thái đơn hàng!', type: 'error' });
+            } finally {
+                setLoading(false);
+            }
+        }, [baseUrl, getCSRFToken, getCookie]);
+
     useEffect(() => {
         fetchOrderHistory();
     }, [fetchOrderHistory]);
@@ -105,6 +139,7 @@ const HistoryPage = () => {
                         <option value="0">Chờ xử lý</option>
                         <option value="1">Đã xử lý</option>
                         <option value="2">Đã hủy</option>
+                        <option value="3">Đã Nhận Hàng</option>
                     </select>
                 </div>
 
@@ -148,6 +183,15 @@ const HistoryPage = () => {
                                             >
                                                 {isExpanded ? '▲ Thu gọn' : '▼ Xem chi tiết'}
                                             </button>
+
+                                            {order.TRANGTHAI === 1 && (
+                                                <button
+                                                    className={styles.orderDetailsButton}
+                                                    onClick={() => markOrderAsReceived(order.ID_HOADON)}
+                                                >
+                                                    Đã Nhận Hàng
+                                                </button>
+                                            )}
                                             {/* <button
                                                 className={styles.contactButton}
                                                 onClick={() => (window.location.href = `${baseUrl}/contact`)}

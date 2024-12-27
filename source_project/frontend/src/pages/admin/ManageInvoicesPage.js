@@ -165,6 +165,7 @@ const ManageInvoicesPage = () => {
                     <option value="0">Chờ xử lý</option>
                     <option value="1">Đã xử lý</option>
                     <option value="2">Đã hủy</option>
+                    <option value="3">Đã giao hàng</option>
                 </select>
             </div>
 
@@ -174,11 +175,11 @@ const ManageInvoicesPage = () => {
                     <thead>
                         <tr>
                         <th className={styles.columnId}>Mã Hóa Đơn</th>
-            <th className={styles.columnCustomerId}>Mã Khách Hàng</th>
-            <th className={styles.columnDate}>Ngày Lập</th>
-            <th className={styles.columnStatus}>Trạng Thái</th>
-            <th className={styles.columnTotal}>Tổng Giá Trị</th>
-            <th className={styles.columnActions}>Hành Động</th>
+                        <th className={styles.columnCustomerId}>Mã Khách Hàng</th>
+                        <th className={styles.columnDate}>Ngày Lập</th>
+                        <th className={styles.columnStatus}>Trạng Thái</th>
+                        <th className={styles.columnTotal}>Tổng Giá Trị</th>
+                        <th className={styles.columnActions}>Hành Động</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -192,7 +193,9 @@ const ManageInvoicesPage = () => {
                                         ? 'Chờ xử lý'
                                         : order.TRANGTHAI === 1
                                             ? 'Đã xử lý'
-                                            : 'Đã hủy'}
+                                            : order.TRANGTHAI === 3
+                                                ? 'Đã giao hàng'
+                                                    : 'Đã hủy'}
                                 </td>
                                 <td>{order.TRIGIAHD.toLocaleString()} VNĐ</td>
                                 <td>
