@@ -90,6 +90,13 @@ const ProductDetailsPage = () => {
 
     const handleAddToCart = async () => {
         try {
+            const userId = localStorage.getItem('id');
+            if (!userId) {
+                alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+                navigate('/Home/Login');
+                return;
+            }
+
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
             const response = await fetch(`${baseUrl}/api/customer/cart/add`, {
