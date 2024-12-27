@@ -129,16 +129,16 @@ class EmployeeManagerController extends Controller
     public function updateEmployeePassword(Request $request)
     {
         try {
+            // Chỉ validate email và mật khẩu mới
             $data = $request->validate([
-                'EMAIL' => 'required|email|max:255',
-                'OLD_PASSWORD' => 'required|string',
+                'EMAIL'        => 'required|email|max:255',
                 'NEW_PASSWORD' => 'required|string|min:6',
             ]);
 
             $pdo = DB::connection()->getPdo();
 
-            // Lấy hash password từ email
-            $sqlCheck = "SELECT ID, PASSWORD FROM TAIKHOAN WHERE EMAIL = :EMAIL";
+            // Kiểm tra email có tồn tại trong bảng TAIKHOAN hay không
+            $sqlCheck = "SELECT ID FROM TAIKHOAN WHERE EMAIL = :EMAIL";
             $stmtCheck = $pdo->prepare($sqlCheck);
             $stmtCheck->execute([':EMAIL' => $data['EMAIL']]);
             $user = $stmtCheck->fetch(PDO::FETCH_ASSOC);
@@ -147,12 +147,7 @@ class EmployeeManagerController extends Controller
                 return response()->json(['error' => 'Email không tồn tại'], 404);
             }
 
-            // Kiểm tra mật khẩu cũ
-            if (!Hash::check($data['OLD_PASSWORD'], $user['PASSWORD'])) {
-                return response()->json(['error' => 'Mật khẩu cũ không đúng'], 400);
-            }
-
-            // Hash mật khẩu mới
+            // Tạo hash cho mật khẩu mới
             $newHashed = Hash::make($data['NEW_PASSWORD']);
 
             // Cập nhật mật khẩu
