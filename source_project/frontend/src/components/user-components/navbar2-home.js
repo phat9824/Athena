@@ -12,15 +12,15 @@ const Navbar2 = () => {
                 <li>
                     <Link to="/Home/Products">Sản Phẩm</Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link to="/Home/Collections">Bộ Sưu Tập</Link>
-                </li>
+                </li> */}
                 <li>
                     <Link to="/Home/NewsEvents">Tin Tức Sự Kiện</Link>
                 </li>
-                <li>
+                {/* <li>
                     <Link to="/Home/Promotions">Khuyến Mãi</Link>
-                </li>
+                </li> */}
                 {/* <li>
                     <Link to="/Home/Contact">Liên Hệ</Link>
                 </li> */}
