@@ -20,11 +20,13 @@ const ProductsPage = () => {
         priceMax: "",
         sort: "asc",
         sortBy: "",
+        searchQuery: "", // Từ khóa tìm kiếm sản phẩm
     });
 
     const perPage = 16;
 
     const navigate = useNavigate();
+
     const handleViewDetails = (productId) => {
         navigate(`../Products/${productId}`);
     };
@@ -53,7 +55,12 @@ const ProductsPage = () => {
         const queryParams = new URLSearchParams({
             page,
             perPage,
-            ...filters,
+            category: filters.category,
+            priceMin: filters.priceMin,
+            priceMax: filters.priceMax,
+            sort: filters.sort,
+            sortBy: filters.sortBy,
+            search: filters.searchQuery, // Gửi từ khóa tìm kiếm tới backend
         });
 
         try {
@@ -95,6 +102,15 @@ const ProductsPage = () => {
     const handleFilterChange = (key, value) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
         setCurrentPage(1); // Reset về trang đầu tiên khi thay đổi bộ lọc
+    };
+
+    const handleSearchChange = (e) => {
+        setFilters((prev) => ({ ...prev, searchQuery: e.target.value }));
+    };
+
+    const handleSearchSubmit = () => {
+        setCurrentPage(1); // Reset trang khi tìm kiếm
+        fetchProducts(1);
     };
 
     const handlePageChange = (newPage) => {
@@ -193,6 +209,16 @@ const ProductsPage = () => {
                     </div>
                 )}
                 <div className={styles.filters}>
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm sản phẩm..."
+                        value={filters.searchQuery}
+                        onChange={handleSearchChange}
+                        className={styles.filterInput}
+                    />
+                    <button onClick={handleSearchSubmit} className={styles.searchButton}>
+                        Tìm kiếm
+                    </button>
                     <select
                         value={filters.category}
                         onChange={(e) => handleFilterChange("category", e.target.value)}
