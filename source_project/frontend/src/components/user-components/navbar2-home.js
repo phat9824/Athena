@@ -1,4 +1,4 @@
-/*import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './navbar2-home.module.css';
 
@@ -23,7 +23,7 @@ const Navbar2 = () => {
                 </li>
                 {/* <li>
                     <Link to="/Home/Contact">Liên Hệ</Link>
-                </li> }
+                </li> */}
                 <li>
                     <a href="#footer">Liên Hệ</a>
                 </li>
@@ -40,8 +40,9 @@ const Navbar2 = () => {
 };
 
 export default Navbar2;
-*/
-import React, { useState } from 'react';
+
+
+/*import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './navbar2-home.module.css';
 
@@ -90,3 +91,4 @@ const Navbar2 = () => {
 };
 
 export default Navbar2;
+*/
