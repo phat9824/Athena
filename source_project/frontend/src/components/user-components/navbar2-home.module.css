@@ -1,48 +1,55 @@
+/* Navbar Container */
 .navbarBottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 10px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #ddd;;
-    background-color: white;
+    padding: 10px 40px;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Giới hạn chiều rộng */
+    margin: 0 auto; /* Căn giữa toàn bộ navbar */
 }
 
+/* Navbar Links */
 .navbarLinks {
     display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
+    gap: 20px; /* Khoảng cách giữa các mục */
 }
 
 .navbarLinks li {
-    margin: 0 15px;
     font-weight: 600;
-    cursor: pointer;
     position: relative;
 }
 
-.navbarLinks li:hover {
-    color:#C9C9C9;
-}
-
+/* Link Styles */
 .navbarLinks li a {
-    color: #888 ;
-    text-decoration: none; /* Loại bỏ gạch chân mặc định của liên kết */
+    color: #555;
+    text-decoration: none; /* Loại bỏ gạch chân */
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
 }
 
 .navbarLinks li a:hover {
-    color: #C9C9C9; /* Màu khi người dùng di chuột vào liên kết */
+    color: #007BFF; /* Màu xanh khi hover */
 }
 
+/* Search Bar */
 .searchBar {
     display: flex;
     align-items: center;
-    background-color: #ccc;
-    border-radius: 10px;
-    padding: 5px 10px;
-    margin-left: 15px;
+    background-color: #f1f1f1;
+    border-radius: 20px;
+    padding: 8px 15px;
+    transition: box-shadow 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    position: relative; /* Để dropdown căn chỉnh tốt hơn */
+}
+
+.searchBar:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng nổi bật khi hover */
 }
 
 .searchBar input {
@@ -50,15 +57,86 @@
     background: transparent;
     outline: none;
     padding: 5px;
-    width: 200px;
+    width: 250px; /* Chiều rộng input */
+    color: #333; /* Màu chữ trong input */
+    font-size: 14px; /* Kích thước chữ trong input */
+}
+
+.searchBar input::placeholder {
+    color: #888; /* Màu placeholder nhạt */
 }
 
 .searchBar button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px; /* Kích thước biểu tượng tìm kiếm */
+    color: #555;
+    transition: color 0.3s ease;
 }
+
+.searchBar button:hover {
+    color: #007BFF;
+}
+
+/* Suggestions Dropdown */
+.suggestionsDropdown {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 2000; /* Đảm bảo dropdown hiển thị trên các thành phần khác */
+}
+
+.suggestionItem {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.suggestionItem:hover {
+    background-color: #f9f9f9;
+}
+
+.suggestionImage {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    object-fit: cover;
+    border-radius: 5px; /* Bo góc ảnh */
+}
+
+.suggestionName {
+    flex: 1;
+    font-size: 14px;
+    color: #555;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbarBottom {
+        padding: 10px 20px; /* Giảm padding cho màn hình nhỏ */
+    }
+
+    .navbarLinks {
+        gap: 10px; /* Giảm khoảng cách giữa các mục */
+    }
+
+    .searchBar input {
+        width: 150px; /* Giảm chiều rộng input */
+    }
+}
+
+
 
 /* responsiveresponsive
 .navbarBottom {
