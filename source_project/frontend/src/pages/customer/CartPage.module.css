@@ -210,3 +210,16 @@
     width: 50%;
     box-sizing: border-box;
 }
+
+
+.qrCodeContainer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.qrCodeImage {
+    max-width: 200px;
+    height: auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
