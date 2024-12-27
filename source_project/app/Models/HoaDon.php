@@ -110,4 +110,76 @@ class HoaDon extends Model
         $stmt->execute(['idHoaDon' => $invoiceId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    public static function getFilteredOrders($status, $search, $customerId, $page, $perPage)
+    {
+        $connection = self::getPDOConnection();
+        $offset = ($page - 1) * $perPage;
+
+        $sql = "SELECT * FROM HOADON WHERE DELETED_AT IS NULL";
+        $params = [];
+
+        if ($status !== 'all') {
+            $sql .= " AND TRANGTHAI = :status";
+            $params['status'] = $status;
+        }
+
+        if (!empty($search)) {
+            $sql .= " AND ID_HOADON LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        if (!empty($customerId)) {
+            $sql .= " AND ID_KHACHHANG = :customerId";
+            $params['customerId'] = $customerId;
+        }
+
+        $totalSql = "SELECT COUNT(*) FROM ($sql) AS total";
+        $stmt = $connection->prepare($totalSql);
+        $stmt->execute($params);
+        $totalRows = $stmt->fetchColumn();
+
+        $sql .= " ORDER BY NGAYLAPHD DESC LIMIT :offset, :limit";
+        $params['offset'] = $offset;
+        $params['limit'] = $perPage;
+
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->execute($params);
+
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'orders' => $orders,
+            'totalPages' => ceil($totalRows / $perPage),
+        ];
+    }
+
+    public static function getOrderDetails($orderId)
+    {
+        $connection = self::getPDOConnection();
+
+        $sql = "SELECT ct.ID_TRANGSUC, ct.SOLUONG, ct.GIASP, ts.TENTS, ts.IMAGEURL 
+                FROM CHITIETHD ct
+                JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID
+                WHERE ct.ID_HOADON = :orderId";
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute(['orderId' => $orderId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function updateOrderStatus($orderId, $newStatus)
+    {
+        $connection = self::getPDOConnection();
+
+        $sql = "UPDATE HOADON SET TRANGTHAI = :status WHERE ID_HOADON = :orderId";
+        $stmt = $connection->prepare($sql);
+        $stmt->execute([
+            'status' => $newStatus,
+            'orderId' => $orderId,
+        ]);
+    }
 }

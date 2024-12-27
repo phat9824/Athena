@@ -11,6 +11,7 @@ use App\Models\ChiTietGH;
 use App\Models\HoaDon;
 use App\Models\ChiTietHD;
 use App\Models\TrangSuc;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -20,7 +21,7 @@ class OrderController extends Controller
             $user = JWTAuth::parseToken()->authenticate();
             $userId = $user->ID;
             $cart = GioHang::getCartByUserId($userId);
-            
+
             if (!$cart) {
                 return response()->json([], 200);
             }
@@ -83,7 +84,7 @@ class OrderController extends Controller
             $userId = $user->ID;
 
             $hoaDon = HoaDon::createInvoiceFromCart($userId);
-            
+
             return response()->json(['message' => 'Thanh toán thành công', 'hoaDon' => $hoaDon], 200);
         } catch (\Exception $e) {
             Log::error('Checkout Error: ' . $e->getMessage(), ['exception' => $e]);
@@ -116,6 +117,49 @@ class OrderController extends Controller
         }
     }
 
+    public function getOrders(Request $request)
+    {
+        try {
+            $status = $request->query('status', 'all');
+            $search = $request->query('search', '');
+            $customerId = $request->query('customerId', '');
+            $page = $request->query('page', 1);
+            $perPage = 10;
 
+            $result = HoaDon::getFilteredOrders($status, $search, $customerId, $page, $perPage);
+
+            return response()->json([
+                'orders' => $result['orders'],
+                'totalPages' => $result['totalPages'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching orders: ' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi server'], 500);
+        }
+    }
+    
+    public function getOrderDetails($orderId)
+    {
+        try {
+            $items = HoaDon::getOrderDetails($orderId);
+
+            return response()->json(['items' => $items]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching order details: ' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi server'], 500);
+        }
+    }
+
+    public function updateOrderStatus(Request $request, $orderId)
+    {
+        try {
+            $newStatus = $request->input('status');
+            HoaDon::updateOrderStatus($orderId, $newStatus);
+
+            return response()->json(['message' => 'Cập nhật trạng thái thành công']);
+        } catch (\Exception $e) {
+            Log::error('Error updating order status: ' . $e->getMessage());
+            return response()->json(['message' => 'Lỗi server'], 500);
+        }
+    }
 }
-
