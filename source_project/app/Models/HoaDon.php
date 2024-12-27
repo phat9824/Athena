@@ -29,18 +29,66 @@ class HoaDon extends Model
             $sql = "SELECT * FROM HOADON WHERE ID_KHACHHANG = :idkh AND DELETED_AT IS NULL ORDER BY NGAYLAPHD DESC";
             $stmt = $connection->prepare($sql);
             $stmt->execute(['idkh' => $idKhachHang]);
-            $hoadons = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $hoadons = $stmt->fetchAll(PDO::FETCH_ASSOC);
             foreach ($hoadons as &$hd) {
-                $sqlCT = "SELECT ct.*, ts.TENTS, ts.IMAGEURL FROM CHITIETHD ct 
-                          LEFT JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID 
-                          WHERE ct.ID_HOADON = :idhd";
-                $stmtCT = $connection->prepare($sqlCT);
-                $stmtCT->execute(['idhd' => $hd['ID_HOADON']]);
-                $hd['chi_tiet'] = $stmtCT->fetchAll(\PDO::FETCH_ASSOC);
+                $hd['chi_tiet'] = self::getInvoiceDetails($hd['ID_HOADON']);
             }
             return $hoadons;
         } catch (\Exception $e) {
             Log::error('Error fetching order history: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getInvoiceDetails($invoiceId)
+    {
+        $connection = self::getPDOConnection();
+
+        try {
+            $sql = "SELECT ct.*, ts.TENTS, ts.IMAGEURL 
+                    FROM CHITIETHD ct 
+                    LEFT JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID 
+                    WHERE ct.ID_HOADON = :idhd";
+            $stmt = $connection->prepare($sql);
+            $stmt->execute(['idhd' => $invoiceId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Exception $e) {
+            Log::error('Error fetching invoice details: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    public static function getAllInvoices($sortOrder = 'desc', $status = 'all')
+    {
+        $connection = self::getPDOConnection();
+
+        try {
+            $query = "SELECT * FROM HOADON WHERE DELETED_AT IS NULL";
+
+            if ($status !== 'all') {
+                $query .= " AND TRANGTHAI = :status";
+            }
+
+            $query .= " ORDER BY NGAYLAPHD $sortOrder";
+
+            $stmt = $connection->prepare($query);
+
+            $params = [];
+            if ($status !== 'all') {
+                $params['status'] = $status;
+            }
+
+            $stmt->execute($params);
+
+            $hoadons = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($hoadons as &$hd) {
+                $hd['chi_tiet'] = self::getInvoiceDetails($hd['ID_HOADON']);
+            }
+
+            return $hoadons;
+        } catch (\Exception $e) {
+            Log::error('Error fetching all invoices: ' . $e->getMessage());
             return [];
         }
     }
@@ -109,5 +157,77 @@ class HoaDon extends Model
         $stmt = $pdo->prepare($sql);
         $stmt->execute(['idHoaDon' => $invoiceId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public static function getFilteredOrders($status, $search, $customerId, $page, $perPage)
+    {
+        $connection = self::getPDOConnection();
+        $offset = ($page - 1) * $perPage;
+
+        $sql = "SELECT * FROM HOADON WHERE DELETED_AT IS NULL";
+        $params = [];
+
+        if ($status !== 'all') {
+            $sql .= " AND TRANGTHAI = :status";
+            $params['status'] = $status;
+        }
+
+        if (!empty($search)) {
+            $sql .= " AND ID_HOADON LIKE :search";
+            $params['search'] = '%' . $search . '%';
+        }
+
+        if (!empty($customerId)) {
+            $sql .= " AND ID_KHACHHANG = :customerId";
+            $params['customerId'] = $customerId;
+        }
+
+        $totalSql = "SELECT COUNT(*) FROM ($sql) AS total";
+        $stmt = $connection->prepare($totalSql);
+        $stmt->execute($params);
+        $totalRows = $stmt->fetchColumn();
+
+        $sql .= " ORDER BY NGAYLAPHD DESC LIMIT :offset, :limit";
+        $params['offset'] = $offset;
+        $params['limit'] = $perPage;
+
+        $stmt = $connection->prepare($sql);
+        $stmt->bindValue('offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue('limit', $perPage, PDO::PARAM_INT);
+        $stmt->execute($params);
+
+        $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            'orders' => $orders,
+            'totalPages' => ceil($totalRows / $perPage),
+        ];
+    }
+
+    public static function getOrderDetails($orderId)
+    {
+        $connection = self::getPDOConnection();
+
+        $sql = "SELECT ct.ID_TRANGSUC, ct.SOLUONG, ct.GIASP, ts.TENTS, ts.IMAGEURL 
+                FROM CHITIETHD ct
+                JOIN TRANGSUC ts ON ct.ID_TRANGSUC = ts.ID
+                WHERE ct.ID_HOADON = :orderId";
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute(['orderId' => $orderId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public static function updateOrderStatus($orderId, $newStatus)
+    {
+        $connection = self::getPDOConnection();
+
+        $sql = "UPDATE HOADON SET TRANGTHAI = :status WHERE ID_HOADON = :orderId";
+        $stmt = $connection->prepare($sql);
+        $stmt->execute([
+            'status' => $newStatus,
+            'orderId' => $orderId,
+        ]);
     }
 }

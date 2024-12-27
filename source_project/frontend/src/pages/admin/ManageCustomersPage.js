@@ -113,7 +113,7 @@ const ManageCustomersPage = () => {
                                     {customer.IMAGEURL ? (
                                         <img src={`${baseUrl}${customer.IMAGEURL}`} alt="Customer" className={styles.thumbnail} />
                                     ) : (
-                                        "Chưa có ảnh"
+                                        "..."
                                     )}
                                 </td>
                             </tr>

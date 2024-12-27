@@ -44,11 +44,10 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::post('/api/admin/khuyenmai/update/{id}', [PromotionManagementController::class, 'updateKhuyenMai']);
 
     Route::get('/api/admin/view-customer', [ProfileController::class, 'getCustomerandAccount']);
-    
+
     Route::get('/api/admin/orders', [OrderController::class, 'getOrders']);
     Route::get('/api/admin/orders/{orderId}', [OrderController::class, 'getOrderDetails']);
     Route::put('/api/admin/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
-
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
@@ -64,6 +63,7 @@ Route::middleware(['auth:api', 'check.role:1'])->group(function () {
 });
 
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {
+    Route::post('api/customer/orders/{orderId}/mark-received', [OrderController::class, 'markOrderAsReceived']);
     Route::get('api/customer/profile', [ProfileController::class, 'getProfile']);
     Route::post('api/customer/profile/update', [ProfileController::class, 'updateProfile']);
     Route::get('api/customer/cart', [OrderController::class, 'getCart']);

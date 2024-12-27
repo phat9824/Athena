@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useAppContext } from "../../AppContext.js";
 import styles from "./ManagePromotionsPage.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faSave } from "@fortawesome/free-solid-svg-icons";
-
+import { faEdit, faSave, faTimes } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../../components/admin/ProductPages/Pagination";
+import Notification from "../../components/user-components/Notification.js";
 const ManagePromotionsPage = () => {
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
 
@@ -17,9 +18,61 @@ const ManagePromotionsPage = () => {
         startDate: "",
         endDate: "",
         discount: "",
-    });
+        scopeType: "category",
+        selectedScope: [],
+    })
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [inputPage, setInputPage] = useState(1);
+    const [categories, setCategories] = useState([]);
+    const [sortField, setSortField] = useState("NGAYBD");
+    const [sortOrder, setSortOrder] = useState("asc");
+
+    const validatePromotion = (promotion) => {
+        if (!promotion.name.trim()) return "Tên khuyến mãi không được để trống.";
+        if (!promotion.startDate) return "Ngày bắt đầu không được để trống.";
+        if (!promotion.endDate) return "Ngày kết thúc không được để trống.";
+        if (new Date(promotion.startDate) > new Date(promotion.endDate)) {
+            return "Ngày bắt đầu không thể lớn hơn ngày kết thúc.";
+        }
+        if (!promotion.discount || isNaN(promotion.discount) || promotion.discount <= 0 || promotion.discount > 100) {
+            return "Phần trăm giảm giá phải là một số trong khoảng từ 1 đến 100.";
+        }
+        if (promotion.scopeType === "category" && promotion.selectedScope.length === 0) {
+            return "Vui lòng chọn ít nhất một danh mục.";
+        }
+        if (promotion.scopeType === "product" && promotion.selectedScope.length === 0) {
+            return "Vui lòng nhập ít nhất một sản phẩm.";
+        }
+        return null;
+    };
+
+    const validateUpdatedPromotion = (updatedData) => {
+        if (!updatedData.startDate) return "Ngày bắt đầu không được để trống.";
+        if (!updatedData.endDate) return "Ngày kết thúc không được để trống.";
+        if (new Date(updatedData.startDate) > new Date(updatedData.endDate)) {
+            return "Ngày bắt đầu không thể lớn hơn ngày kết thúc.";
+        }
+        if (!updatedData.discount || isNaN(updatedData.discount) || updatedData.discount <= 0 || updatedData.discount > 100) {
+            return "Phần trăm giảm giá phải là một số trong khoảng từ 1 đến 100.";
+        }
+        return null;
+    };
+
+
+    const fetchCategories = async () => {
+        try {
+            const resp = await fetch(`${baseUrl}/api/danhmucts`);
+            const data = await resp.json();
+            setCategories(data); // [{MADM: '...', TENDM: '...'}, ...]
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
 
     // Hàm cập nhật thông tin khuyến mãi
     const handlePromoChange = (id, field, value) => {
@@ -38,7 +91,7 @@ const ManagePromotionsPage = () => {
             const xsrfToken = getCookie("XSRF-TOKEN");
 
             const response = await fetch(
-                `${baseUrl}/api/admin/khuyenmai?page=${page}&perPage=10&search=${searchQuery}`,
+                `${baseUrl}/api/admin/khuyenmai?page=${page}&perPage=10&search=${searchQuery}&sortField=${sortField}&sortOrder=${sortOrder}`,
                 {
                     method: "GET",
                     headers: {
@@ -66,15 +119,15 @@ const ManagePromotionsPage = () => {
 
     useEffect(() => {
         fetchPromotions(currentPage);
-    }, [currentPage, searchQuery]);
+    }, [currentPage, searchQuery, sortField, sortOrder]);
 
     // Hàm thêm khuyến mãi mới
     const addPromotion = async () => {
-        if (!newPromotion.name || !newPromotion.startDate || !newPromotion.endDate || !newPromotion.discount) {
-            setErrorMessage("Vui lòng điền đầy đủ thông tin khuyến mãi!");
+        const validationError = validatePromotion(newPromotion);
+        if (validationError) {
+            setErrorMessage(validationError);
             return;
         }
-
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
@@ -83,7 +136,7 @@ const ManagePromotionsPage = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
+                    Accept: "application/json",
                     "X-XSRF-TOKEN": decodeURIComponent(xsrfToken),
                 },
                 credentials: "include",
@@ -92,6 +145,8 @@ const ManagePromotionsPage = () => {
                     NGAYBD: newPromotion.startDate,
                     NGAYKT: newPromotion.endDate,
                     PHANTRAM: newPromotion.discount,
+                    scopeType: newPromotion.scopeType,
+                    selectedScope: newPromotion.selectedScope,
                 }),
             });
 
@@ -101,9 +156,16 @@ const ManagePromotionsPage = () => {
             }
 
             setSuccessMessage("Thêm khuyến mãi thành công!");
-            setErrorMessage("");  // Reset lỗi
-            setNewPromotion({ name: "", startDate: "", endDate: "", discount: "" });  // Reset form
-            fetchPromotions(1);  // Refresh danh sách khuyến mãi sau khi thêm mới
+            setErrorMessage("");
+            setNewPromotion({
+                name: "",
+                startDate: "",
+                endDate: "",
+                discount: "",
+                scopeType: "category",
+                selectedScope: [],
+            });
+            fetchPromotions(1);
         } catch (error) {
             setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm khuyến mãi!");
         }
@@ -114,61 +176,21 @@ const ManagePromotionsPage = () => {
         setSearchQuery(e.target.value);
     };
 
-    // Hiển thị phân trang
-    const renderPagination = () => {
-        if (totalPages <= 1) return null;
-
-        const pageNumbers = [];
-        const maxVisibleButtons = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
-        let endPage = Math.min(totalPages, currentPage + Math.floor(maxVisibleButtons / 2));
-
-        if (endPage - startPage + 1 < maxVisibleButtons) {
-            if (startPage === 1) {
-                endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
-            } else if (endPage === totalPages) {
-                startPage = Math.max(1, endPage - maxVisibleButtons + 1);
-            }
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
         }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(i);
-        }
-
-        return (
-            <div className={styles.pagination}>
-                <button
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ""}`}
-                >
-                    ←
-                </button>
-
-                {pageNumbers.map((page) => (
-                    <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        disabled={page === currentPage}
-                        className={`${styles.paginationButton} ${page === currentPage ? styles.paginationButtonActive : ""}`}
-                    >
-                        {page}
-                    </button>
-                ))}
-
-                <button
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ""}`}
-                >
-                    →
-                </button>
-            </div>
-        );
     };
 
     // Hàm gọi API update
     const updatePromotion = async (promoId, updatedData) => {
+
+        const validationError = validateUpdatedPromotion(updatedData);
+        if (validationError) {
+            setErrorMessage(validationError);
+            return;
+        }
+
         try {
             await getCSRFToken();
             const xsrfToken = getCookie("XSRF-TOKEN");
@@ -201,23 +223,112 @@ const ManagePromotionsPage = () => {
         }
     };
 
+    const renderScopeSelection = () => {
+        const handleCheckboxChange = (type, id, isChecked) => {
+            setNewPromotion((prev) => {
+                const updatedScope = isChecked
+                    ? [...prev.selectedScope, id]
+                    : prev.selectedScope.filter((item) => item !== id);
+                return { ...prev, scopeType: type, selectedScope: updatedScope };
+            });
+        };
+
+        if (newPromotion.scopeType === "category") {
+            return (
+                <div>
+                    <h3>Chọn danh mục áp dụng</h3>
+                    {categories.map((category) => (
+                        <label key={category.MADM}>
+                            <input
+                                type="checkbox"
+                                checked={newPromotion.selectedScope.includes(category.MADM)}
+                                onChange={(e) =>
+                                    handleCheckboxChange("category", category.MADM, e.target.checked)
+                                }
+                            />
+                            {category.TENDM}
+                        </label>
+                    ))}
+                </div>
+            );
+        } else if (newPromotion.scopeType === "product") {
+            return (
+                <div>
+                    <h3>Nhập ID sản phẩm áp dụng</h3>
+                    <textarea
+                        placeholder="Nhập ID sản phẩm, cách nhau bằng dấu phẩy (ví dụ: 1, 2, 3)"
+                        name="selectedScope"
+                        //value={newPromotion.selectedScope.join(", ")} // Hiển thị danh sách ID hiện tại
+                        onChange={handleInputChange}
+                        style={{ width: "99.44%", minHeight: "30px" }}
+                    />
+                </div>
+            );
+        }
+        return null;
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewPromotion((prev) => {
+            if (name === "selectedScope") {
+                const ids = value.split(",").map((id) => id.trim()).filter((id) => id);
+                return { ...prev, [name]: ids };
+            }
+            return { ...prev, [name]: value };
+        });
+    };
+
     return (
         <div className={styles.container}>
             <h1 className={styles.heading}>Quản lý chương trình khuyến mãi</h1>
-
             {/* Thanh tìm kiếm */}
-            <div className={styles.inputGroup}>
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm khuyến mãi"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                    className={styles.input}
-                />
+            <div className={`${styles.containerFilter}`}>
+                <div className={styles.inputGroup}>
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm khuyến mãi"
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        className={styles.input}
+                    />
+                </div>
+
+                <div className={styles.sortControls}>
+                    <select
+                        value={sortField}
+                        onChange={(e) => setSortField(e.target.value)}
+                        className={styles.sortSelect}
+                    >
+                        <option value="NGAYBD">Ngày bắt đầu</option>
+                        <option value="NGAYKT">Ngày kết thúc</option>
+                        <option value="PHANTRAM">Giảm giá</option>
+                    </select>
+                    <select
+                        value={sortOrder}
+                        onChange={(e) => setSortOrder(e.target.value)}
+                        className={styles.sortSelect}
+                    >
+                        <option value="asc">Tăng dần</option>
+                        <option value="desc">Giảm dần</option>
+                    </select>
+                </div>
             </div>
 
-            {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
-            {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
+            {errorMessage && (
+                <Notification
+                    message={errorMessage}
+                    type="error"
+                    onClose={() => setErrorMessage("")}
+                />
+            )}
+            {successMessage && (
+                <Notification
+                    message={successMessage}
+                    type="success"
+                    onClose={() => setSuccessMessage("")}
+                />
+            )}
 
             {/* Bảng danh sách khuyến mãi */}
             <table className={styles.table}>
@@ -227,6 +338,8 @@ const ManagePromotionsPage = () => {
                         <th>Ngày bắt đầu</th>
                         <th>Ngày kết thúc</th>
                         <th>Phần trăm giảm giá</th>
+                        <th>Phạm vi áp dụng</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -267,6 +380,28 @@ const ManagePromotionsPage = () => {
                                 )}
                             </td>
                             <td>
+                                <td>
+                                    {promo.scopeType === "category" ? (
+                                        <>
+                                            <span>Danh mục: </span>
+                                            {promo.selectedScope
+                                                .map((id) => {
+                                                    const category = categories.find((cat) => cat.MADM === id);
+                                                    return category ? category.TENDM : id; // Lấy tên danh mục nếu tìm thấy, nếu không thì hiển thị ID
+                                                })
+                                                .join(", ")} {/* Nối các phần tử thành chuỗi với dấu phẩy */}
+                                        </>
+                                    ) : promo.scopeType === "product" ? (
+                                        <>
+                                            <span>Sản phẩm: </span>
+                                            {promo.selectedScope.join(", ")} {/* Nối danh sách sản phẩm thành chuỗi với dấu phẩy */}
+                                        </>
+                                    ) : (
+                                        <span>Không xác định</span>
+                                    )}
+                                </td>
+                            </td>
+                            <td>
                                 {promo.isEditing ? (
                                     <button
                                         onClick={() => {
@@ -295,44 +430,81 @@ const ManagePromotionsPage = () => {
                 </tbody>
             </table>
 
-            {renderPagination()}
+            <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                onInputPageChange={setInputPage}
+                inputPage={inputPage}
+            />
 
             {/* Form thêm khuyến mãi mới */}
             <h2>Thêm chương trình khuyến mãi mới</h2>
             <form
+                className={styles.promotionForm}
                 onSubmit={(e) => {
                     e.preventDefault();
                     addPromotion();
                 }}
-                className={styles.form}
             >
-                <input
-                    type="text"
-                    placeholder="Tên khuyến mãi"
-                    value={newPromotion.name}
-                    onChange={(e) => setNewPromotion((prev) => ({ ...prev, name: e.target.value }))}
-                    required
-                />
-                <input
-                    type="date"
-                    value={newPromotion.startDate}
-                    onChange={(e) => setNewPromotion((prev) => ({ ...prev, startDate: e.target.value }))}
-                    required
-                />
-                <input
-                    type="date"
-                    value={newPromotion.endDate}
-                    onChange={(e) => setNewPromotion((prev) => ({ ...prev, endDate: e.target.value }))}
-                    required
-                />
-                <input
-                    type="number"
-                    placeholder="Phần trăm giảm giá"
-                    value={newPromotion.discount}
-                    onChange={(e) => setNewPromotion((prev) => ({ ...prev, discount: e.target.value }))}
-                    required
-                />
-                <button type="submit">Thêm</button>
+                <div className={styles.formRow}>
+                    <input
+                        type="text"
+                        placeholder="Tên khuyến mãi"
+                        value={newPromotion.name}
+                        onChange={(e) => setNewPromotion({ ...newPromotion, name: e.target.value })}
+                        required
+                        className={styles.formInput}
+                    />
+                    <input
+                        type="number"
+                        placeholder="Phần trăm giảm giá"
+                        value={newPromotion.discount}
+                        onChange={(e) => setNewPromotion({ ...newPromotion, discount: e.target.value })}
+                        required
+                        className={styles.formInput}
+                    />
+                </div>
+                <div className={styles.formRow}>
+                    <input
+                        type="date"
+                        value={newPromotion.startDate}
+                        onChange={(e) => setNewPromotion({ ...newPromotion, startDate: e.target.value })}
+                        required
+                        className={styles.formInput}
+                    />
+                    <input
+                        type="date"
+                        value={newPromotion.endDate}
+                        onChange={(e) => setNewPromotion({ ...newPromotion, endDate: e.target.value })}
+                        required
+                        className={styles.formInput}
+                    />
+                </div>
+                <div className={styles.formRow}>
+                    <label className={styles.radioLabel}>
+                        <input
+                            type="radio"
+                            name="scopeType"
+                            value="category"
+                            checked={newPromotion.scopeType === "category"}
+                            onChange={() => setNewPromotion({ ...newPromotion, scopeType: "category" })}
+                        />
+                        Theo danh mục
+                    </label>
+                    <label className={styles.radioLabel}>
+                        <input
+                            type="radio"
+                            name="scopeType"
+                            value="product"
+                            checked={newPromotion.scopeType === "product"}
+                            onChange={() => setNewPromotion({ ...newPromotion, scopeType: "product" })}
+                        />
+                        Theo sản phẩm
+                    </label>
+                </div>
+                {renderScopeSelection()}
+                <button type="submit" className={styles.submitButton}>Thêm</button>
             </form>
         </div>
     );
