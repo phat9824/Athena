@@ -20,6 +20,7 @@ const ManageProductsPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
+
     // Danh sách sản phẩm
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -50,6 +51,7 @@ const ManageProductsPage = () => {
         const category = categories.find((cat) => cat.MADM === madm);
         return category ? category.TENDM : "Không xác định";
     };
+
 
     const fetchCategories = async () => {
         try {
@@ -273,36 +275,61 @@ const ManageProductsPage = () => {
         }
     };
 
+    const filteredProducts = products.filter((product) => {
+        const productName = product.TENTS?.toLowerCase() || "";
+        const isNameMatch = productName.includes(searchQuery.toLowerCase());
+
+        const isCategoryMatch =
+            !filters.category || product.MADM === filters.category;
+
+        return isNameMatch && isCategoryMatch;
+    });
+
+
+
     return (
         <div className={styles.container}>
             <h2 className={styles.heading}>Danh sách sản phẩm</h2>
 
-            <div className={styles.inputGroup}>
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm sản phẩm"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className={styles.input}
-                />
-                <select
-                    onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                    className={styles.select}
-                >
-                    <option value="">Chọn danh mục</option>
-                    {categories.map((cat) => (
-                        <option key={cat.ID} value={cat.MADM}>
-                            {cat.TENDM}
-                        </option>
-                    ))}
-                </select>
+            <div className={styles.container}>
+                <h2 className={styles.heading}>Danh sách sản phẩm</h2>
+
+                {/* Ô tìm kiếm và chọn danh mục */}
+                <div className={styles.inputGroup}>
+                    {/* Tìm kiếm theo tên sản phẩm */}
+                    <input
+                        type="text"
+                        placeholder="Tìm kiếm theo tên sản phẩm..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className={styles.searchInput}
+                    />
+
+                    {/* Chọn danh mục */}
+                    <select
+                        value={filters.category || ""}
+                        onChange={(e) =>
+                            setFilters({ ...filters, category: e.target.value })
+                        }
+                        className={styles.select}
+                    >
+                        <option value="">Tất cả danh mục</option>
+                        {categories.map((cat) => (
+                            <option key={cat.ID} value={cat.MADM}>
+                                {cat.TENDM}
+                            </option>
+                        ))}
+                    </select>
+
+                </div>
             </div>
+
 
             {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
             {successMessage && <div className={styles.successMessage}>{successMessage}</div>}
 
             <ProductTable
-                products={products}
+                products={filteredProducts}
                 categories={categories}
                 baseUrl={baseUrl}
                 mapCategoryName={mapCategoryName}

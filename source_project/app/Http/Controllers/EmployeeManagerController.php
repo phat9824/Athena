@@ -32,7 +32,7 @@ class EmployeeManagerController extends Controller
 
             $stmt = $pdo->prepare($sql);
             $stmt->execute();
-            $employees = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $employees = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return response()->json($employees);
         } catch (Exception $e) {
@@ -59,7 +59,7 @@ class EmployeeManagerController extends Controller
             $checkEmailSql = "SELECT COUNT(*) as cnt FROM TAIKHOAN WHERE EMAIL = :EMAIL";
             $checkStmt = $pdo->prepare($checkEmailSql);
             $checkStmt->execute([':EMAIL' => $data['EMAIL']]);
-            $count = $checkStmt->fetch(\PDO::FETCH_ASSOC)['cnt'];
+            $count = $checkStmt->fetch(PDO::FETCH_ASSOC)['cnt'];
 
             if ($count > 0) {
                 return response()->json(['error' => 'Email đã tồn tại trong hệ thống!'], 400);
@@ -74,8 +74,8 @@ class EmployeeManagerController extends Controller
             $stmt1 = $pdo->prepare($sqlTaiKhoan);
             $stmt1->bindValue(':EMAIL', $data['EMAIL']);
             $stmt1->bindValue(':PASSWORD', $hashedPassword);
-            $stmt1->bindValue(':ROLE', 2, \PDO::PARAM_INT); // Role = 2 (admin)
-            $stmt1->bindValue(':TINHTRANG', 1, \PDO::PARAM_INT); // Tình trạng = 1 (hoạt động)
+            $stmt1->bindValue(':ROLE', 2, PDO::PARAM_INT); // Role = 2 (admin)
+            $stmt1->bindValue(':TINHTRANG', 1, PDO::PARAM_INT); // Tình trạng = 1 (hoạt động)
             $stmt1->execute();
 
             // Lấy ID vừa insert
@@ -84,7 +84,7 @@ class EmployeeManagerController extends Controller
             // Chèn vào ADMIN
             $sqlAdmin = "INSERT INTO ADMIN (ID, TENADMIN, SDT, DIACHI) VALUES (:ID, :TENADMIN, :SDT, :DIACHI)";
             $stmt2 = $pdo->prepare($sqlAdmin);
-            $stmt2->bindValue(':ID', $adminId, \PDO::PARAM_INT);
+            $stmt2->bindValue(':ID', $adminId, PDO::PARAM_INT);
             $stmt2->bindValue(':TENADMIN', $data['TENADMIN']);
             $stmt2->bindValue(':SDT', $data['SDT']);
             $stmt2->bindValue(':DIACHI', $data['DIACHI']);
