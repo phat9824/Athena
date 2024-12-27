@@ -284,27 +284,17 @@ const CartPage = () => {
                         </div>
 
                         <h3>Thông tin giao hàng</h3>
-                        <input
-                            type="text"
-                            placeholder="Người nhận"
-                            value={receiverName}
-                            onChange={(e) => setReceiverName(e.target.value)}
-                            className={styles.inputField}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Số điện thoại liên hệ"
-                            value={contactPhone}
-                            onChange={(e) => setContactPhone(e.target.value)}
-                            className={styles.inputField}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Địa chỉ nhận hàng"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            className={styles.inputField}
-                        />
+                        <h3>Thông tin giao hàng</h3>
+                        <div className={styles.inputField}>
+                            <p><b>Người nhận:</b> {receiverName}</p>
+                        </div>
+                        <div className={styles.inputField}>
+                            <p><b>Số điện thoại liên hệ:</b> {contactPhone}</p>
+                        </div>
+                        <div className={styles.inputField}>
+                            <p><b>Địa chỉ nhận hàng:</b> {address}</p>
+                        </div>
+
 
                         <h3>Phương thức thanh toán</h3>
                         <select
@@ -315,6 +305,23 @@ const CartPage = () => {
                             <option value="credit_card">Thẻ tín dụng</option>
                             <option value="bank_transfer">Chuyển khoản</option>
                         </select>
+
+                        {paymentMethod === 'bank_transfer' && (
+                            <div className={styles.qrCodeContainer}>
+                                <img
+                                    src={`${baseUrl}/storage/images/qr_code/QR_CODE.jpg`} // Corrected QR code path
+                                    alt="QR Code for Bank Transfer"
+                                    className={styles.qrCodeImage} // Add styling class for QR code
+                                />
+                                <p>
+                                    Quý khách vui lòng chuyển khoản đến số tài khoản: xxxxxxxxxxxxxx
+                                    với nội dung chuyển khoản là "TEN KHACH HANG - SDT KHACH HANG".
+                                </p>
+                            </div>
+                        )}
+
+
+
 
                         {paymentMethod === 'credit_card' && (
                             <div className={styles.cardInfoForm}>

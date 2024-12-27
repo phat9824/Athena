@@ -11,6 +11,7 @@ use App\Http\Controllers\PromotionManagementController;
 use App\Http\Controllers\EmployeeManagerController;
 use App\Http\Controllers\ThongKeController;
 use App\Http\Controllers\InvoiceManagerController;
+use App\Http\Controllers\SanPhamBanChayController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -42,11 +43,10 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::post('/api/admin/khuyenmai/update/{id}', [PromotionManagementController::class, 'updateKhuyenMai']);
 
     Route::get('/api/admin/view-customer', [ProfileController::class, 'getCustomerandAccount']);
-    
+
     Route::get('/api/admin/orders', [OrderController::class, 'getOrders']);
     Route::get('/api/admin/orders/{orderId}', [OrderController::class, 'getOrderDetails']);
     Route::put('/api/admin/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
-
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
@@ -70,4 +70,6 @@ Route::middleware(['auth:api', 'check.role:0'])->group(function () {
     Route::post('/api/customer/cart/checkout', [OrderController::class, 'checkout']);
     Route::post('/api/customer/cart/add', [OrderController::class, 'addToCart']);
     Route::get('api/customer/history/', [OrderController::class, 'getOrderHistory']);
+
+    Route::get('/api/top-products', [SanPhamBanChayController::class, 'getTopProduct']);
 });
