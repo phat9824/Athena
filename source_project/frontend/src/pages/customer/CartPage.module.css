@@ -1,7 +1,7 @@
 .inputField {
     width: 95%;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
@@ -66,7 +66,7 @@
     border: 1px solid #ccc;
     border-radius: 4px;
     background: #fff;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
 }
 
 .originalPrice {
@@ -183,4 +183,30 @@
     display: flex;
     gap: 10px;
     margin-top: 0px;
+}
+
+.cardInfoForm {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expiryCvvRow {
+    display: flex;
+    gap: 10px;
+}
+
+.inputField {
+    padding: 10px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.inputFieldHalf {
+    padding: 10px;
+    font-size: 16px;
+    width: 50%;
+    box-sizing: border-box;
 }

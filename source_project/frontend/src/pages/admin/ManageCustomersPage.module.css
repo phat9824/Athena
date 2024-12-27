@@ -54,7 +54,8 @@
 
 /* Xóa đường viền nhưng vẫn giữ cấu trúc bảng */
 .table th, .table td {
-    padding: 12px;
+    height: 50px;
+    padding: 2px;
     text-align: left;
 }
 
@@ -105,8 +106,8 @@
 }
 
 .thumbnail {
-    max-width: 100px;        
-    height: auto;            
+    max-width: 50px;        
+    max-height: 50px;            
     margin: 0 auto;          
     display: block;          
 }

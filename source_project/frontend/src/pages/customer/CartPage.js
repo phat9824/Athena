@@ -13,16 +13,20 @@ const CartPage = () => {
     const [originalTotal, setOriginalTotal] = useState(0);
     const [discount, setDiscount] = useState(0);
     const [finalTotal, setFinalTotal] = useState(0);
-    const [shippingFee, setShippingFee] = useState(0);
     const [address, setAddress] = useState('');
     const [receiverName, setReceiverName] = useState('');
     const [contactPhone, setContactPhone] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('credit_card');
     const [processingPayment, setProcessingPayment] = useState(false);
+    const [cardNumber, setCardNumber] = useState('');
+    const [expiryDate, setExpiryDate] = useState('');
+    const [cvv, setCvv] = useState('');
+    const [cardHolderName, setCardHolderName] = useState('');
 
 
     useEffect(() => {
         fetchCartItems();
+        fetchCustomerInfo();
     }, []);
 
     const updateCartSummaryInLocalStorage = (items) => {
@@ -32,15 +36,20 @@ const CartPage = () => {
 
     useEffect(() => {
         const currentItems = editingItems.length > 0 ? editingItems : cartItems;
-        let total = 0;
+        let totalOriginal = 0;
+        let totalDiscount = 0;
+
         currentItems.forEach(item => {
-            total += item.GIANIEMYET * item.SOLUONG;
+            const originalPrice = item.GIANIEMYET * item.SOLUONG;
+            const discountedPrice = originalPrice * (item.BEST_DISCOUNT || 0) / 100;
+
+            totalOriginal += originalPrice;
+            totalDiscount += discountedPrice;
         });
 
-        const appliedDiscount = 0; // Sẽ được xử lí sau
-        setOriginalTotal(total);
-        setDiscount(appliedDiscount);
-        setFinalTotal(total - appliedDiscount);
+        setOriginalTotal(totalOriginal);
+        setDiscount(totalDiscount);
+        setFinalTotal(totalOriginal - totalDiscount);
     }, [cartItems, editingItems]);
 
     const fetchCartItems = async () => {
@@ -71,6 +80,36 @@ const CartPage = () => {
             setNotification({ message: 'Đã xảy ra lỗi khi tải giỏ hàng!', type: 'error' });
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchCustomerInfo = async () => {
+        try {
+            await getCSRFToken();
+            const xsrfToken = getCookie('XSRF-TOKEN');
+
+            const response = await fetch(`${baseUrl}/api/customer/profile`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-XSRF-TOKEN': decodeURIComponent(xsrfToken),
+                },
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            // Cập nhật thông tin giao hàng với dữ liệu từ API
+            setReceiverName(data.TENKH || '');
+            setContactPhone(data.SDT || '');
+            setAddress(data.DIACHI || '');
+        } catch (error) {
+            console.error('Error fetching customer info:', error);
+            setNotification({ message: 'Không thể tải thông tin cá nhân!', type: 'error' });
         }
     };
 
@@ -132,6 +171,11 @@ const CartPage = () => {
     };
 
     const handleCheckout = async () => {
+        if (paymentMethod === 'credit_card' && (!cardNumber || !expiryDate || !cvv || !cardHolderName)) {
+            setNotification({ message: 'Vui lòng nhập đầy đủ thông tin thẻ.', type: 'error' });
+            return;
+        }
+
         setProcessingPayment(true);
         try {
             await getCSRFToken();
@@ -227,16 +271,12 @@ const CartPage = () => {
                     <div className={styles.cartSummary}>
                         <h2>Thông tin thanh toán</h2>
                         <div className={styles.summaryRow}>
-                            <span>Giá gốc:</span>
+                            <span>Giá trị:</span>
                             <span>{originalTotal.toLocaleString()} VNĐ</span>
                         </div>
                         <div className={styles.summaryRow}>
                             <span>Giảm giá:</span>
                             <span>-{discount.toLocaleString()} VNĐ</span>
-                        </div>
-                        <div className={styles.summaryRow}>
-                            <span>Phí ship:</span>
-                            <span>{shippingFee.toLocaleString()} VNĐ</span>
                         </div>
                         <div className={styles.summaryRowTotal}>
                             <span>Tổng cộng:</span>
@@ -275,6 +315,41 @@ const CartPage = () => {
                             <option value="credit_card">Thẻ tín dụng</option>
                             <option value="bank_transfer">Chuyển khoản</option>
                         </select>
+
+                        {paymentMethod === 'credit_card' && (
+                            <div className={styles.cardInfoForm}>
+                                <input
+                                    type="text"
+                                    placeholder="Số thẻ"
+                                    value={cardNumber}
+                                    onChange={(e) => setCardNumber(e.target.value)}
+                                    className={styles.inputField}
+                                />
+                                <div className={styles.expiryCvvRow}>
+                                    <input
+                                        type="text"
+                                        placeholder="Ngày hết hạn (MM/YY)"
+                                        value={expiryDate}
+                                        onChange={(e) => setExpiryDate(e.target.value)}
+                                        className={styles.inputFieldHalf}
+                                    />
+                                    <input
+                                        type="text"
+                                        placeholder="CVV"
+                                        value={cvv}
+                                        onChange={(e) => setCvv(e.target.value)}
+                                        className={styles.inputFieldHalf}
+                                    />
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Tên chủ thẻ"
+                                    value={cardHolderName}
+                                    onChange={(e) => setCardHolderName(e.target.value)}
+                                    className={styles.inputField}
+                                />
+                            </div>
+                        )}
 
                         <button className={styles.checkoutButton} onClick={handleCheckout} disabled={processingPayment}>
                             {processingPayment ? 'Đang thanh toán...' : 'Thanh toán'}
