@@ -25,6 +25,7 @@ Route::get('/api/trangsuc/{id}', [ProductManagementController::class, 'getProduc
 Route::get('/api/trangsuc/random/{excludeId}', [ProductManagementController::class, 'getRandomProducts']);
 Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
 Route::get('/api/thongke', [ThongKeController::class, 'getStatistics']);
+Route::get('/api/top-products', [SanPhamBanChayController::class, 'getTopProduct']);
 
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
@@ -70,6 +71,4 @@ Route::middleware(['auth:api', 'check.role:0'])->group(function () {
     Route::post('/api/customer/cart/checkout', [OrderController::class, 'checkout']);
     Route::post('/api/customer/cart/add', [OrderController::class, 'addToCart']);
     Route::get('api/customer/history/', [OrderController::class, 'getOrderHistory']);
-
-    Route::get('/api/top-products', [SanPhamBanChayController::class, 'getTopProduct']);
 });
