@@ -10,11 +10,10 @@ use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\PromotionManagementController;
 use App\Http\Controllers\EmployeeManagerController;
 use App\Http\Controllers\ThongKeController;
-use App\Http\Controllers\SanPhamBanChayController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
-Route::post('/api/upload', [TestAPIController::class, 'upload']); 
+Route::post('/api/upload', [TestAPIController::class, 'upload']);
 
 // Các API không cần xác thực
 Route::post('/api/register', [AuthController::class, 'register']);
@@ -24,7 +23,6 @@ Route::get('/api/trangsuc/{id}', [ProductManagementController::class, 'getProduc
 Route::get('/api/trangsuc/random/{excludeId}', [ProductManagementController::class, 'getRandomProducts']);
 Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
 Route::get('/api/thongke', [ThongKeController::class, 'getStatistics']);
-Route::get('/api/top-products', [SanPhamBanChayController::class, 'getTopProduct']);
 
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
@@ -43,6 +41,11 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::post('/api/admin/khuyenmai/update/{id}', [PromotionManagementController::class, 'updateKhuyenMai']);
 
     Route::get('/api/admin/view-customer', [ProfileController::class, 'getCustomerandAccount']);
+    
+    Route::get('/api/admin/orders', [OrderController::class, 'getOrders']);
+    Route::get('/api/admin/orders/{orderId}', [OrderController::class, 'getOrderDetails']);
+    Route::put('/api/admin/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
+
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
@@ -55,7 +58,6 @@ Route::middleware(['auth:api', 'check.role:1'])->group(function () {
 
     Route::post('/api/admin/employees/update-info', [EmployeeManagerController::class, 'updateEmployeeInfo']);
     Route::post('/api/admin/employees/update-password', [EmployeeManagerController::class, 'updateEmployeePassword']);
-
 });
 
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {
