@@ -47,6 +47,9 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::get('/api/admin/orders', [OrderController::class, 'getOrders']);
     Route::get('/api/admin/orders/{orderId}', [OrderController::class, 'getOrderDetails']);
     Route::put('/api/admin/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
+    Route::get('/api/admin/profile', [ProfileController::class, 'getAdminProfile']);
+    Route::post('/api/admin/profile/update', [ProfileController::class, 'updateAdminProfile']);
+    
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {
