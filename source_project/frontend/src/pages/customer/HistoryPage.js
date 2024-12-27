@@ -148,12 +148,12 @@ const HistoryPage = () => {
                                             >
                                                 {isExpanded ? '▲ Thu gọn' : '▼ Xem chi tiết'}
                                             </button>
-                                            <button
+                                            {/* <button
                                                 className={styles.contactButton}
                                                 onClick={() => (window.location.href = `${baseUrl}/contact`)}
                                             >
                                                 <FontAwesomeIcon icon={faPhone} /> Liên Hệ
-                                            </button>
+                                            </button> */}
                                         </div>
                                     </div>
 
