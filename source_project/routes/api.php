@@ -10,10 +10,11 @@ use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\PromotionManagementController;
 use App\Http\Controllers\EmployeeManagerController;
 use App\Http\Controllers\ThongKeController;
+use App\Http\Controllers\InvoiceManagerController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
-Route::post('/api/upload', [TestAPIController::class, 'upload']); 
+Route::post('/api/upload', [TestAPIController::class, 'upload']);
 
 // Các API không cần xác thực
 Route::post('/api/register', [AuthController::class, 'register']);
@@ -58,7 +59,6 @@ Route::middleware(['auth:api', 'check.role:1'])->group(function () {
 
     Route::post('/api/admin/employees/update-info', [EmployeeManagerController::class, 'updateEmployeeInfo']);
     Route::post('/api/admin/employees/update-password', [EmployeeManagerController::class, 'updateEmployeePassword']);
-
 });
 
 Route::middleware(['auth:api', 'check.role:0'])->group(function () {

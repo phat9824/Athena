@@ -115,9 +115,11 @@ class ProductManagementController extends Controller
         try {
             // Validate dữ liệu
             $data = $request->validate([
+                'MADM'       => 'required|string',
+                'TENTS'      => 'required|string',
                 'GIANIEMYET' => 'required|numeric',
-                'SLTK' => 'required|integer',
-                'deleted' => 'required|boolean'
+                'SLTK'       => 'required|integer',
+                'deleted'    => 'required|boolean'
             ]);
 
             // Tìm sản phẩm
@@ -128,8 +130,10 @@ class ProductManagementController extends Controller
 
             // Chuẩn bị dữ liệu cập nhật
             $updateData = [
+                'MADM'       => $data['MADM'],
+                'TENTS'      => $data['TENTS'],
                 'GIANIEMYET' => $data['GIANIEMYET'],
-                'SLTK' => $data['SLTK']
+                'SLTK'       => $data['SLTK']
             ];
 
             // Xử lý DELETED_AT
@@ -157,14 +161,14 @@ class ProductManagementController extends Controller
     {
         try {
             $product = TrangSuc::findProductById($id);
-    
+
             if (!$product) {
                 return response()->json(['error' => 'Sản phẩm không tồn tại!'], 404);
             }
 
             $productsWithDiscount = TrangSuc::applyBestDiscount([$product]);
             $productWithDiscount = $productsWithDiscount[0];
-    
+
             return response()->json($productWithDiscount);
         } catch (Exception $e) {
             Log::error('Error fetching product details: ' . $e->getMessage());
@@ -185,7 +189,4 @@ class ProductManagementController extends Controller
             return response()->json(['error' => 'Something went wrong: ' . $e->getMessage()], 500);
         }
     }
-
-
-
 }
