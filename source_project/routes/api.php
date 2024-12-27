@@ -10,6 +10,8 @@ use App\Http\Controllers\ProductManagementController;
 use App\Http\Controllers\PromotionManagementController;
 use App\Http\Controllers\EmployeeManagerController;
 use App\Http\Controllers\ThongKeController;
+use App\Http\Controllers\InvoiceManagerController;
+use App\Http\Controllers\SanPhamBanChayController;
 
 // Test API
 Route::get('/api/images', [TestAPIController::class, 'getAllImages']);
@@ -23,6 +25,7 @@ Route::get('/api/trangsuc/{id}', [ProductManagementController::class, 'getProduc
 Route::get('/api/trangsuc/random/{excludeId}', [ProductManagementController::class, 'getRandomProducts']);
 Route::get('/api/danhmucts', [DanhMucController::class, 'getDanhMuc']);
 Route::get('/api/thongke', [ThongKeController::class, 'getStatistics']);
+Route::get('/api/top-products', [SanPhamBanChayController::class, 'getTopProduct']);
 
 // Các API cần xác thực người dùng trước khi truy cập
 Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {

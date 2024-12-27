@@ -1,0 +1,40 @@
+/* NewsEventsPage.module.css */
+.eventContainer {
+    border: 2px solid white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px; /* Để giới hạn độ rộng */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.heading {
+    color: #333;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center; /* Căn giữa tiêu đề */
+}
+
+.text {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    padding-left: 20px;  /* Khoảng cách bên trái */
+    padding-right: 20px; /* Khoảng cách bên phải */
+    text-align: justify; /* Căn đều văn bản */
+}
+
+.link {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
