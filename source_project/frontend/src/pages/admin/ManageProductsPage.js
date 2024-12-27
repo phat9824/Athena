@@ -10,6 +10,7 @@ import ProductTable from "../../components/admin/ProductPages/ProductTable";
 import Pagination from "../../components/admin/ProductPages/Pagination";
 import AddCategoryForm from "../../components/admin/ProductPages/AddCategoryForm";
 import AddProductForm from "../../components/admin/ProductPages/AddProductForm";
+import Notification from "../../components/user-components/Notification.js";
 
 const ManageProductsPage = () => {
     const { getCSRFToken, getCookie, baseUrl } = useAppContext();
@@ -28,6 +29,7 @@ const ManageProductsPage = () => {
     const [filters, setFilters] = useState({});
     const [searchQuery, setSearchQuery] = useState("");
     const [inputPage, setInputPage] = useState(1);
+    const [notification, setNotification] = useState(null);
 
     const [newProduct, setNewProduct] = useState({
         name: "",
@@ -37,6 +39,11 @@ const ManageProductsPage = () => {
         category: "",
         imageFile: null,
     });
+
+    const showNotification = (type, message) => {
+        setNotification({ type, message });
+        setTimeout(() => setNotification(null), 3000); 
+    };
 
     useEffect(() => {
         fetchCategories();
@@ -51,7 +58,6 @@ const ManageProductsPage = () => {
         const category = categories.find((cat) => cat.MADM === madm);
         return category ? category.TENDM : "Không xác định";
     };
-
 
     const fetchCategories = async () => {
         try {
@@ -101,7 +107,7 @@ const ManageProductsPage = () => {
             setTotalPages(res.totalPages);
             setInputPage(res.currentPage);
         } catch (error) {
-            setErrorMessage(error.message || "Lỗi không xác định khi lấy sản phẩm.");
+            showNotification("error", error.message || "Lỗi không xác định khi lấy sản phẩm.");
         } finally {
             setIsFetching(false);
         }
@@ -125,7 +131,7 @@ const ManageProductsPage = () => {
     // Thêm danh mục
     const addCategory = async () => {
         if (!newCategory) {
-            setErrorMessage("Tên danh mục không được để trống!");
+            showNotification("error", "Tên danh mục không được để trống!");
             return;
         }
         try {
@@ -145,13 +151,11 @@ const ManageProductsPage = () => {
             if (!response.ok) {
                 throw new Error(res.message || "Không thể thêm danh mục.");
             }
-            setSuccessMessage(res.message || "Thêm danh mục thành công!");
-            setErrorMessage("");
+            showNotification("success", res.message || "Thêm danh mục thành công!");
             setNewCategory("");
             fetchCategories();
         } catch (error) {
-            setErrorMessage(error.message || "Đã có lỗi xảy ra, vui lòng thử lại!");
-            setSuccessMessage("");
+            showNotification("error", error.message || "Đã có lỗi xảy ra, vui lòng thử lại!");
         }
     };
 
@@ -193,8 +197,7 @@ const ManageProductsPage = () => {
             }
 
             const res = await response.json();
-            setSuccessMessage(res.message || "Thêm sản phẩm thành công!");
-            setErrorMessage("");
+            showNotification("success", res.message || "Thêm sản phẩm thành công!");
             setNewProduct({
                 name: "",
                 price: "",
@@ -205,7 +208,7 @@ const ManageProductsPage = () => {
             });
             fetchProducts(1);
         } catch (error) {
-            setErrorMessage(error.message || "Đã xảy ra lỗi khi thêm sản phẩm!");
+            showNotification("error", error.message || "Đã xảy ra lỗi khi thêm sản phẩm!");
         }
     };
 
@@ -292,7 +295,7 @@ const ManageProductsPage = () => {
             <h2 className={styles.heading}>Danh sách sản phẩm</h2>
 
             <div className={styles.container}>
-                <h2 className={styles.heading}>Danh sách sản phẩm</h2>
+
 
                 {/* Ô tìm kiếm và chọn danh mục */}
                 <div className={styles.inputGroup}>
@@ -358,6 +361,15 @@ const ManageProductsPage = () => {
                 setNewProduct={setNewProduct}
                 addProduct={addProduct}
             />
+
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    duration={2000}
+                    onClose={() => setNotification(null)}
+                />
+            )}
         </div>
     );
 };

@@ -22,7 +22,7 @@ const ManageInvoicesPage = () => {
     const [inputPage, setInputPage] = useState(1);
 
     const fetchOrders = useCallback(async () => {
-        setLoading(true);
+        //setLoading(true);
         try {
             await getCSRFToken();
             const xsrfToken = getCookie('XSRF-TOKEN');
@@ -54,7 +54,7 @@ const ManageInvoicesPage = () => {
             console.error('Error fetching orders:', error);
             setNotification({ message: 'Đã xảy ra lỗi khi tải danh sách hóa đơn!', type: 'error' });
         } finally {
-            setLoading(false);
+            //setLoading(false);
         }
     }, [baseUrl, getCSRFToken, getCookie, filters]);
 
