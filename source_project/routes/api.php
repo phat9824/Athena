@@ -42,10 +42,11 @@ Route::middleware(['auth:api', 'check.role:1,2'])->group(function () {
     Route::post('/api/admin/khuyenmai/update/{id}', [PromotionManagementController::class, 'updateKhuyenMai']);
 
     Route::get('/api/admin/view-customer', [ProfileController::class, 'getCustomerandAccount']);
+    
+    Route::get('/api/admin/orders', [OrderController::class, 'getOrders']);
+    Route::get('/api/admin/orders/{orderId}', [OrderController::class, 'getOrderDetails']);
+    Route::put('/api/admin/orders/{orderId}/status', [OrderController::class, 'updateOrderStatus']);
 
-
-    // Route để quản lý hóa đơn
-    Route::get('/api/admin/invoices', [InvoiceManagerController::class, 'getAllInvoices']);
 });
 
 Route::middleware(['auth:api', 'check.role:1'])->group(function () {

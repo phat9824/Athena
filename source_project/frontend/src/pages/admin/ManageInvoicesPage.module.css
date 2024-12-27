@@ -1,94 +1,154 @@
-.container {
+.ordersPage {
     padding: 20px;
-    font-family: Arial, sans-serif;
+    background-color: #f4f7fc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; 
+    margin: 0 auto;
 }
 
-.heading {
-    text-align: center;
+.ordersHeading {
     font-size: 24px;
+    text-align: center;
+    font-weight: bold;
+    color: darkblue;
     margin-bottom: 20px;
 }
 
-.filters {
+.filtersContainer {
+    margin-bottom: 20px;
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 10px;
+    justify-content: center;
 }
 
-.filterSelect {
-    padding: 10px;
+.filtersContainer input,
+.filtersContainer select {
+    padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
 }
 
-.invoiceList {
+.filtersContainer input:focus,
+.filtersContainer select:focus {
+    border-color: darkblue;
+}
+
+.ordersTable {
+    width: 100%;
+    border-collapse: collapse;
     margin-top: 20px;
+    background-color: #ffffff;
 }
 
-.invoiceCard {
+.ordersTable th, .ordersTable td {
     border: 1px solid #ccc;
     padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
+    text-align: center;
 }
 
-.invoiceSummary {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.ordersTable th {
+    background-color: darkblue;
+    color: #ffffff;
 }
 
-.toggleButton {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #fff;
+.ordersTable td button {
+    padding: 6px 10px;
+    margin: 5px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    background-color: #ccc;
+    color: #000;
     cursor: pointer;
 }
 
-.toggleButton:hover {
-    background-color: #0056b3;
+.ordersTable td button:hover {
+    background-color: darkblue;
+    color: #fff;
 }
 
-.invoiceDetails {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.orderDetailsModal {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.orderDetailsModal h4 {
+    margin-bottom: 10px;
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: darkblue;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
 }
 
 .detailItem {
     display: flex;
-    align-items: center;
     margin-bottom: 10px;
 }
 
 .productImage {
     width: 50px;
     height: 50px;
-    margin-right: 10px;
+    border-radius: 4px;
     object-fit: cover;
-    border-radius: 5px;
+    margin-right: 10px;
 }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+
+.columnId {
+    width: 10%;
+    min-width: 5%
 }
 
-.pageButton {
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.columnCustomerId {
+    width: 10%;
+    min-width: 5%
 }
 
-.pageButton:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+.columnDate {
+    width: 15%;
+    min-width: 5%
+}
+
+.columnStatus {
+    width: 15%;
+    min-width: 5%
+}
+
+.columnTotal {
+    width: 20%;
+    min-width: 5%;
+    text-align: right;
+}
+
+.columnActions {
+    width: 25%;
+    min-width: 100px;
 }
