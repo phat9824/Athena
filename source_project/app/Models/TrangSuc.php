@@ -177,66 +177,66 @@ class TrangSuc extends Model
                         WHERE NOW() BETWEEN NGAYBD AND NGAYKT
                         GROUP BY MADM
                     ) AS KM2 ON TRANGSUC.MADM = KM2.MADM";
-
-        $baseSql .= " WHERE DELETED_AT IS NULL";
-
+    
+        $baseSql .= " WHERE TRANGSUC.DELETED_AT IS NULL";
+    
         // Lọc theo danh mục
         if (!empty($filters['category'])) {
             $baseSql .= " AND TRANGSUC.MADM = :category";
             $params[':category'] = $filters['category'];
         }
-
+    
         // Lọc theo giá tối thiểu sau khi giảm
         if (!empty($filters['priceMin'])) {
-            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) >= :priceMin";
+            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)) / 100, 0))) >= :priceMin";
             $params[':priceMin'] = $filters['priceMin'];
         }
-
+    
         // Lọc theo giá tối đa sau khi giảm
         if (!empty($filters['priceMax'])) {
-            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) <= :priceMax";
+            $baseSql .= " AND (GIANIEMYET * (1 - COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)) / 100, 0))) <= :priceMax";
             $params[':priceMax'] = $filters['priceMax'];
         }
-
+    
         // Tìm kiếm theo tên sản phẩm
         if (!empty($search)) {
             $baseSql .= " AND TENTS LIKE :search";
             $params[':search'] = "%$search%";
         }
-
+    
         // Sắp xếp
         $sortColumn = match ($sortBy) {
-            'discount' => "COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT), 0)",
-            'price' => "GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))",
+            'discount' => "COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)), 0)",
+            'price' => "GIANIEMYET * (1 - COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)) / 100, 0))",
             default => "GIANIEMYET",
         };
-
+    
         // Tính tổng số sản phẩm
         $countSql = "SELECT COUNT(*) AS total " . $baseSql;
         $countStmt = $pdo->prepare($countSql);
         foreach ($params as $key => $value) {
-            $countStmt->bindValue($key, $value);
+            $countStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
         $countStmt->execute();
         $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-
+    
         // Lấy danh sách sản phẩm với phân trang và sắp xếp
         $productSql = "SELECT TRANGSUC.*, 
-                            COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT), 0) AS BEST_DISCOUNT,
-                            (GIANIEMYET * (1 - COALESCE(GREATEST(KM1.BEST_DISCOUNT, KM2.CATEGORY_DISCOUNT) / 100, 0))) AS DISCOUNTED_PRICE 
+                            COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)), 0) AS BEST_DISCOUNT,
+                            (GIANIEMYET * (1 - COALESCE(GREATEST(COALESCE(KM1.BEST_DISCOUNT, 0), COALESCE(KM2.CATEGORY_DISCOUNT, 0)) / 100, 0))) AS DISCOUNTED_PRICE 
                     " . $baseSql . " 
                     ORDER BY $sortColumn " . ($sort === 'desc' ? 'DESC' : 'ASC') . " 
                     LIMIT :offset, :limit";
         $params[':offset'] = $offset;
         $params[':limit'] = $limit;
-
+    
         $productStmt = $pdo->prepare($productSql);
         foreach ($params as $key => $value) {
             $productStmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
         }
         $productStmt->execute();
         $products = $productStmt->fetchAll(PDO::FETCH_ASSOC);
-
+    
         return [
             'total' => $total,
             'products' => $products,
