@@ -48,7 +48,7 @@ class ProductManagementController extends Controller
             $result = TrangSuc::filterProducts2($filters, $search, $offset, $perPage, $sort, $sortBy);
             $products = $result['products'];
             $total = $result['total'];
-
+            Log::info($products);
             $products = TrangSuc::applyBestDiscount($products);
 
             return response()->json([
