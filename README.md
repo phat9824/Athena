@@ -28,7 +28,7 @@
 * **Đề tài:** WEB BÁN TRANG SỨC
 
 # Trang giới thiệu nhóm
-* [LuxurySpark](https://sites.google.com/gm.uit.edu.vn/group15-is207p11/home)
+* [Athena](https://sites.google.com/gm.uit.edu.vn/group15-is207p11/home)
 
 # Bảng màu chủ đạo
 
