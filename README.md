@@ -30,8 +30,4 @@
 # Trang giới thiệu nhóm
 * [Athena](https://sites.google.com/gm.uit.edu.vn/group15-is207p11/home)
 
-# Bảng màu chủ đạo
 
-* [link](https://coolors.co/user/palettes/6707ec7d2bb692000b74b162)
-
-<p align='center'>Copyright © 2024 Nhóm ? - IS207.P11</p>
